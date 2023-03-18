@@ -1,10 +1,7 @@
 import datetime
 
 import markpickle
-from markpickle.deserialize import (
-    extract_scalar,
-    is_float,
-)
+from markpickle.deserialize import extract_scalar, is_float
 
 
 def test_is_float():

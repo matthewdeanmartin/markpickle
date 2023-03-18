@@ -4,7 +4,6 @@ import platform
 
 import mistune
 
-
 print(
     "{} {}; markpickle {}".format(
         platform.python_implementation(),

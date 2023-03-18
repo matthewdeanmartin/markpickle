@@ -9,20 +9,21 @@ import dataclasses
 import datetime
 import io
 import textwrap
-from typing import Any, Optional, cast, Union
-import mistune
+from typing import Any, Optional, Union, cast
 
+import mistune
 
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 
+
 @dataclasses.dataclass
-class DeserializationConfig():
-    infer_scalar_types: bool= True
-    true_values: list[str]= dataclasses.field(default_factory=lambda: ["True", "true"])
-    false_values: list[str]= dataclasses.field(default_factory=lambda: ["False", "false"])
-    none_values:list[str]= dataclasses.field(default_factory=lambda: ["None", "nil", "nil"])
-    empty_string_is:str = ""
-    root: Optional[str]=None
+class DeserializationConfig:
+    infer_scalar_types: bool = True
+    true_values: list[str] = dataclasses.field(default_factory=lambda: ["True", "true"])
+    false_values: list[str] = dataclasses.field(default_factory=lambda: ["False", "false"])
+    none_values: list[str] = dataclasses.field(default_factory=lambda: ["None", "nil", "nil"])
+    empty_string_is: str = ""
+    root: Optional[str] = None
 
 
 def loads(value: str, config: Optional[DeserializationConfig] = None) -> SerializableTypes:
@@ -57,11 +58,11 @@ def is_float(value: str) -> bool:
         return False
 
 
-def extract_scalar(value:str, config:DeserializationConfig) -> ScalarTypes:
+def extract_scalar(value: str, config: DeserializationConfig) -> ScalarTypes:
     """
     Infer datatypes, mostly expecting python-like string representations.
 
-    >>> extract_scalar("1")
+    >>> extract_scalar("1",DeserializationConfig())
     1
     """
     if value in config.true_values:

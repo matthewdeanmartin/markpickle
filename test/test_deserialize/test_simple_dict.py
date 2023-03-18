@@ -2,7 +2,6 @@ import markpickle
 from markpickle import loads
 
 
-
 def test_empty_dict():
     config = markpickle.DeserializationConfig()
     config.empty_string_is = {}

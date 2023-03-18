@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "markpickle"
-version = "0.1.0"
+version = "0.2.0"
 description = "Lossy python to markdown serializer"
 authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
 keywords = ["serializer", "deserializer", "markdown",]

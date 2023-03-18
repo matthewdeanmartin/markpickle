@@ -2,11 +2,14 @@
 # and is provided under the Creative Commons Zero public domain dedication.
 
 import datetime
+import typing
+
+from hypothesis import given
+from hypothesis import strategies as st
+
 import markpickle
 import markpickle.deserialize
 import markpickle.serialize
-import typing
-from hypothesis import given, strategies as st
 from markpickle import DeserializationConfig, SerializationConfig
 
 
@@ -29,9 +32,7 @@ from markpickle import DeserializationConfig, SerializationConfig
         st.integers(),
         st.dictionaries(
             keys=st.text(),
-            values=st.one_of(
-                st.none(), st.dates(), st.floats(), st.integers(), st.text()
-            ),
+            values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
         ),
         st.dictionaries(
             keys=st.text(),
@@ -42,66 +43,56 @@ from markpickle import DeserializationConfig, SerializationConfig
                 st.integers(),
                 st.dictionaries(
                     keys=st.text(),
-                    values=st.one_of(
-                        st.none(), st.dates(), st.floats(), st.integers(), st.text()
-                    ),
+                    values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
                 ),
-                st.lists(
-                    st.one_of(
-                        st.none(), st.dates(), st.floats(), st.integers(), st.text()
-                    )
-                ),
+                st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
                 st.text(),
             ),
         ),
-        st.lists(
-            st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())
-        ),
+        st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
         st.lists(
             st.dictionaries(
                 keys=st.text(),
-                values=st.one_of(
-                    st.none(), st.dates(), st.floats(), st.integers(), st.text()
-                ),
+                values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
             )
         ),
         st.text(),
     ),
 )
 def test_roundtrip_dumps_loads(
-        config: typing.Union[
-            typing.Optional[markpickle.deserialize.DeserializationConfig],
-            typing.Optional[markpickle.serialize.SerializationConfig],
-        ],
-        root: typing.Optional[str],
-        value: typing.Union[
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-                dict[
-                    str,
-                    typing.Union[
-                        None,
-                        str,
-                        int,
-                        float,
-                        datetime.date,
-                        list[typing.Union[None, str, int, float, datetime.date]],
-                        dict[str, typing.Union[None, str, int, float, datetime.date]],
-                    ],
-                ],
-                list[typing.Union[None, str, int, float, datetime.date]],
-                list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-            ],
+    config: typing.Union[
+        typing.Optional[markpickle.deserialize.DeserializationConfig],
+        typing.Optional[markpickle.serialize.SerializationConfig],
+    ],
+    root: typing.Optional[str],
+    value: typing.Union[
+        typing.Union[
+            None,
             str,
+            int,
+            float,
+            datetime.date,
+            dict[str, typing.Union[None, str, int, float, datetime.date]],
+            dict[
+                str,
+                typing.Union[
+                    None,
+                    str,
+                    int,
+                    float,
+                    datetime.date,
+                    list[typing.Union[None, str, int, float, datetime.date]],
+                    dict[str, typing.Union[None, str, int, float, datetime.date]],
+                ],
+            ],
+            list[typing.Union[None, str, int, float, datetime.date]],
+            list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
         ],
+        str,
+    ],
 ) -> None:
-    if value in ([],{},(),"","0",None):
-        # falsies will not roundtrip. 
+    if value in ([], {}, (), "", "0", None):
+        # falsies will not roundtrip.
         return
     value0 = markpickle.dumps(value=value, root=root, config=config)
     value1 = markpickle.loads(value=value0, config=config)
@@ -117,12 +108,12 @@ def test_roundtrip_dumps_loads(
     root=st.one_of(st.none(), st.text()),
 )
 def test_fuzz_DeserializationConfig(
-        infer_scalar_types: bool,
-        true_values: list[str],
-        false_values: list[str],
-        none_values: list[str],
-        empty_string_is: str,
-        root: typing.Optional[str],
+    infer_scalar_types: bool,
+    true_values: list[str],
+    false_values: list[str],
+    none_values: list[str],
+    empty_string_is: str,
+    root: typing.Optional[str],
 ) -> None:
     markpickle.DeserializationConfig(
         infer_scalar_types=infer_scalar_types,
@@ -139,9 +130,7 @@ def test_fuzz_DeserializationConfig(
     dict_as_table=st.booleans(),
     child_dict_as_table=st.booleans(),
 )
-def test_fuzz_SerializationConfig(
-        headers_are_dict_keys: bool, dict_as_table: bool, child_dict_as_table: bool
-) -> None:
+def test_fuzz_SerializationConfig(headers_are_dict_keys: bool, dict_as_table: bool, child_dict_as_table: bool) -> None:
     markpickle.SerializationConfig(
         headers_are_dict_keys=headers_are_dict_keys,
         dict_as_table=dict_as_table,

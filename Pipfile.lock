@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b5af2927a834494b11a1be0b33ec86123f277fe5aa1ef2ba8922aea8860e753b"
+            "sha256": "353228a76da7d5f5c940b8e4c4729d585869d236ee76b7573b6421bce7fcdc4c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -40,13 +40,13 @@
             "markers": "python_version >= '3.7'",
             "version": "==0.1.2"
         },
-        "mistletoe": {
+        "mistune": {
             "hashes": [
-                "sha256:b1f89afb079a1b1a542e9ef2c08dd450a07a2bd935c03cab22c328ad7ca4d8e8",
-                "sha256:c1e3d8a5a7fcd6354650977bb228d28f184f09a475456b8a1e122170038e2707"
+                "sha256:0246113cb2492db875c6be56974a7c893333bf26cd92891c85f63151cee09d34",
+                "sha256:bad7f5d431886fcbaf5f758118ecff70d31f75231b34024a1341120340a65ce8"
             ],
             "index": "pypi",
-            "version": "==1.0.1"
+            "version": "==2.0.5"
         }
     },
     "develop": {

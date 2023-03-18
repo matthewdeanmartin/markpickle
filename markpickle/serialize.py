@@ -3,25 +3,24 @@ Serialize many python types to Markdown.
 """
 import dataclasses
 import io
-from typing import  Optional, Union
+from typing import Optional, Union
 
 import mdformat
 
 import markpickle.python_to_tables as python_to_tables
 from markpickle.mypy_types import SerializableTypes
 
+
 @dataclasses.dataclass
-class SerializationConfig():
-    headers_are_dict_keys:bool= True
-    dict_as_table:bool= False
-    child_dict_as_table:bool=True
-    none_is:str ="None"
-    run_formatter:bool = False
+class SerializationConfig:
+    headers_are_dict_keys: bool = True
+    dict_as_table: bool = False
+    child_dict_as_table: bool = True
+    none_is: str = "None"
+    run_formatter: bool = False
 
 
-def dumps(
-    value: SerializableTypes, root: Optional[str] = None, config: Optional[SerializationConfig] = None
-) -> str:
+def dumps(value: SerializableTypes, root: Optional[str] = None, config: Optional[SerializationConfig] = None) -> str:
     """
     Serialize basic python types to string of markdown
 
@@ -33,7 +32,7 @@ def dumps(
     builder = io.StringIO()
     dump(value, builder, root, config)
     builder.seek(0)
-    result= builder.read()
+    result = builder.read()
     if config.run_formatter:
         result = mdformat.text(result)
     return result
@@ -75,8 +74,9 @@ def dump(
         raise NotImplementedError()
 
 
-
-def render_dict(builder: io.IOBase, value: SerializableTypes, config: SerializationConfig, indent: int = 0, header_level: int = 1) -> int:
+def render_dict(
+    builder: io.IOBase, value: SerializableTypes, config: SerializationConfig, indent: int = 0, header_level: int = 1
+) -> int:
     """Convert python dictionary to markdown"""
     for key, item in value.items():
         if not isinstance(item, (list, dict, set)):

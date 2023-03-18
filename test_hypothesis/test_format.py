@@ -1,10 +1,11 @@
 """
 Does it generate clean Markdown?
 """
+from test.examples_of_supported_types import EXAMPLES
+
 import mdformat
 
 import markpickle
-from test.examples_of_supported_types import EXAMPLES
 
 
 def test_format_of_all_examples():
