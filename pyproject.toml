@@ -32,11 +32,13 @@ documentation ="https://github.com/matthewdeanmartin/markpickle"
 "Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGES.md"
 
 [tool.poetry.dependencies]
-mistletoe = "*"
+mistune = "*"
+mdformat = "*"
 
 
 [tool.poetry.dev-dependencies]
-marko = "*"
+#marko = "*"
+#mistletoe = "*"
 pytest = "*"
 vermin = "*"
 hypothesis = {extras = ["cli"], version = "*"}

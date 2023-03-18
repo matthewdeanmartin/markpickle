@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mistletoe = "*"
+mistune = "*"
+mdformat = "*"
 
 [dev-packages]
-marko = "*"
+# marko = "*"
 pytest = "*"
 vermin = "*"
 hypothesis = {extras = ["cli"], version = "*"}
@@ -15,8 +16,8 @@ pre-commit = "*"
 mypy = "*"
 pytest-cov = "*"
 ruff = "*"
-mdformat = "*"
 linkcheckmd = "*"
+tox = "*"
 
 [requires]
 python_version = "3.11"

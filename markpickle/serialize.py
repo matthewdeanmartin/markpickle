@@ -28,6 +28,8 @@ def dumps(
     >>> dumps([1,2])
     '- 1\\n- 2\\n'
     """
+    if not config:
+        config = SerializationConfig()
     builder = io.StringIO()
     dump(value, builder, root, config)
     builder.seek(0)
@@ -41,7 +43,7 @@ def dump(
     value: SerializableTypes,
     stream: io.IOBase,
     root: Optional[str] = None,
-    config: Optional[dict[str, Union[bool, str]]] = None,
+    config: Optional[SerializationConfig] = None,
 ) -> None:
     """
     Serialize basic python types to markdown in a file-like object.

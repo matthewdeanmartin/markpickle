@@ -10,8 +10,8 @@ import datetime
 import io
 import textwrap
 from typing import Any, Optional, cast, Union
-
 import mistune
+
 
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 

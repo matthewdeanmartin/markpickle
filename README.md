@@ -11,7 +11,16 @@ For example this
 
 becomes the python list `[1, 2]`
 
-This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistletoe or one of the other markdown parsers.
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/pypi/markpickle) [![Downloads](https://pepy.tech/badge/markpickle/month)](https://pepy.tech/project/markpickle/month)
+
+## Installation
+
+```shell
+pip install openmock
+```
+
+## Capabilities
+This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistune or one of the other markdown parsers.
 
 Supported types
 
@@ -33,7 +42,7 @@ Almost all markdown libraries use it as intended, as a way to generate HTML frag
 
 # Deserializing
 
-Markdown is deserialized by parsing the document to an abstract syntax tree. This is done by `mistletoe`. If the markdown file has the same structure that markpickle uses, then it will create a sensible object. Deserializing a random README.md file is not expected to always work. For that you should use mistletoe's AST.
+Markdown is deserialized by parsing the document to an abstract syntax tree. This is done by `mistune`. If the markdown file has the same structure that markpickle uses, then it will create a sensible object. Deserializing a random README.md file is not expected to always work. For that you should use mistune's AST.
 
 # Round Tripping
 
@@ -59,7 +68,7 @@ People normally want to convert json to markdown. Json looks like python dict, s
 
 I don't know of any libraries that turn markdown into basic python types. At the moment, they all turn markdown into document object model.
 
-[mistletoe](https://github.com/miyuchina/mistletoe) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes. 
+[mistune](https://github.com/miyuchina/mistune) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes. 
 
 [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup. 
 

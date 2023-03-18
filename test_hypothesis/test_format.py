@@ -12,4 +12,7 @@ def test_format_of_all_examples():
         unformatted = markpickle.dumps(example)
         # unformatted = "\n\n# A header\n\n"
         formatted = mdformat.text(unformatted)
+        if not (formatted == unformatted or formatted == unformatted + "\n"):
+            print(formatted)
+            print()
         assert formatted == unformatted or formatted == unformatted + "\n"
