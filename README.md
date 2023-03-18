@@ -68,7 +68,7 @@ People normally want to convert json to markdown. Json looks like python dict, s
 
 I don't know of any libraries that turn markdown into basic python types. At the moment, they all turn markdown into document object model.
 
-[mistune](https://github.com/miyuchina/mistune) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes. 
+[mistune](https://pypi.org/project/mistune/) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes. 
 
 [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup. 
 
