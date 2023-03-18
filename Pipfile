@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mistletoe = "*"
+
+[dev-packages]
+marko = "*"
+pytest = "*"
+vermin = "*"
+hypothesis = {extras = ["cli"], version = "*"}
+pre-commit = "*"
+mypy = "*"
+pytest-cov = "*"
+ruff = "*"
+mdformat = "*"
+linkcheckmd = "*"
+
+[requires]
+python_version = "3.11"

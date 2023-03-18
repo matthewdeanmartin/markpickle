@@ -1,0 +1,4 @@
+- json to markdown utility function
+- fix scalars with root look like dicts
+- get hypothesis to pass
+- hypothesis for internal functions

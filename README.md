@@ -1,2 +1,71 @@
 # markpickle
-Lossy serialization of markdown to python and back
+
+Lossy serialization of markdown to simple python data types and back. It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST)
+
+For example this
+
+```markdown
+- 1
+- 2
+```
+
+becomes the python list `[1, 2]`
+
+This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistletoe or one of the other markdown parsers.
+
+Supported types
+
+- Scalar values
+- Lists of scalar values
+- Dictionaries with scalar values
+- Lists of dictionaries of scalar values
+- Dictionaries with list values
+- Partial support for blanks/string with leading/trailing whitespace
+
+Not supported
+
+- Things not ordinarily serializable
+- Markdown that uses more than headers, lists, tables
+
+# Serializing
+
+Almost all markdown libraries use it as intended, as a way to generate HTML fragments from untrusted sources for insertion into some other HTML template.
+
+# Deserializing
+
+Markdown is deserialized by parsing the document to an abstract syntax tree. This is done by `mistletoe`. If the markdown file has the same structure that markpickle uses, then it will create a sensible object. Deserializing a random README.md file is not expected to always work. For that you should use mistletoe's AST.
+
+# Round Tripping
+
+Some but not all data structures will be round-trippable. The goal is that the sort of dicts you get from loading JSON will be round-trippable, provided everything is a string.
+
+
+## Prior Art
+
+People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
+
+### Serializing to Markdown
+[json2md](https://github.com/IonicaBizau/json2md), a node package, will turn json that looks like the HTML document object model into markdown, e.g.
+```python
+{"h1": "Some Header",
+ "p": "Some Text"}
+```
+
+[tomark](https://pypi.org/project/tomark/) will turn dict into a markdown table. Unmaintained.
+
+[pytablewriter](https://pytablewriter.readthedocs.io/en/latest/pages/reference/writers/text/markup/md.html) also, dict to table, but supports many tabular formats.
+
+### Deserializing to Python 
+
+I don't know of any libraries that turn markdown into basic python types. At the moment, they all turn markdown into document object model.
+
+[mistletoe](https://github.com/miyuchina/mistletoe) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes. 
+
+[beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup. 
+
+# Documentation
+
+- [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
+- [TODO](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/TODO.md)
+
+

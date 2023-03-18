@@ -1,0 +1,77 @@
+---
+repos:
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.4.0
+        hooks:
+            # each hook takes about 1s to run. These are expensive-ish checks
+            -   id: check-added-large-files
+            -   id: check-yaml
+            -   id: check-builtin-literals
+            -   id: check-byte-order-marker
+            -   id: check-case-conflict
+            -   id: check-merge-conflict
+            -   id: check-symlinks
+            -   id: check-toml
+            -   id: debug-statements
+            -   id: detect-private-key
+            -   id: fix-encoding-pragma
+                args: [ --remove ]
+            -   id: forbid-new-submodules
+    -   repo: https://github.com/asottile/pyupgrade
+        rev: v3.3.1
+        hooks:
+            -   id: pyupgrade
+                args: [ --py37-plus ]
+# Buggy? Reports no files change, "FAILURE"
+#    -   repo: https://github.com/tox-dev/pyproject-fmt
+#        rev: "0.4.1"
+#        hooks:
+#            -   id: pyproject-fmt
+    -   repo: https://github.com/abravalheri/validate-pyproject
+        rev: v0.10.1
+        hooks:
+            -   id: validate-pyproject
+    -   repo: https://github.com/myint/autoflake
+        rev: v2.0.0
+        hooks:
+            -   id: autoflake
+                args:
+                    - --in-place
+                    - --recursive
+                    - --expand-star-imports
+                    - --remove-all-unused-imports
+                    - --remove-duplicate-keys
+                    - --remove-unused-variables
+    -   repo: https://github.com/psf/black
+        rev: 22.12.0
+        hooks:
+            -   id: black
+                language_version: python3.10
+    -   repo: https://github.com/pycqa/isort
+        rev: 5.11.4
+        hooks:
+            -   id: isort
+                name: isort
+                args:
+                    - --profile black
+    -   repo: https://github.com/charliermarsh/ruff-pre-commit
+        rev: v0.0.222
+        hooks:
+            -   id: ruff
+                exclude: ^dead_code/
+                args: [
+                    "--config",
+                    "pyproject.toml",
+                    "--fix",
+                ]
+    -   repo: https://github.com/pre-commit/pygrep-hooks
+        rev: v1.10.0  # Use the ref you want to point at
+        hooks:
+            -   id: python-use-type-annotations
+            -   id: python-no-eval
+            -   id: python-no-log-warn
+            -   id: text-unicode-replacement-char
+    -   repo: https://github.com/executablebooks/mdformat
+        rev: 0.7.16
+        hooks:
+            -   id: mdformat
