@@ -1,49 +1,62 @@
-# Data types Markdown supports
+# Examples
 
-**String**. Can you infer types? Probably not.
-
-**List**. And lists can hold String, List, Dict\[int, str\],
+## scalar
 
 ```markdown
- - Cat
- - Dog
- - Rabbit
+6
 ```
 
-**Dict\[int, str | list | dict\[int, str\]\]**. Also known as ordered lists. Can hold most types.
+## list of scalars
 
 ```markdown
-1. Cat
-2. Dog
-3. Rabbit
+- 1
+- 2
+- 3
+
 ```
 
-**Dict\[int, str\]**. Also known as ordered lists.
-
-**Dict\[str, str\]**. Via headers
+## list of dictionaries
 
 ```markdown
-# Things
-## Animals
- - Cat
- - Dog
- - Rabbit
-## Plants
- - Tree
- - Potato
- - Radish
+| animal | name   |
+| ------ | ------ |
+| cat    | Frisky |
+| dog    | Fido   |
+
 ```
 
-**Dict\[int, dict\[str, str\]\]** Dictionary of numeric keys and value that are dictionaries.
+## dictionaries of strings
 
 ```markdown
-# dict of lists of strings
+# animal
+cat
+# name
+Frisky
 
-1. | author | title    | pub_date |
-   | ------ | -------- | -------- |
-   | john   | the book | 1922     |
+```
 
-2. | author | title    | pub_date |
-   | ------ | -------- | -------- |
-   | john   | the book | 1922     |
+## dictionary of lists
+
+```markdown
+- ages
+ - 24
+ - 59
+ - 45
+- countires
+ - US
+ - Canada
+ - Iceland
+
+```
+
+## dictionary of dictionaries
+
+```markdown
+ | animal | name   |
+ | ------ | ------ |
+ | cat    | Frisky |
+ | animal | name |
+ | ------ | ---- |
+ | dog    | Fido |
+
 ```

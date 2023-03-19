@@ -5,95 +5,13 @@ import datetime
 import io
 import typing
 
-import _io
-from _io import StringIO
 from hypothesis import given
 from hypothesis import strategies as st
 
-import markpickle
 import markpickle.config_class
-from markpickle.serialize import unsafe_falsy_type, unsafe_scalar_type
+import markpickle.serialize
 
-
-@given(
-    # config class creates garbage if messed up
-    config=st.just(
-        markpickle.config_class.Config(infer_scalar_types=False)
-    ),  # .from_type(typing.Optional[markpickle.config_class.Config]),
-    value=st.one_of(
-        st.none(),
-        st.dates(),
-        st.floats(),
-        st.integers(),
-        st.dictionaries(
-            keys=st.text(),
-            values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
-        ),
-        st.dictionaries(
-            keys=st.text(),
-            values=st.one_of(
-                st.none(),
-                st.dates(),
-                st.floats(),
-                st.integers(),
-                st.dictionaries(
-                    keys=st.text(),
-                    values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
-                ),
-                st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
-                st.text(),
-            ),
-        ),
-        st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
-        st.lists(
-            st.dictionaries(
-                keys=st.text(),
-                values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
-            )
-        ),
-        st.text(),
-    ),
-)
-def test_roundtrip_dumps_loads(
-    config: typing.Optional[markpickle.config_class.Config],
-    value: typing.Union[
-        typing.Union[
-            None,
-            str,
-            int,
-            float,
-            datetime.date,
-            dict[str, typing.Union[None, str, int, float, datetime.date]],
-            dict[
-                str,
-                typing.Union[
-                    None,
-                    str,
-                    int,
-                    float,
-                    datetime.date,
-                    list[typing.Union[None, str, int, float, datetime.date]],
-                    dict[str, typing.Union[None, str, int, float, datetime.date]],
-                ],
-            ],
-            list[typing.Union[None, str, int, float, datetime.date]],
-            list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-        ],
-        str,
-    ],
-) -> None:
-    if unsafe_falsy_type(value):
-        # falsies will not roundtrip.
-        return
-    if unsafe_scalar_type(value):
-        # non-strings will not roundtrip.
-        return
-
-    value0 = markpickle.dumps(value=value, config=config)
-    value1 = markpickle.loads(value=value0, config=config)
-    if value != value1:
-        print("whoa")
-    assert value == value1, (value, value1)
+# TODO: replace st.nothing() with appropriate strategies
 
 
 @given(
@@ -105,8 +23,11 @@ def test_roundtrip_dumps_loads(
     serialize_headers_are_dict_keys=st.booleans(),
     serialize_dict_as_table=st.booleans(),
     serialize_child_dict_as_table=st.booleans(),
+    serialize_tables_tabulate_style=st.booleans(),
     none_string=st.text(),
     serialize_run_formatter=st.booleans(),
+    serialize_date_format=st.text(),
+    serialized_datetime_format=st.text(),
 )
 def test_fuzz_Config(
     infer_scalar_types: bool,
@@ -117,10 +38,13 @@ def test_fuzz_Config(
     serialize_headers_are_dict_keys: bool,
     serialize_dict_as_table: bool,
     serialize_child_dict_as_table: bool,
+    serialize_tables_tabulate_style: bool,
     none_string: str,
     serialize_run_formatter: bool,
+    serialize_date_format: str,
+    serialized_datetime_format: str,
 ) -> None:
-    markpickle.Config(
+    markpickle.serialize.Config(
         infer_scalar_types=infer_scalar_types,
         true_values=true_values,
         false_values=false_values,
@@ -129,8 +53,11 @@ def test_fuzz_Config(
         serialize_headers_are_dict_keys=serialize_headers_are_dict_keys,
         serialize_dict_as_table=serialize_dict_as_table,
         serialize_child_dict_as_table=serialize_child_dict_as_table,
+        serialize_tables_tabulate_style=serialize_tables_tabulate_style,
         none_string=none_string,
         serialize_run_formatter=serialize_run_formatter,
+        serialize_date_format=serialize_date_format,
+        serialized_datetime_format=serialized_datetime_format,
     )
 
 
@@ -168,7 +95,7 @@ def test_fuzz_Config(
         ),
         st.text(),
     ),
-    stream=st.just(io.StringIO),
+    stream=st.just(io.StringIO()),
     config=st.from_type(typing.Optional[markpickle.config_class.Config]),
 )
 def test_fuzz_dump(
@@ -197,12 +124,78 @@ def test_fuzz_dump(
     stream: io.IOBase,
     config: typing.Optional[markpickle.config_class.Config],
 ) -> None:
-    markpickle.dump(value=value, stream=stream, config=config)
+    markpickle.serialize.dump(value=value, stream=stream, config=config)
 
 
 @given(
-    value=st.builds(StringIO),
+    value=st.one_of(
+        st.none(),
+        st.dates(),
+        st.floats(),
+        st.integers(),
+        st.dictionaries(
+            keys=st.text(),
+            values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
+        ),
+        st.dictionaries(
+            keys=st.text(),
+            values=st.one_of(
+                st.none(),
+                st.dates(),
+                st.floats(),
+                st.integers(),
+                st.dictionaries(
+                    keys=st.text(),
+                    values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
+                ),
+                st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
+                st.text(),
+            ),
+        ),
+        st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text())),
+        st.lists(
+            st.dictionaries(
+                keys=st.text(),
+                values=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()),
+            )
+        ),
+        st.text(),
+    ),
     config=st.from_type(typing.Optional[markpickle.config_class.Config]),
 )
-def test_fuzz_load(value: _io.StringIO, config: typing.Optional[markpickle.config_class.Config]) -> None:
-    markpickle.load(value=value, config=config)
+def test_fuzz_dumps(
+    value: typing.Union[
+        None,
+        str,
+        int,
+        float,
+        datetime.date,
+        dict[str, typing.Union[None, str, int, float, datetime.date]],
+        dict[
+            str,
+            typing.Union[
+                None,
+                str,
+                int,
+                float,
+                datetime.date,
+                list[typing.Union[None, str, int, float, datetime.date]],
+                dict[str, typing.Union[None, str, int, float, datetime.date]],
+            ],
+        ],
+        list[typing.Union[None, str, int, float, datetime.date]],
+        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
+    ],
+    config: typing.Optional[markpickle.config_class.Config],
+) -> None:
+    markpickle.serialize.dumps(value=value, config=config)
+
+
+@given(value=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()))
+def test_fuzz_unsafe_falsy_type(value: typing.Union[None, str, int, float, datetime.date]) -> None:
+    markpickle.serialize.unsafe_falsy_type(value=value)
+
+
+@given(value=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()))
+def test_fuzz_unsafe_scalar_type(value: typing.Union[None, str, int, float, datetime.date]) -> None:
+    markpickle.serialize.unsafe_scalar_type(value=value)

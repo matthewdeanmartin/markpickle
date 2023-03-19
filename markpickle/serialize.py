@@ -4,13 +4,16 @@ Serialize many python types to Markdown.
 import datetime
 import io
 import logging
+import textwrap
 from typing import Optional
 
 import mdformat
 
 import markpickle.python_to_tables as python_to_tables
-from markpickle.config_class import Config, unsafe_falsy_type, unsafe_scalar_type
-from markpickle.mypy_types import SerializableTypes
+import markpickle.simplify_types as simplify_types
+import markpickle.third_party_tables as third_party_tables
+from markpickle.config_class import Config
+from markpickle.mypy_types import ScalarTypes, SerializableTypes
 
 
 def dumps(value: SerializableTypes, config: Optional[Config] = None) -> str:
@@ -63,11 +66,20 @@ def dump(
     elif isinstance(value, (str, int, float, bool)):
         builder.write(str(value))
     elif isinstance(value, (datetime.date,)):
-        builder.write(value.strftime(config.serialize_date_format))
+        try:
+            builder.write(value.strftime(config.serialize_date_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialize_date_format))
     elif isinstance(value, (datetime.datetime,)):
-        builder.write(value.strftime(config.serialized_datetime_format))
+        try:
+            builder.write(value.strftime(config.serialized_datetime_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialize_date_format))
     elif value is None:
         builder.write(config.none_string)
+    elif simplify_types.can_class_to_dict(value):
+        candidate_dict = simplify_types.class_to_dict(value)
+        render_dict(builder, candidate_dict, config, indent=0, header_level=header_level)
     else:
         raise NotImplementedError()
 
@@ -99,21 +111,40 @@ def render_dict(
                 render_list(builder, item, config, indent + 1)
         elif isinstance(item, dict):
             if config.serialize_child_dict_as_table:
-                table = python_to_tables.dict_to_markdown(item, include_header=True, indent=indent + 1)
-                builder.write(table)
+                success = False
+                if config.serialize_tables_tabulate_style:
+                    try:
+                        table = third_party_tables.to_table_tablulate_style(item)
+                        table = textwrap.indent(table, prefix=" " * (indent + 1))
+                        builder.write(table)
+                        success = True
+                    except Exception:
+                        success = False
+                if not success:
+                    # Try again
+                    table = python_to_tables.dict_to_markdown(item, include_header=True, indent=indent + 1)
+                    builder.write(table)
             else:
                 render_dict(builder, item, config, indent + 1)
         else:
-            raise NotImplementedError()
+            try:
+                table = third_party_tables.to_table_tablulate_style(item)
+                table = textwrap.indent(table, prefix=" " * (indent + 1))
+                builder.write(table)
+            except Exception as ex:
+                logging.warning(f"Tabulate can't handle it either: {ex}")
+                raise NotImplementedError()
     return indent
 
 
 def render_list(
-    builder: io.IOBase, value: SerializableTypes, config: Config, indent: int = 0, header_level: int = 1
+    builder: io.IOBase, value: list[SerializableTypes], config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
     """Convert python list to markdown"""
+    if not value:
+        return indent
     # This list is a list of dictionaries and we want a big table.
-    if value and isinstance(value[0], dict):
+    if value and all(isinstance(_, dict) for _ in value):
         python_to_tables.list_of_dict_to_markdown(builder, value, indent)
         return indent
 
@@ -132,3 +163,80 @@ def render_list(
         else:
             raise NotImplementedError()
     return indent
+
+
+def unsafe_falsy_type(value: ScalarTypes) -> bool:
+    """Warn user that blank structures don't have equivallent in markdown"""
+    if value in ([], {}, (), "", "0", None):
+        # falsies will not roundtrip.
+        return True
+    if isinstance(value, dict):
+        if any(key in ([], {}, (), "", "0", None) for key in value.keys()):
+            return True
+        if any(dict_value in ([], {}, (), "", "0", None) for dict_value in value.values()):
+            return True
+    if isinstance(value, list):
+        if any(list_value in ([], {}, (), "", "0", None) for list_value in value):
+            return True
+        for inner in value:
+            if isinstance(inner, dict):
+                if any(key in ([], {}, (), "", "0", None) for key in inner.keys()):
+                    return True
+                if any(dict_value in ([], {}, (), "", "0", None) for dict_value in inner.values()):
+                    return True
+    return False
+
+
+def unsafe_scalar_type(value: ScalarTypes) -> bool:
+    """Warn user that non-string types won't roundtrip"""
+    if isinstance(
+        value,
+        (
+            int,
+            float,
+            datetime.date,
+        ),
+    ):
+        # we either get 0->"0" and then "0" is inferred to 0
+        # and we also get "0"->"0" and then "0" is inferred to 0
+        # or vica versa, for everything except strings.
+        return True
+    if isinstance(value, dict):
+        if any(
+            isinstance(
+                key,
+                (
+                    int,
+                    float,
+                    datetime.date,
+                ),
+            )
+            for key in value.keys()
+        ):
+            return True
+        if any(
+            isinstance(
+                dict_value,
+                (
+                    int,
+                    float,
+                    datetime.date,
+                ),
+            )
+            for dict_value in value.values()
+        ):
+            return True
+    if isinstance(value, list):
+        if any(
+            isinstance(
+                list_value,
+                (
+                    int,
+                    float,
+                    datetime.date,
+                ),
+            )
+            for list_value in value
+        ):
+            return True
+    return False

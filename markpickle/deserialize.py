@@ -12,6 +12,7 @@ from typing import Any, Optional, cast
 
 import mistune
 
+import markpickle.python_to_tables as python_to_tables
 from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 
@@ -62,11 +63,19 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
     if value in config.false_values:
         return False
     if value.isnumeric() and config.infer_scalar_types:
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            # That was not actually an int
+            pass
     if is_float(value) and config.infer_scalar_types:
         return float(value)
-    if "-" in value:
-        return datetime.datetime.strptime(value, "%Y-%m-%d").date()
+    if value.count("-") == 2:
+        try:
+            return datetime.datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            # that wasn't a date!
+            pass
 
     return value
 
@@ -159,8 +168,8 @@ def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTyp
         ):
             # root scalar
             current_text_value: str = token["children"][0]["text"]
-            if current_text_value.count("|") >= 2:
-                raise NotImplementedError("This is probably a table.")
+            if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
+                return python_to_tables.parse_table_with_regex(current_text_value)
 
             return extract_scalar(current_text_value, config)
         elif (

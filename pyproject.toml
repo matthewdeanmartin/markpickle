@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "markpickle"
-version = "1.0.0"
+version = "1.1.0"
 description = "Lossy python to markdown serializer"
 authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
 keywords = ["serializer", "deserializer", "markdown",]
@@ -32,8 +32,12 @@ documentation ="https://github.com/matthewdeanmartin/markpickle"
 "Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGES.md"
 
 [tool.poetry.dependencies]
+# DOM parser
 mistune = "*"
+# alternate formatter
 mdformat = "*"
+# support more types to table
+tabulate = "*"
 
 
 [tool.poetry.dev-dependencies]
@@ -144,10 +148,10 @@ version = "literal: pyproject.toml: project.version"
 path = "markpickle/__init__.py"
 output_file = "CHANGELOG.${config:format}"
 
-[tool.setuptools]
-find = {}
-py-modules = ["markpickle",
-    "markpickle.deserialize",
-    "markpickle.python_to_tables",
-    "markpickle.serialize",
-]
+#[tool.setuptools]
+## find = {}
+#py-modules = ["markpickle",
+#    "markpickle.deserialize",
+#    "markpickle.python_to_tables",
+#    "markpickle.serialize",
+#]
