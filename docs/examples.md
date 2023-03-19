@@ -2,11 +2,19 @@
 
 ## scalar
 
+```python
+6
+```
+
 ```markdown
 6
 ```
 
 ## list of scalars
+
+```python
+[1, 2, 3]
+```
 
 ```markdown
 - 1
@@ -16,6 +24,10 @@
 ```
 
 ## list of dictionaries
+
+```python
+[{'animal': 'cat', 'name': 'Frisky'}, {'animal': 'dog', 'name': 'Fido'}]
+```
 
 ```markdown
 | animal | name   |
@@ -27,6 +39,10 @@
 
 ## dictionaries of strings
 
+```python
+{'animal': 'cat', 'name': 'Frisky'}
+```
+
 ```markdown
 # animal
 cat
@@ -36,6 +52,10 @@ Frisky
 ```
 
 ## dictionary of lists
+
+```python
+{'ages': [24, 59, 45], 'countires': ['US', 'Canada', 'Iceland']}
+```
 
 ```markdown
 - ages
@@ -50,6 +70,10 @@ Frisky
 ```
 
 ## dictionary of dictionaries
+
+```python
+{'Best Cat': {'animal': 'cat', 'name': 'Frisky'}, 'Best Dog': {'animal': 'dog', 'name': 'Fido'}}
+```
 
 ```markdown
  | animal | name   |

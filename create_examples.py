@@ -20,6 +20,10 @@ with open("docs/examples.md", "w", encoding="utf-8") as file:
     for key, value in EXAMPLES.items():
         string = markpickle.dumps(value)
         file.write(f"## {key}\n")
+        file.write("```python\n")
+        file.write(repr(value))
+        file.write("\n```\n\n")
+
         file.write("```markdown\n")
         file.write(string)
         file.write("\n```\n\n")

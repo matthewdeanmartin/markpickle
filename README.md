@@ -34,6 +34,8 @@ Supported types
 - Dictionaries with list values
 - Partial support for blanks/string with leading/trailing whitespace
 
+See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md).
+
 Not supported
 
 - Things not ordinarily serializable
