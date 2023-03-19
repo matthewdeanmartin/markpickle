@@ -1,39 +1,37 @@
 """
 Serialize many python types to Markdown.
 """
-import dataclasses
+import datetime
 import io
-from typing import Optional, Union
+import logging
+from typing import Optional
 
 import mdformat
 
 import markpickle.python_to_tables as python_to_tables
+from markpickle.config_class import Config, unsafe_falsy_type, unsafe_scalar_type
 from markpickle.mypy_types import SerializableTypes
 
 
-@dataclasses.dataclass
-class SerializationConfig:
-    headers_are_dict_keys: bool = True
-    dict_as_table: bool = False
-    child_dict_as_table: bool = True
-    none_is: str = "None"
-    run_formatter: bool = False
-
-
-def dumps(value: SerializableTypes, root: Optional[str] = None, config: Optional[SerializationConfig] = None) -> str:
+def dumps(value: SerializableTypes, config: Optional[Config] = None) -> str:
     """
     Serialize basic python types to string of markdown
 
     >>> dumps([1,2])
     '- 1\\n- 2\\n'
     """
+    if unsafe_falsy_type(value):
+        logging.warning("Unsafe falsy types, round tripping won't be possible")
+    if unsafe_scalar_type(value):
+        logging.warning("Unsafe non-string types, round tripping won't be possible")
+
     if not config:
-        config = SerializationConfig()
+        config = Config()
     builder = io.StringIO()
-    dump(value, builder, root, config)
+    dump(value, builder, config)
     builder.seek(0)
     result = builder.read()
-    if config.run_formatter:
+    if config.serialize_run_formatter:
         result = mdformat.text(result)
     return result
 
@@ -41,8 +39,7 @@ def dumps(value: SerializableTypes, root: Optional[str] = None, config: Optional
 def dump(
     value: SerializableTypes,
     stream: io.IOBase,
-    root: Optional[str] = None,
-    config: Optional[SerializationConfig] = None,
+    config: Optional[Config] = None,
 ) -> None:
     """
     Serialize basic python types to markdown in a file-like object.
@@ -55,40 +52,41 @@ def dump(
     '- 1\\n- 2\\n'
     """
     if not config:
-        config = SerializationConfig()
+        config = Config()
     # TODO: support formatting when stream can't go backwards- seek(0)
     builder = stream
     header_level = 1
-    if root:
-        builder.write(f"# {root}\n")
-        header_level += 1
     if isinstance(value, list):
         render_list(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, (str, int, float, bool)):
         builder.write(str(value))
+    elif isinstance(value, (datetime.date,)):
+        builder.write(value.strftime(config.serialize_date_format))
+    elif isinstance(value, (datetime.datetime,)):
+        builder.write(value.strftime(config.serialized_datetime_format))
     elif value is None:
-        builder.write(config.none_is)
+        builder.write(config.none_string)
     else:
         raise NotImplementedError()
 
 
 def render_dict(
-    builder: io.IOBase, value: SerializableTypes, config: SerializationConfig, indent: int = 0, header_level: int = 1
+    builder: io.IOBase, value: SerializableTypes, config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
     """Convert python dictionary to markdown"""
     for key, item in value.items():
         if not isinstance(item, (list, dict, set)):
             # `- key : value` is not markdown
-            if config.headers_are_dict_keys and indent == 0:
+            if config.serialize_headers_are_dict_keys and indent == 0:
                 # headers dict keys. Can't nest.
                 builder.write(f"{header_level * '#'} {key}\n" f"{item}\n")
             else:
                 builder.write(f"{indent * ' '}- {key} : {item}\n")
         elif isinstance(item, list):
             if item and isinstance(item[0], dict):
-                if config.headers_are_dict_keys and indent == 0:
+                if config.serialize_headers_are_dict_keys and indent == 0:
                     # headers dict keys. Can't nest.
                     header = f"{header_level * '#'} {key}\n"
                     builder.write(header)
@@ -100,7 +98,7 @@ def render_dict(
                 builder.write(f"{indent * ' '}- {key}\n")
                 render_list(builder, item, config, indent + 1)
         elif isinstance(item, dict):
-            if config.child_dict_as_table:
+            if config.serialize_child_dict_as_table:
                 table = python_to_tables.dict_to_markdown(item, include_header=True, indent=indent + 1)
                 builder.write(table)
             else:
@@ -111,7 +109,7 @@ def render_dict(
 
 
 def render_list(
-    builder: io.IOBase, value: SerializableTypes, config: SerializationConfig, indent: int = 0, header_level: int = 1
+    builder: io.IOBase, value: SerializableTypes, config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
     """Convert python list to markdown"""
     # This list is a list of dictionaries and we want a big table.

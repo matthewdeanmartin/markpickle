@@ -5,28 +5,18 @@ Strings made by markpickle should pass and create a variety of simple python typ
 
 Arbitrary strings might not pass or may pass but create values that still have unparsed markdown in them.
 """
-import dataclasses
 import datetime
 import io
 import textwrap
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, cast
 
 import mistune
 
+from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 
 
-@dataclasses.dataclass
-class DeserializationConfig:
-    infer_scalar_types: bool = True
-    true_values: list[str] = dataclasses.field(default_factory=lambda: ["True", "true"])
-    false_values: list[str] = dataclasses.field(default_factory=lambda: ["False", "false"])
-    none_values: list[str] = dataclasses.field(default_factory=lambda: ["None", "nil", "nil"])
-    empty_string_is: str = ""
-    root: Optional[str] = None
-
-
-def loads(value: str, config: Optional[DeserializationConfig] = None) -> SerializableTypes:
+def loads(value: str, config: Optional[Config] = None) -> SerializableTypes:
     """
     Convert certain markdown strings into simple python types
 
@@ -34,7 +24,7 @@ def loads(value: str, config: Optional[DeserializationConfig] = None) -> Seriali
     ['a', 'b', 'c']
     """
     if not config:
-        config = DeserializationConfig()
+        config = Config()
     stream = io.StringIO(value)
     return load(stream, config)
 
@@ -58,27 +48,30 @@ def is_float(value: str) -> bool:
         return False
 
 
-def extract_scalar(value: str, config: DeserializationConfig) -> ScalarTypes:
+def extract_scalar(value: str, config: Config) -> ScalarTypes:
     """
     Infer datatypes, mostly expecting python-like string representations.
 
-    >>> extract_scalar("1",DeserializationConfig())
+    >>> extract_scalar("1",Config())
     1
     """
+    if value == config.none_string:
+        return None
     if value in config.true_values:
         return True
     if value in config.false_values:
         return False
     if value.isnumeric() and config.infer_scalar_types:
         return int(value)
+    if is_float(value) and config.infer_scalar_types:
+        return float(value)
     if "-" in value:
         return datetime.datetime.strptime(value, "%Y-%m-%d").date()
-    if "." in value and is_float(value) and config.infer_scalar_types:
-        return float(value)
+
     return value
 
 
-def process_list(list_ast: Any, config: DeserializationConfig) -> Optional[ListTypes]:
+def process_list(list_ast: Any, config: Config) -> Optional[ListTypes]:
     """Deserialize a markdown list in AST form"""
     current_list = []
     for token in list_ast["children"]:
@@ -98,7 +91,7 @@ def process_list(list_ast: Any, config: DeserializationConfig) -> Optional[ListT
     return current_list
 
 
-def load(value: io.StringIO, config: Optional[DeserializationConfig] = None) -> SerializableTypes:
+def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTypes:
     """
     Convert certain markdown streams into simple python types
 
@@ -107,7 +100,7 @@ def load(value: io.StringIO, config: Optional[DeserializationConfig] = None) -> 
     ['a', 'b', 'c']
     """
     if not config:
-        config = DeserializationConfig()
+        config = Config()
 
     # too much is RawText?
     # d = Document([marks.read()])
@@ -140,9 +133,6 @@ def load(value: io.StringIO, config: Optional[DeserializationConfig] = None) -> 
         if token["type"] == "newline":
             # whitespace, no impact on datatype
             continue
-        if token["type"] == "heading" and token["level"] == 1 and config.root:
-            # skip roots, this would correspond to the name of the variable holding a dict
-            continue
         if token["type"] == "heading" and current_key is None:
             # dict key, value not found yet
             current_key = ",".join([_["text"] for _ in token["children"]])
@@ -169,6 +159,9 @@ def load(value: io.StringIO, config: Optional[DeserializationConfig] = None) -> 
         ):
             # root scalar
             current_text_value: str = token["children"][0]["text"]
+            if current_text_value.count("|") >= 2:
+                raise NotImplementedError("This is probably a table.")
+
             return extract_scalar(current_text_value, config)
         elif (
             token["type"] == "paragraph"

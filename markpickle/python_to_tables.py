@@ -2,7 +2,7 @@
 Function created with help of ChatGPT
 """
 import io
-from typing import Any, Optional
+from typing import Optional
 
 from markpickle.mypy_types import DictTypes, ScalarTypes
 

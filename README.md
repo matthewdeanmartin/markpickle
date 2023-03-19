@@ -16,7 +16,7 @@ becomes the python list `[1, 2]`
 ## Installation
 
 ```shell
-pip install openmock
+pip install markpickle
 ```
 
 ## Capabilities

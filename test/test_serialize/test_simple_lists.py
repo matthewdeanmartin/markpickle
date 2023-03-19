@@ -16,14 +16,14 @@ def test_list_of_int():
     assert result == "- 1\n- 2\n- 3\n"
 
 
-def test_rooted_list():
-    markdown = dumps(["a", "b", "c"], "list")
-    assert markdown == "# list\n- a\n- b\n- c\n"
+def test_another_list():
+    markdown = dumps(["a", "b", "c"])
+    assert markdown == "- a\n- b\n- c\n"
 
 
-def test_rooted_mixed_list():
-    markdown = dumps([1, "b", 1.2], "mixed type values")
-    assert markdown == "# mixed type values\n- 1\n- b\n- 1.2\n"
+def test_another_mixed_list():
+    markdown = dumps([1, "b", 1.2])
+    assert markdown == "- 1\n- b\n- 1.2\n"
 
 
 def test_list_of_dict_same_schema():

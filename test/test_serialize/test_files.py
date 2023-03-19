@@ -24,7 +24,7 @@ def test_file():
         sample_search_results_file: str = locate_file(file, __file__)
         absolute_file_paths.append(sample_search_results_file)
 
-    config = markpickle.SerializationConfig()
+    config = markpickle.Config()
     config.headers_are_dict_keys = True
     config.dict_as_table = False
     config.child_dict_as_table = False
@@ -33,7 +33,6 @@ def test_file():
             some_dict = json.loads(file.read())
             result = markpickle.dumps(
                 some_dict,
-                file_name,
                 config=config,
             )
             print(result)

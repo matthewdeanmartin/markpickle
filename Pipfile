@@ -18,6 +18,8 @@ pytest-cov = "*"
 ruff = "*"
 linkcheckmd = "*"
 tox = "*"
+2to3 = "*"
+scriv = "*"
 
 [requires]
 python_version = "3.11"

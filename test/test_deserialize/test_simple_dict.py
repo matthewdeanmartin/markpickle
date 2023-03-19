@@ -3,7 +3,7 @@ from markpickle import loads
 
 
 def test_empty_dict():
-    config = markpickle.DeserializationConfig()
+    config = markpickle.Config()
     config.empty_string_is = {}
     result = loads("", config)
     assert result == {}

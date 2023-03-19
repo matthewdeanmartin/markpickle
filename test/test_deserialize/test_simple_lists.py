@@ -3,7 +3,7 @@ from markpickle import dumps, loads
 
 
 def test_empty_list():
-    config = markpickle.DeserializationConfig()
+    config = markpickle.Config()
     config.empty_string_is = []
     result = loads("", config)
     assert result == []

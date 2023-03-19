@@ -134,3 +134,4 @@ dmypy.json
 .build_history/
 
 test/test_serialize/data/
+/.ruff_cache/

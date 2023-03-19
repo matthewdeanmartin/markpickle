@@ -15,7 +15,7 @@ def test_is_float():
 
 
 def test_extract_scalar():
-    config = markpickle.DeserializationConfig()
+    config = markpickle.Config()
     assert extract_scalar("1", config=config) == 1
     assert extract_scalar("1.2", config=config) == 1.2
     assert extract_scalar("2202-1-1", config=config) == datetime.date(2202, 1, 1)

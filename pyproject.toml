@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "markpickle"
-version = "0.2.0"
+version = "1.0.0"
 description = "Lossy python to markdown serializer"
 authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
 keywords = ["serializer", "deserializer", "markdown",]
@@ -135,3 +135,19 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.10.
 target-version = "py311"
+
+[tool.scriv]
+format = "md"
+version = "literal: pyproject.toml: project.version"
+
+[tool.hatch.version]
+path = "markpickle/__init__.py"
+output_file = "CHANGELOG.${config:format}"
+
+[tool.setuptools]
+find = {}
+py-modules = ["markpickle",
+    "markpickle.deserialize",
+    "markpickle.python_to_tables",
+    "markpickle.serialize",
+]
