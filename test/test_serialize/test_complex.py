@@ -65,3 +65,24 @@ def test_rooted_list_of_objects():
 | janet  | the big one    | 2010     |
 """
     )
+
+
+def test_dict_of_dicts_as_tables():
+    markdown = dumps({"Best Cat": {"animal": "cat", "name": "Frisky"}, "Best Dog": {"animal": "dog", "name": "Fido"}})
+
+    assert (
+        markdown
+        == """# Best Cat
+
+ | animal | name   |
+ | ------ | ------ |
+ | cat    | Frisky |
+
+# Best Dog
+
+ | animal | name |
+ | ------ | ---- |
+ | dog    | Fido |
+
+"""
+    )

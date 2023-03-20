@@ -1,7 +1,7 @@
 """
 String -> Python
 
-Strings made by markpickle should pass and create a variety of simple python types.
+Strings made by markpickle should pass and create a variety of simple Python types.
 
 Arbitrary strings might not pass or may pass but create values that still have unparsed markdown in them.
 """
@@ -19,7 +19,7 @@ from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, Serializabl
 
 def loads(value: str, config: Optional[Config] = None) -> SerializableTypes:
     """
-    Convert certain markdown strings into simple python types
+    Convert certain markdown strings into simple Python types
 
     >>> loads("- a\\n- b\\n - c\\n")
     ['a', 'b', 'c']
@@ -43,33 +43,36 @@ def is_float(value: str) -> bool:
     try:
         float(value)
         return True
-    except TypeError:
-        return False
-    except ValueError:
+    except (TypeError, ValueError):
         return False
 
 
 def extract_scalar(value: str, config: Config) -> ScalarTypes:
     """
-    Infer datatypes, mostly expecting python-like string representations.
+    Infer datatypes, mostly expecting Python-like string representations.
 
     >>> extract_scalar("1",Config())
     1
     """
+    # Handle special cases for None, True, and False
     if value == config.none_string:
         return None
     if value in config.true_values:
         return True
     if value in config.false_values:
         return False
-    if value.isnumeric() and config.infer_scalar_types:
-        try:
-            return int(value)
-        except ValueError:
-            # That was not actually an int
-            pass
-    if is_float(value) and config.infer_scalar_types:
-        return float(value)
+
+    # Attempt to parse as int or float if infer_scalar_types is enabled
+    if config.infer_scalar_types:
+        if value.isnumeric():
+            try:
+                return int(value)
+            except ValueError:
+                pass
+        if is_float(value):
+            return float(value)
+
+    # Attempt to parse as a date
     if value.count("-") == 2:
         try:
             return datetime.datetime.strptime(value, "%Y-%m-%d").date()
@@ -77,6 +80,7 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
             # that wasn't a date!
             pass
 
+    # Return the value as a string if no other type matched
     return value
 
 
@@ -100,9 +104,9 @@ def process_list(list_ast: Any, config: Config) -> Optional[ListTypes]:
     return current_list
 
 
-def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTypes:
+def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
     """
-    Convert certain markdown streams into simple python types
+    Convert certain markdown streams into simple Python types
 
     >>> import io
     >>> load(io.StringIO("- a\\n- b\\n - c\\n"))
@@ -124,31 +128,35 @@ def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTyp
     string_value = value.read()
     # TODO: maybe only do this if top level is block_code
     string_value = textwrap.dedent(string_value)
-    # empty document
+
+    # Empty document
     if not string_value:
-        # Exists to improve round tripping for unit tests
+        # Exists to improve round-tripping for unit tests
         return cast(SerializableTypes, config.empty_string_is)
 
     parser = mistune.create_markdown(renderer="ast")
     result = parser.parse(string_value)
 
+    # Process a list
     if len(result) == 1 and result[0]["type"] == "list":
         return process_list(result[0], config)
 
     possible_dict: DictTypes = {}
-
     current_key = None
+
+    # Iterate through tokens in the parsed result
     for token in result:
         if token["type"] == "newline":
-            # whitespace, no impact on datatype
+            # Whitespace, no impact on datatype
             continue
+
         if token["type"] == "heading" and current_key is None:
-            # dict key, value not found yet
+            # Dict key, value not found yet
             current_key = ",".join([_["text"] for _ in token["children"]])
             possible_dict[current_key] = None
 
         elif token["type"] == "list" and current_key is not None:
-            # dict value of type list
+            # Dict value of type list
             if token["children"][0]["type"] == "text":
                 possible_dict[current_key] = [
                     ",".join(_["text"] for _ in item["children"]) for item in token["children"]
@@ -159,6 +167,7 @@ def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTyp
                 current_key = None
             else:
                 raise NotImplementedError()
+
         elif (
             token["type"] == "paragraph"
             and token.get("children")
@@ -166,12 +175,13 @@ def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTyp
             and token["children"][0]["type"] == "text"
             and not possible_dict
         ):
-            # root scalar
+            # Root scalar
             current_text_value: str = token["children"][0]["text"]
             if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
                 return python_to_tables.parse_table_with_regex(current_text_value)
 
             return extract_scalar(current_text_value, config)
+
         elif (
             token["type"] == "paragraph"
             and token.get("children")
@@ -180,12 +190,16 @@ def load(value: io.StringIO, config: Optional[Config] = None) -> SerializableTyp
             and possible_dict
             and current_key
         ):
-            # root scalar
+            # Root scalar
             current_value: str = token["children"][0]["text"]
             scalar = extract_scalar(current_value, config)
             possible_dict[current_key] = scalar
             current_key = None
         else:
             raise NotImplementedError()
+
+    # really? do I misunderstand this?
+    if object_hook:
+        return object_hook(possible_dict)
 
     return possible_dict

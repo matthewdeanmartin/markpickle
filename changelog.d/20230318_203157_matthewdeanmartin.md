@@ -11,14 +11,11 @@ Uncomment the section that is right (remove the HTML comment wrapper).
 ### Added
 
 - You can ask for the resulting documents to be formatted with `mdformat`. It will have performance cost.
--
+- markpickle.tool added, adapted from json.tool
 
-<!--
 ### Changed
 
-- A bullet item for the Changed category.
-
--->
+- dumps/loads signature has more options
 
 <!--
 ### Deprecated

@@ -1,6 +1,6 @@
 # markpickle
 
-Lossy serialization of markdown to simple python data types and back. It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST). I created this because I wanted a way to turn json into Markdown.
+Markpickle is a Python library for lossy serialization of markdown to simple python data types and back. It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST). I created this because I wanted a way to turn json into Markdown.
 
 For example this
 
@@ -25,7 +25,7 @@ pip install markpickle
 
 This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistune or one of the other markdown parsers.
 
-Supported types
+### Supported Types
 
 - Scalar values
 - Lists of scalar values
@@ -36,26 +36,30 @@ Supported types
 
 See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md).
 
-Not supported
+### Not Supported
 
 - Things not ordinarily serializable
 - Markdown that uses more than headers, lists, tables
 - Blanks, falsy values, empty iterables don't round trip
 - Scalar type inference doesn't round trip. After a scalar is converted to a markdown string, there is no indication if the original was a string or not.
 
-# Serializing
+## Serializing and Deserializing
 
-Results can be formatted at cost of speed.
+### Serializing
 
-Dictionaries can be represented as tables or header text pairs.
+Results can be formatted at the cost of speed. Dictionaries can be represented as tables or header-text pairs.
 
-# Deserializing
+### Deserializing
 
-Markdown is deserialized by parsing the document to an abstract syntax tree. This is done by `mistune`. If the markdown file has the same structure that markpickle uses, then it will create a sensible object. Deserializing a random README.md file is not expected to always work. For that you should use mistune's AST.
+Markdown is deserialized by parsing the document to an abstract syntax tree (AST). This is done by `mistune`. If the markdown file has the same structure that markpickle uses, then it will create a sensible object. Deserializing a random README.md file is not expected to always work. For that, you should use mistune's AST.
 
-# Round Tripping
+### Round Tripping
 
 Some but not all data structures will be round-trippable. The goal is that the sort of dicts you get from loading JSON will be round-trippable, provided everything is a string.
+
+### Splitting Files
+
+If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
 
 ## Prior Art
 
