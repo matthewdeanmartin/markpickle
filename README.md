@@ -15,6 +15,8 @@ Almost all markdown libraries use it as intended, as a way to generate HTML frag
 
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/pypi/markpickle) [![Downloads](https://pepy.tech/badge/markpickle/month)](https://pepy.tech/project/markpickle/month)
 
+______________________________________________________________________
+
 ## Installation
 
 ```shell
@@ -24,6 +26,8 @@ pip install markpickle
 ## Capabilities
 
 This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistune or one of the other markdown parsers.
+
+______________________________________________________________________
 
 ### Supported Types
 
@@ -43,7 +47,11 @@ See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/ex
 - Blanks, falsy values, empty iterables don't round trip
 - Scalar type inference doesn't round trip. After a scalar is converted to a markdown string, there is no indication if the original was a string or not.
 
+______________________________________________________________________
+
 ## Serializing and Deserializing
+
+______________________________________________________________________
 
 ### Serializing
 
@@ -59,11 +67,11 @@ Some but not all data structures will be round-trippable. The goal is that the s
 
 ### Splitting Files
 
-If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
+## If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
 
 ## Prior Art
 
-People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
+## People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
 
 ### Serializing to Markdown
 
@@ -84,9 +92,9 @@ I don't know of any libraries that turn markdown into basic python types. At the
 
 [mistune](https://pypi.org/project/mistune/) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes.
 
-[beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
+## [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
 
-# Documentation
+## Documentation
 
 - [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
 - [TODO](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/TODO.md)

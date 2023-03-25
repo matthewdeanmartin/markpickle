@@ -9,7 +9,7 @@ import datetime
 import io
 import logging
 import textwrap
-from typing import Any, Optional, cast
+from typing import Any, Generator, Optional, cast
 
 import mistune
 
@@ -105,6 +105,49 @@ def process_list(list_ast: Any, config: Config) -> Optional[ListTypes]:
     return current_list
 
 
+def load_all(
+    value: io.StringIO, config: Optional[Config] = None, object_hook=None
+) -> Generator[SerializableTypes, None, None]:
+    part = io.StringIO()
+    has_data = False
+    while True:
+        line = value.readline()
+        if line is None:
+            break
+        if line.startswith("---") and not has_data:
+            continue
+        if line.startswith("---"):
+            part.seek(0)
+            yield load(part, config, object_hook)
+            has_data = False
+            part = io.StringIO()
+            continue
+        part.write(line)
+        has_data = True
+    if has_data:
+        part.seek(0)
+        yield load(part, config, object_hook)
+
+
+def loads_all(
+    value: str, config: Optional[Config] = None, object_hook=None
+) -> Generator[SerializableTypes, None, None]:
+    part = io.StringIO()
+    has_data = False
+    stream = io.StringIO(value)
+    while True:
+        line = stream.readline()
+        if line.startswith("---"):
+            doc = part.read()
+            yield loads(doc, config, object_hook)
+            part = io.StringIO()
+            break
+        part.write(line)
+        has_data = True
+    if has_data:
+        yield loads(part.read(), config, object_hook)
+
+
 def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown streams into simple Python types
@@ -160,7 +203,12 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
                 print("uh oh")
             current_key = ",".join([_["text"] for _ in token["children"]])
             possible_dict[current_key] = None
-
+        elif token["type"] == "heading" and current_key is not None:
+            # New dict key, value not found yet
+            if not all("text" in _ for _ in token["children"]):
+                print("uh oh")
+            current_key = ",".join([_["text"] for _ in token["children"]])
+            possible_dict[current_key] = None
         elif token["type"] == "list" and current_key is not None:
             # Dict value of type list
             if token["children"][0]["type"] == "text":
@@ -229,7 +277,7 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
             else:
                 raise TypeError("This shouldn't happen")
         else:
-            raise NotImplementedError()
+            raise NotImplementedError(token["type"])
 
     # if possible_dict and possible_dict.get("python_type"):
     #     python_type = possible_dict.get("python_type")
