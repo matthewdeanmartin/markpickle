@@ -5,7 +5,11 @@
 - json to markdown utility function
 - support multiple 3rd party table makers
 - more comprehensive example page
-- support  `__getstate__()` and `__setstate__()`
+- support  `__getstate__()`
+  - Easy! Just check if well behaved python type would rather serialize a proxy.
+- and `__setstate__()`
+  - Difficult! Most likely custom types implemente `__setstate__()`
+  - Don't have meta data extensions.
 
 ## Bugs
 

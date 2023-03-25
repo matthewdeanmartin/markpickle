@@ -7,6 +7,7 @@ Arbitrary strings might not pass or may pass but create values that still have u
 """
 import datetime
 import io
+import logging
 import textwrap
 from typing import Any, Optional, cast
 
@@ -17,7 +18,7 @@ from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 
 
-def loads(value: str, config: Optional[Config] = None) -> SerializableTypes:
+def loads(value: str, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown strings into simple Python types
 
@@ -27,7 +28,7 @@ def loads(value: str, config: Optional[Config] = None) -> SerializableTypes:
     if not config:
         config = Config()
     stream = io.StringIO(value)
-    return load(stream, config)
+    return load(stream, config, object_hook)
 
 
 def is_float(value: str) -> bool:
@@ -144,6 +145,9 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
     possible_dict: DictTypes = {}
     current_key = None
 
+    # Use this key when we find more text, ie a subsequent token that is just more text.
+    most_recent_key = None
+
     # Iterate through tokens in the parsed result
     for token in result:
         if token["type"] == "newline":
@@ -152,6 +156,8 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
 
         if token["type"] == "heading" and current_key is None:
             # Dict key, value not found yet
+            if not all("text" in _ for _ in token["children"]):
+                print("uh oh")
             current_key = ",".join([_["text"] for _ in token["children"]])
             possible_dict[current_key] = None
 
@@ -161,9 +167,11 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
                 possible_dict[current_key] = [
                     ",".join(_["text"] for _ in item["children"]) for item in token["children"]
                 ]
+                most_recent_key = current_key
                 current_key = None
             elif token["children"][0]["type"] == "list_item":
                 possible_dict[current_key] = process_list(token, config)
+                most_recent_key = current_key
                 current_key = None
             else:
                 raise NotImplementedError()
@@ -194,12 +202,61 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
             current_value: str = token["children"][0]["text"]
             scalar = extract_scalar(current_value, config)
             possible_dict[current_key] = scalar
+            most_recent_key = current_key
             current_key = None
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            # and len(token["children"]) == 1
+            # and token["children"][0]["type"] == "text"
+            and possible_dict
+            and most_recent_key
+            and not current_key
+        ):
+            series_of_children = token["children"]
+            most_recent_key = handle_series_of_children(config, most_recent_key, possible_dict, series_of_children)
+            current_key = None
+        elif token["type"] == "block_code" and possible_dict:
+            # Treat block code as just more text, no "styling"
+            continuation_value: str = token["text"]
+            scalar = extract_scalar(continuation_value, config)
+            # continuation of text
+            if most_recent_key and not current_key:
+                possible_dict[most_recent_key] += "\n\n" + scalar
+                current_key = None
+            elif current_key:
+                possible_dict[current_key] = scalar
+            else:
+                raise TypeError("This shouldn't happen")
         else:
             raise NotImplementedError()
+
+    # if possible_dict and possible_dict.get("python_type"):
+    #     python_type = possible_dict.get("python_type")
+    #     if constructor := globals().get(python_type):
+    #         if hasattr(constructor, "__getstate__"):
+    #             possible_dict = constructor.__setstate__(possible_dict)
+    #         else:
+    #             constructor(**possible_dict)
 
     # really? do I misunderstand this?
     if object_hook:
         return object_hook(possible_dict)
 
     return possible_dict
+
+
+def handle_series_of_children(config, most_recent_key, possible_dict, series_of_children):
+    for inner_token in series_of_children:
+        if inner_token["type"] in ("image", "link"):
+            logging.warning("not handling image or link")
+            continue
+        if "text" not in inner_token:
+            raise NotImplementedError("Not text like?")
+        continuation_value: str = inner_token["text"]
+        scalar = extract_scalar(continuation_value, config)
+        # continuation of text
+        possible_dict[most_recent_key] += "\n\n" + scalar
+        most_recent_key = most_recent_key
+
+    return most_recent_key

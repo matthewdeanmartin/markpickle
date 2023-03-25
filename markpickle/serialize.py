@@ -19,6 +19,23 @@ from markpickle.config_class import Config
 from markpickle.mypy_types import ScalarTypes, SerializableTypes
 
 
+def dumps_all(
+    value: SerializableTypes,
+    config: Optional[Config] = None,
+    default: Optional[Callable[[object], str]] = None,
+) -> str:
+    """Iterate value and serialize documents with horizontal lines between documents"""
+    docs = 0
+    builder = io.StringIO()
+    for document in value:
+        if docs > 0:
+            builder.write("\n---\n")
+        builder.write(dumps(document, config, default))
+        docs += 1
+    builder.seek(0)
+    return builder.read()
+
+
 def dumps(
     value: SerializableTypes,
     config: Optional[Config] = None,
@@ -47,11 +64,30 @@ def dumps(
         config = Config()
     builder = io.StringIO()
     dump(value, builder, config=config, default=default)
+
     builder.seek(0)
     result = builder.read()
     if config.serialize_run_formatter:
         result = mdformat.text(result)
+
+    # results in a copy! ugh!
+    if result.endswith("\n"):
+        result = result[0:-1]
     return result
+
+
+def dump_all(
+    value: SerializableTypes,
+    stream: Union[io.IOBase, TextIO],
+    config: Optional[Config] = None,
+    default: Optional[Callable[[object], str]] = None,
+) -> None:
+    """Iterate value and serialize documents with horizontal lines between documents"""
+    docs = 0
+    for document in value:
+        if docs > 0:
+            stream.write("---\n")
+        dump(document, stream, config, default)
 
 
 def dump(
@@ -80,6 +116,14 @@ def dump(
     # TODO: support formatting when stream can't go backwards- seek(0)
     builder = stream
     header_level = 1
+
+    outtermost_type = type(value).__qualname__
+
+    if hasattr(value, "__getstate__") and value.__getstate__():
+        value = value.__getstate__()
+        if isinstance(value, dict) and config.serialize_include_python_type:
+            value["python_type"] = outtermost_type
+
     if isinstance(value, list):
         render_list(builder, value, config, indent=0, header_level=header_level)
     # elif isinstance(value, dict) and all(isinstance(_, dict) for _ in value.values()):

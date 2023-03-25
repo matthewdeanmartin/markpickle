@@ -1,6 +1,8 @@
 # Examples
 
-## scalar
+## Single Documents
+
+### scalar
 
 ```python
 6
@@ -10,7 +12,7 @@
 6
 ```
 
-## list of scalars
+### list of scalars
 
 ```python
 [1, 2, 3]
@@ -20,10 +22,9 @@
 - 1
 - 2
 - 3
-
 ```
 
-## list of dictionaries
+### list of dictionaries
 
 ```python
 [{'animal': 'cat', 'name': 'Frisky'}, {'animal': 'dog', 'name': 'Fido'}]
@@ -34,10 +35,9 @@
 | ------ | ------ |
 | cat    | Frisky |
 | dog    | Fido   |
-
 ```
 
-## dictionaries of strings
+### dictionaries of strings
 
 ```python
 {'animal': 'cat', 'name': 'Frisky'}
@@ -48,10 +48,9 @@
 cat
 # name
 Frisky
-
 ```
 
-## dictionary of lists
+### dictionary of lists
 
 ```python
 {'ages': [24, 59, 45], 'countires': ['US', 'Canada', 'Iceland']}
@@ -66,10 +65,9 @@ Frisky
  - US
  - Canada
  - Iceland
-
 ```
 
-## dictionary of dictionaries
+### dictionary of dictionaries
 
 ```python
 {'Best Cat': {'animal': 'cat', 'name': 'Frisky'}, 'Best Dog': {'animal': 'dog', 'name': 'Fido'}}
@@ -88,5 +86,32 @@ Frisky
  | ------ | ---- |
  | dog    | Fido |
 
+```
 
+## Examples of multiple document in one file
+
+### two scalar documents
+
+```python
+['abc', 123]
+```
+
+```markdown
+abc
+---
+123
+```
+
+### two dictionary documents
+
+```python
+[{'cat': 'Frisky'}, {'dog': 'Fido'}]
+```
+
+```markdown
+# cat
+Frisky
+---
+# dog
+Fido
 ```

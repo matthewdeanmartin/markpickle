@@ -8,7 +8,7 @@ def test_empty_dict():
 
 def test_single_dict():
     result = dumps({"author": "jane", "title": "the little one", "pub_date": 1988})
-    assert result == "# author\njane\n# title\nthe little one\n# pub_date\n1988\n"
+    assert result == "# author\njane\n# title\nthe little one\n# pub_date\n1988"
 
 
 def test_another_simple_dict():
@@ -19,4 +19,4 @@ def test_another_simple_dict():
             "c": "2",
         }
     )
-    assert markdown == "# a\n1\n# b\n2\n# c\n2\n"
+    assert markdown == "# a\n1\n# b\n2\n# c\n2"

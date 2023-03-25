@@ -7,13 +7,13 @@ from markpickle import dumps
 def test_serialize_dataclass():
     person = Person("Alice", 30)
     result = dumps(person)
-    assert result == "# name\nAlice\n# age\n30\n"
+    assert result == "# name\nAlice\n# age\n30"
 
 
 def test_serialize_class():
     animal = Animal("Dog")
     result = dumps(animal)
-    assert result == "# species\nDog\n"
+    assert result == "# species\nDog"
 
 
 def test_serialize_module():

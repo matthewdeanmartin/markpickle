@@ -135,3 +135,7 @@ dmypy.json
 
 test/test_serialize/data/
 /.ruff_cache/
+
+.vs/
+
+TestResults/

@@ -51,3 +51,6 @@ class Config:
 
     list_bullet_style: str = "-"
     """Specifies the bullet style to use for lists in the serialized markdown (e.g., "-", "*", "+")."""
+
+    serialize_include_python_type: bool = False
+    """Help deserializer find correct constructor"""
