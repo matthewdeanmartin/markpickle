@@ -15,6 +15,7 @@ import markpickle
 
 
 def main():
+    """CLI entry point"""
     prog = "python -m markpickle.tool"
     description = "Command-line tool to validate and pretty-print Markdown as simple Python types"
     parser = argparse.ArgumentParser(prog=prog, description=description)

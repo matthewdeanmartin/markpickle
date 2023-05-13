@@ -4,7 +4,6 @@
 
 - json to markdown utility function
 - support multiple 3rd party table makers
-- more comprehensive example page
 - support  `__getstate__()`
   - Easy! Just check if well behaved python type would rather serialize a proxy.
 - and `__setstate__()`
@@ -75,7 +74,7 @@
 ```
 
 ## Deserialing real world english
+
 - deerialize bold/italic to f string-like thing (possible? not possible?)
 - treat code block as eval
 - treat 2nd unexpected data structure as generator stream? (essentially another variation on handing `---`
-

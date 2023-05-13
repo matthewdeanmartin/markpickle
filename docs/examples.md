@@ -12,6 +12,16 @@
 6
 ```
 
+### binary
+
+```python
+b'hello world'
+```
+
+```markdown
+![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
+```
+
 ### list of scalars
 
 ```python
@@ -22,6 +32,17 @@
 - 1
 - 2
 - 3
+```
+
+### list of binary
+
+```python
+[b'hello world', b'hello universe']
+```
+
+```markdown
+- ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
+- ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
 ```
 
 ### list of dictionaries
@@ -50,10 +71,23 @@ cat
 Frisky
 ```
 
+### dictionaries of binary
+
+```python
+{'animal': b'hello world', 'name': b'hello universe'}
+```
+
+```markdown
+# animal
+![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
+# name
+![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
+```
+
 ### dictionary of lists
 
 ```python
-{'ages': [24, 59, 45], 'countires': ['US', 'Canada', 'Iceland']}
+{'ages': [24, 59, 45], 'countries': ['US', 'Canada', 'Iceland']}
 ```
 
 ```markdown
@@ -61,7 +95,7 @@ Frisky
  - 24
  - 59
  - 45
-- countires
+- countries
  - US
  - Canada
  - Iceland

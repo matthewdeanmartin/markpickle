@@ -67,11 +67,11 @@ Some but not all data structures will be round-trippable. The goal is that the s
 
 ### Splitting Files
 
-## If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
+If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
 
 ## Prior Art
 
-## People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
+People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
 
 ### Serializing to Markdown
 
@@ -99,3 +99,8 @@ I don't know of any libraries that turn markdown into basic python types. At the
 - [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
 - [TODO](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/TODO.md)
 - [People solving similar problems on StackOverflow](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/stackoverflow.md)
+
+## Change Log
+
+- 1.1.0 - Basic functionality. See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md) for what is supported.
+- 1.2.0 - Add support for binary data, which is serialized as images with data URLs.

@@ -17,6 +17,8 @@ def test_serialize_class():
 
 
 def test_serialize_module():
-    result = dumps(markpickle)
+    markpickle.Config()
+
+    result = dumps(markpickle, default=str)
     # whoa, that is ugly
     assert "# __name__\nmarkpickle\n" in result

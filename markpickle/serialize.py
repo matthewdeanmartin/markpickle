@@ -15,6 +15,7 @@ import mdformat
 import markpickle.python_to_tables as python_to_tables
 import markpickle.simplify_types as simplify_types
 import markpickle.third_party_tables as third_party_tables
+from markpickle.binary_streams import bytes_to_markdown
 from markpickle.config_class import Config
 from markpickle.mypy_types import ScalarTypes, SerializableTypes
 
@@ -25,6 +26,12 @@ def dumps_all(
     default: Optional[Callable[[object], str]] = None,
 ) -> str:
     """Iterate value and serialize documents with horizontal lines between documents"""
+    if default and config:
+        config.default = default
+    if default and not config:
+        config = Config()
+        config.default = default
+
     docs = 0
     builder = io.StringIO()
     for document in value:
@@ -53,8 +60,14 @@ def dumps(
         A string containing the serialized Markdown.
 
     >>> dumps([1,2])
-    '- 1\\n- 2\\n'
+    '- 1\\n- 2'
     """
+    if default and config:
+        config.default = default
+    if default and not config:
+        config = Config()
+        config.default = default
+
     if unsafe_falsy_type(value):
         logging.warning("Unsafe falsy types, round tripping won't be possible")
     if unsafe_scalar_type(value):
@@ -83,11 +96,47 @@ def dump_all(
     default: Optional[Callable[[object], str]] = None,
 ) -> None:
     """Iterate value and serialize documents with horizontal lines between documents"""
+    if default and config:
+        config.default = default
+    if default and not config:
+        config = Config()
+        config.default = default
     docs = 0
     for document in value:
         if docs > 0:
             stream.write("---\n")
         dump(document, stream, config, default)
+
+
+def render_scalar(
+    builder: io.IOBase,
+    value: SerializableTypes,
+    config: Config,
+    indent: int = 0,
+    header_level: int = 1,
+) -> None:
+    """Render a scalar value to Markdown"""
+    if isinstance(value, (str, int, float, bool)):
+        builder.write(str(value))
+    elif isinstance(value, (datetime.date,)):
+        try:
+            builder.write(value.strftime(config.serialize_date_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialize_date_format))
+    elif isinstance(value, (datetime.datetime,)):
+        try:
+            builder.write(value.strftime(config.serialized_datetime_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialize_date_format))
+    elif value is None:
+        builder.write(config.none_string)
+    elif isinstance(value, bytes):
+        builder.write(bytes_to_markdown(None, value))
+    elif config.default:
+        # fall back to user preferred, e.g. str()
+        builder.write(config.default(value))
+    else:
+        raise NotImplementedError(f"Unknown scalar type: {type(value)}")
 
 
 def dump(
@@ -133,25 +182,22 @@ def dump(
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, (str, int, float, bool)):
-        builder.write(str(value))
+        render_scalar(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, (datetime.date,)):
-        try:
-            builder.write(value.strftime(config.serialize_date_format))
-        except UnicodeEncodeError:
-            builder.write(str(config.serialize_date_format))
+        render_scalar(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, (datetime.datetime,)):
-        try:
-            builder.write(value.strftime(config.serialized_datetime_format))
-        except UnicodeEncodeError:
-            builder.write(str(config.serialize_date_format))
+        render_scalar(builder, value, config, indent=0, header_level=header_level)
     elif value is None:
-        builder.write(config.none_string)
+        render_scalar(builder, value, config, indent=0, header_level=header_level)
     elif simplify_types.can_class_to_dict(value):
         candidate_dict = simplify_types.class_to_dict(value)
         render_dict(builder, candidate_dict, config, indent=0, header_level=header_level)
     elif default:
         attempt = default(value)
         builder.write(attempt)
+    elif isinstance(value, (bytes,)):
+        image_text = bytes_to_markdown("bytes", value)
+        builder.write(image_text)
     else:
         raise NotImplementedError()
 
@@ -176,10 +222,16 @@ def render_dict(
             # `- key : value` is not markdown
             if config.serialize_headers_are_dict_keys and indent == 0:
                 # headers dict keys. Can't nest.
-                builder.write(f"{header_level * '#'} {key}\n" f"{item}\n")
+                minibuilder = io.StringIO()
+                render_scalar(minibuilder, item, config)
+                seralialized_scalar = minibuilder.getvalue()
+                builder.write(f"{header_level * '#'} {key}\n" f"{seralialized_scalar}\n")
             else:
                 # This is ad hoc and not a markdown standard.
-                builder.write(f"{indent * ' '}{config.list_bullet_style} {key} : {item}\n")
+                minibuilder = io.StringIO()
+                render_scalar(minibuilder, item, config)
+                seralialized_scalar = minibuilder.getvalue()
+                builder.write(f"{indent * ' '}{config.list_bullet_style} {key} : {seralialized_scalar}\n")
         elif isinstance(item, list):
             if item and isinstance(item[0], dict):
                 if config.serialize_headers_are_dict_keys and indent == 0:
@@ -249,7 +301,10 @@ def render_list(
     # The list is not of dictionaries or we don't want tables.
     for item in value:
         if not isinstance(item, (list, dict, set)):
-            builder.write(f"{indent * ' '}{config.list_bullet_style} {item}\n")
+            minibuilder = io.StringIO()
+            render_scalar(minibuilder, item, config)
+            seralialized_scalar = minibuilder.getvalue()
+            builder.write(f"{indent * ' '}{config.list_bullet_style} {seralialized_scalar}\n")
         elif isinstance(item, list):
             if item and isinstance(item[0], dict):
                 python_to_tables.list_of_dict_to_markdown(builder, item, indent)

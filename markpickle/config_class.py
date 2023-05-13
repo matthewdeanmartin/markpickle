@@ -2,6 +2,7 @@
 Config for serializing and deserializing. They need to be the same for increasing the odds of successful round tripping.
 """
 import dataclasses
+from typing import Callable, Optional
 
 
 @dataclasses.dataclass
@@ -54,3 +55,7 @@ class Config:
 
     serialize_include_python_type: bool = False
     """Help deserializer find correct constructor"""
+
+    serialize_images_to_pillow: bool = False
+
+    default: Optional[Callable[[object], str]] = None

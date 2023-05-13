@@ -14,6 +14,7 @@ from typing import Any, Generator, Optional, cast
 import mistune
 
 import markpickle.python_to_tables as python_to_tables
+from markpickle.binary_streams import extract_bytes
 from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
 
@@ -108,6 +109,7 @@ def process_list(list_ast: Any, config: Config) -> Optional[ListTypes]:
 def load_all(
     value: io.StringIO, config: Optional[Config] = None, object_hook=None
 ) -> Generator[SerializableTypes, None, None]:
+    """Load multiple documents from a single stream"""
     part = io.StringIO()
     has_data = False
     while True:
@@ -132,6 +134,7 @@ def load_all(
 def loads_all(
     value: str, config: Optional[Config] = None, object_hook=None
 ) -> Generator[SerializableTypes, None, None]:
+    """Load multiple documents from a single string"""
     part = io.StringIO()
     has_data = False
     stream = io.StringIO(value)
@@ -228,9 +231,12 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
             token["type"] == "paragraph"
             and token.get("children")
             and len(token["children"]) == 1
-            and token["children"][0]["type"] == "text"
+            and token["children"][0]["type"] in ("text", "image")
             and not possible_dict
         ):
+            if token["children"][0]["type"] == "image":
+                return extract_bytes(token["children"][0]["src"], config)
+
             # Root scalar
             current_text_value: str = token["children"][0]["text"]
             if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
@@ -247,8 +253,13 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
             and current_key
         ):
             # Root scalar
-            current_value: str = token["children"][0]["text"]
-            scalar = extract_scalar(current_value, config)
+            if token["children"][0]["type"] == "text":
+                current_value: str = token["children"][0]["text"]
+                scalar = extract_scalar(current_value, config)
+            elif token["children"][0]["type"] == "image":
+                scalar = extract_bytes(token["children"][0]["src"], config)
+            else:
+                raise NotImplementedError()
             possible_dict[current_key] = scalar
             most_recent_key = current_key
             current_key = None
@@ -294,9 +305,12 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
     return possible_dict
 
 
-def handle_series_of_children(config, most_recent_key, possible_dict, series_of_children):
+def handle_series_of_children(config: Config, most_recent_key: str, possible_dict: dict[str, Any], series_of_children):
+    """Handle a series of children, which may be text, images, or links."""
     for inner_token in series_of_children:
-        if inner_token["type"] in ("image", "link"):
+        if inner_token["type"] == "image":
+            possible_dict[most_recent_key] += extract_bytes(inner_token["src"], config)
+        elif inner_token["type"] in ("image", "link"):
             logging.warning("not handling image or link")
             continue
         if "text" not in inner_token:

@@ -7,6 +7,7 @@ name = "pypi"
 mistune = "*"
 mdformat = "*"
 tabulate = "*"
+pillow = "*"
 
 [dev-packages]
 # marko = "*"

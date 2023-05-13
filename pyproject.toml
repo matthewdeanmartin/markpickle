@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "markpickle"
-version = "1.1.0"
+version = "1.2.0"
 description = "Lossy python to markdown serializer"
 authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
 keywords = ["serializer", "deserializer", "markdown",]
@@ -38,7 +38,8 @@ mistune = "*"
 mdformat = "*"
 # support more types to table
 tabulate = "*"
-
+# image/binary support
+pillow = "*"
 
 [tool.poetry.dev-dependencies]
 #marko = "*"
