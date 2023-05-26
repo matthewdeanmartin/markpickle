@@ -20,6 +20,7 @@ def test_file():
     #     "data/internal1.json",
     #     "data/internal2.json",
     # ]
+
     for file in glob.glob(locate_file("data", __file__) + "/*.json"):
         sample_search_results_file: str = locate_file(file, __file__)
         absolute_file_paths.append(sample_search_results_file)

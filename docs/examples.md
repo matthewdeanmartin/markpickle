@@ -12,6 +12,8 @@
 6
 ```
 
+Roundtripable? Yes
+
 ### binary
 
 ```python
@@ -21,6 +23,8 @@ b'hello world'
 ```markdown
 ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
 ```
+
+Roundtripable? Yes
 
 ### list of scalars
 
@@ -34,6 +38,8 @@ b'hello world'
 - 3
 ```
 
+Roundtripable? Yes
+
 ### list of binary
 
 ```python
@@ -44,6 +50,8 @@ b'hello world'
 - ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
 - ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
 ```
+
+Roundtripable? No
 
 ### list of dictionaries
 
@@ -58,6 +66,8 @@ b'hello world'
 | dog    | Fido   |
 ```
 
+Roundtripable? No
+
 ### dictionaries of strings
 
 ```python
@@ -71,6 +81,8 @@ cat
 Frisky
 ```
 
+Roundtripable? Yes
+
 ### dictionaries of binary
 
 ```python
@@ -83,6 +95,8 @@ Frisky
 # name
 ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
 ```
+
+Roundtripable? No
 
 ### dictionary of lists
 
@@ -100,6 +114,8 @@ Frisky
  - Canada
  - Iceland
 ```
+
+Roundtripable? No
 
 ### dictionary of dictionaries
 
@@ -121,6 +137,8 @@ Frisky
  | dog    | Fido |
 
 ```
+
+Roundtripable? No
 
 ## Examples of multiple document in one file
 

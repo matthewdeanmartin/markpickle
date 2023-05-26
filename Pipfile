@@ -11,7 +11,7 @@ pillow = "*"
 
 [dev-packages]
 # marko = "*"
-pytest = "*"
+pytest = "===6.2.5"
 vermin = "*"
 hypothesis = {extras = ["cli"], version = "*"}
 pre-commit = "*"
@@ -22,6 +22,12 @@ linkcheckmd = "*"
 tox = "*"
 2to3 = "*"
 scriv = "*"
+blacken-docs = "*"
+flake8-markdown = "*"
+# good pytest 7 required
+pytest-markdown-docs = "*"
+# good pytest 7 required
+pytest-codeblocks = "*"
 
 [requires]
 python_version = "3.11"

@@ -20,39 +20,17 @@ EXAMPLES = {
 
 MULTI = {"two scalar documents": ["abc", 123], "two dictionary documents": [{"cat": "Frisky"}, {"dog": "Fido"}]}
 
-with open("docs/examples.md", "w", encoding="utf-8") as file:
-    file.write("# Examples\n\n")
-    file.write("## Single Documents\n\n")
-    for key, value in EXAMPLES.items():
+for key, value in EXAMPLES.items():
+    with open(f"docs/individual/{key}.md", "w", encoding="utf-8") as file:
         string = markpickle.dumps(value)
-        try:
-            roundtrip = markpickle.loads(string)
-            roundtripable = value == roundtrip
-        except NotImplementedError:
-            roundtripable = False
-
         if string == "None":
             raise TypeError(f"Lost a serialization for {value}")
-        file.write(f"### {key}\n")
-        file.write("```python\n")
-        file.write(repr(value))
-        file.write("\n```\n\n")
-
-        file.write("```markdown\n")
         file.write(string)
-        file.write("\n```\n\n")
-        file.write(f"Roundtripable? {'Yes' if roundtripable else 'No'}\n\n")
 
-    file.write("## Examples of multiple document in one file\n\n")
-    for key, value in MULTI.items():
+
+for key, value in MULTI.items():
+    with open(f"docs/individual/{key}_multi.md", "w", encoding="utf-8") as file:
         string = markpickle.dumps_all(value)
         if string == "None":
             raise TypeError(f"Lost a serialization for {value}")
-        file.write(f"### {key}\n")
-        file.write("```python\n")
-        file.write(repr(value))
-        file.write("\n```\n\n")
-
-        file.write("```markdown\n")
         file.write(string)
-        file.write("\n```\n\n")

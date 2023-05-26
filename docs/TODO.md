@@ -9,6 +9,12 @@
 - and `__setstate__()`
   - Difficult! Most likely custom types implemente `__setstate__()`
   - Don't have meta data extensions.
+- anti-tamper signature
+- schema? Markdown schema?
+- use code block to put source code of class so you can deserialize to that at target.
+- Using serialization format as a database format, e.g. Shelve - key value store for serialized things? A persistent dictionary.
+- investigate json to markdown using mapping (key to md tag) e.g. https://github.com/snjyor/jsonvalue2markdown
+- using urlparse/yarl/furl serialize object representing url to a textual url. maybe doing same for links.
 
 ## Bugs
 

@@ -69,6 +69,14 @@ Some but not all data structures will be round-trippable. The goal is that the s
 
 If typical serialization scenarios, many json files might be written to a single file, or in the case of yaml, you can put multiple documents into one file separated by `---`. markpickle can treat the horizontal rule as a document spliter if you use `split_file`. It works like [splitstream](https://github.com/rickardp/splitstream), but less efficiently.
 
+## CLI
+
+This command will take a deserializable markdown file and output json.
+
+```bash
+python -m markpickle "docs/individual/list of scalars.md"
+```
+
 ## Prior Art
 
 People normally want to convert json to markdown. Json looks like python dict, so if you can do that you can probably do both.
@@ -88,11 +96,21 @@ People normally want to convert json to markdown. Json looks like python dict, s
 
 ### Deserializing to Python
 
-I don't know of any libraries that turn markdown into basic python types. At the moment, they all turn markdown into document object model.
+Most libraries turn markdown into document object model. Markdown-to-json is the most similar to markpickle's goal of turning a markdown document into a python data types, in this case nested dicts.
+
+[markdown-to-json](https://github.com/njvack/markdown-to-json)
 
 [mistune](https://pypi.org/project/mistune/) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes.
 
 ## [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
+
+## Schema Validation for Markdown
+
+In the case of a serialization library, you'd want something that would indicate if your markdown file will successfully deserialize back into python.
+
+I haven't really found anything that says, for example, "This markdown document shall have one # Header and a 3 column table and nothing else."
+
+- [schema-markdown-js](https://craigahobbs.github.io/schema-markdown-js/language/) A json schema that happens to be using markdown as its syntax.
 
 ## Documentation
 

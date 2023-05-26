@@ -40,7 +40,7 @@ test: clean .build_history/pylint .build_history/bandit Pipfile.lock
 
 .build_history/isort: .build_history $(FILES)
 	@echo "Formatting imports"
-	$(VENV) isort .
+	$(VENV) isort markpickle markmodule
 	@touch .build_history/isort
 
 .PHONY: isort
@@ -48,7 +48,7 @@ isort: .build_history/isort
 
 .build_history/black: .build_history .build_history/isort $(FILES)
 	@echo "Formatting code"
-	$(VENV) black .
+	$(VENV) black . --exclude .virtualenv
 	@touch .build_history/black
 
 .PHONY: black
@@ -82,9 +82,14 @@ bandit: .build_history/bandit
 check: test pylint bandit pre-commit
 
 .PHONY: publish
-publish_test:
-	rm -rf dist && poetry version minor && poetry build && twine upload -r testpypi dist/*
+publish: check
+	rm -rf dist && poetry build
 
-.PHONY: publish
-publish: test
-	echo "rm -rf dist && poetry version minor && poetry build && twine upload dist/*"
+# Use github to publish
+#.PHONY: publish
+#publish_test:
+#	rm -rf dist && poetry version minor && poetry build && twine upload -r testpypi dist/*
+#
+#.PHONY: publish
+#publish: test
+#	echo "rm -rf dist && poetry version minor && poetry build && twine upload dist/*"

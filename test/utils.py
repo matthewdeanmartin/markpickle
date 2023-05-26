@@ -14,6 +14,5 @@ def locate_file(file_name: str, executing_file: str) -> str:
     File must exist
     """
     file_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(executing_file)), file_name))
-    if not os.path.exists(file_path):
-        raise TypeError(file_path + " doesn't exist")
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     return file_path
