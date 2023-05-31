@@ -23,6 +23,10 @@ def convert_markup_to_terminal(markdown: str):
 
 
 if __name__ == "__main__":
-    text = "Some text in __bold__, *italic*, and --underline--"
-    converted_text = convert_markup_to_terminal(text)
-    print(converted_text)
+
+    def run() -> None:
+        text = "Some text in __bold__, *italic*, and --underline--"
+        converted_text = convert_markup_to_terminal(text)
+        print(converted_text)
+
+    run()

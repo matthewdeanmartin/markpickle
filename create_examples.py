@@ -4,6 +4,7 @@ EXAMPLES = {
     "scalar": 6,
     "binary": b"hello world",
     "list of scalars": [1, 2, 3],
+    "list of scalars and lists": [1, 2, 3, ["a", "b", "c"]],
     "list of binary": [b"hello world", b"hello universe"],
     "list of dictionaries": [{"animal": "cat", "name": "Frisky"}, {"animal": "dog", "name": "Fido"}],
     "dictionaries of strings": {"animal": "cat", "name": "Frisky"},
@@ -15,7 +16,12 @@ EXAMPLES = {
     "dictionary of dictionaries": {
         "Best Cat": {"animal": "cat", "name": "Frisky"},
         "Best Dog": {"animal": "dog", "name": "Fido"},
-    },
+    }
+    # Markdown to python is fine, but python to markdown isn't sensible!
+    # "complex nested": {'Description': 'This is an example file',
+    #                    'Authors': ['Nate Vack', 'Vendor Packages', ['docopt', 'CommonMark-py']],
+    #                    'Versions': {'Version 1': 'Here\'s something about Version 1; I said "Hooray!"',
+    #                                 'Version 2': "Here's something about Version 2"}}
 }
 
 MULTI = {"two scalar documents": ["abc", 123], "two dictionary documents": [{"cat": "Frisky"}, {"dog": "Fido"}]}

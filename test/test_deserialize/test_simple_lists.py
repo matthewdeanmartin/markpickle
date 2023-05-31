@@ -19,6 +19,16 @@ def test_list_of_int():
     assert result == [1, 2, 3]
 
 
+def test_list_of_lists():
+    marks = """* Nate Vack
+* Vendor Packages
+    * docopt
+    * CommonMark-py
+"""
+    result = loads(marks)
+    assert result == ["Nate Vack", "Vendor Packages", ["docopt", "CommonMark-py"]]
+
+
 def test_list_of_dict_same_schema():
     result = dumps(
         [

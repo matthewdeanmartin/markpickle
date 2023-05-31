@@ -46,8 +46,8 @@ def main():
                 for obj in objs:
                     markpickle.dump(obj, outfile, **dump_args)
                     outfile.write("\n")
-        except ValueError as e:
-            raise SystemExit(e)
+        except ValueError as error:
+            raise SystemExit(error) from error
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 
 ## Features
 
+- support links as ParseResult (urllib)
 - json to markdown utility function
 - support multiple 3rd party table makers
 - support  `__getstate__()`

@@ -9,14 +9,16 @@ import datetime
 import io
 import logging
 import textwrap
+import urllib
 from typing import Any, Generator, Optional, cast
 
 import mistune
 
 import markpickle.python_to_tables as python_to_tables
+from markpickle.atx_as_dictionary import parse_outermost_dict
 from markpickle.binary_streams import extract_bytes
 from markpickle.config_class import Config
-from markpickle.mypy_types import DictTypes, ListTypes, ScalarTypes, SerializableTypes
+from markpickle.mypy_types import ListTypes, ScalarTypes, SerializableTypes
 
 
 def loads(value: str, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
@@ -91,16 +93,24 @@ def process_list(list_ast: Any, config: Config) -> Optional[ListTypes]:
     current_list = []
     for token in list_ast["children"]:
         if token["type"] == "list_item":
-            if token["children"][0]["type"] == "block_text":
-                block_text = token["children"][0]
-                if block_text["children"][0]["type"] == "text":
-                    current_value = ",".join(text["text"] for text in block_text["children"])
-                    scalar = extract_scalar(current_value, config)
-                    current_list.append(scalar)
+            for child in token["children"]:
+                if child["type"] == "block_text":
+                    block_text = child
+                    if block_text["children"][0]["type"] == "text":
+                        # This fails if not all text!
+                        current_value = ",".join(str(text.get("text")) for text in block_text["children"])
+                        scalar = extract_scalar(current_value, config)
+                        current_list.append(scalar)
+                    elif block_text["children"][0]["type"] == "link":
+                        # Doesn't handle title or text
+                        url = urllib.parse.urlparse(block_text["children"][0]["link"])
+                        current_list.append(url)
+                    else:
+                        raise NotImplementedError(block_text["children"])
+                elif child["type"] == "list":
+                    current_list.append(process_list(child, config))
                 else:
-                    raise NotImplementedError()
-            else:
-                raise NotImplementedError()
+                    raise NotImplementedError(child["type"])
         else:
             raise NotImplementedError()
     return current_list
@@ -111,10 +121,10 @@ def load_all(
 ) -> Generator[SerializableTypes, None, None]:
     """Load multiple documents from a single stream"""
     part = io.StringIO()
-    has_data = False
+    has_data = True
     while True:
         line = value.readline()
-        if line is None:
+        if line is None or line == "":
             break
         if line.startswith("---") and not has_data:
             continue
@@ -126,6 +136,7 @@ def load_all(
             continue
         part.write(line)
         has_data = True
+    # last part
     if has_data:
         part.seek(0)
         yield load(part, config, object_hook)
@@ -149,6 +160,94 @@ def loads_all(
         has_data = True
     if has_data:
         yield loads(part.read(), config, object_hook)
+
+
+def process_list_of_tokens(list_of_tokens: list[dict[str, Any]], config: Config):
+    """Process a list of tokens to lists and scalars and so on."""
+    # Tokens that are not ATX-dict-like headers
+    return_value = None
+    for token in list_of_tokens:
+        if token["type"] == "newline":
+            # Whitespace, no impact on datatype
+            continue
+
+        # if token["type"] == "heading" and current_key is None:
+        #     # Dict key, value not found yet
+        #     if not all("text" in _ for _ in token["children"]):
+        #         print("uh oh")
+        #     current_key = ",".join([_["text"] for _ in token["children"]])
+        #     possible_dict[current_key] = None
+        # elif token["type"] == "heading" and current_key is not None:
+        #     # New dict key, value not found yet
+        #     if not all("text" in _ for _ in token["children"]):
+        #         print("uh oh")
+        #     current_key = ",".join([_["text"] for _ in token["children"]])
+        #     possible_dict[current_key] = None
+        if token["type"] == "list":
+            # Dict value of type list
+            if token["children"][0]["type"] == "text":
+                return_value = [",".join(_["text"] for _ in item["children"]) for item in token["children"]]
+            elif token["children"][0]["type"] == "list_item":
+                return_value = process_list(token, config)
+            else:
+                raise NotImplementedError()
+
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            and len(token["children"]) == 1
+            and token["children"][0]["type"] in ("text", "image")
+        ):
+            if token["children"][0]["type"] == "image":
+                return extract_bytes(token["children"][0]["src"], config)
+
+            # Root scalar
+            current_text_value: str = token["children"][0]["text"]
+            if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
+                return python_to_tables.parse_table_with_regex(current_text_value)
+
+            return extract_scalar(current_text_value, config)
+
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            and len(token["children"]) == 1
+            and token["children"][0]["type"] == "text"
+        ):
+            # Root scalar
+            if token["children"][0]["type"] == "text":
+                current_value: str = token["children"][0]["text"]
+                scalar = extract_scalar(current_value, config)
+            elif token["children"][0]["type"] == "image":
+                scalar = extract_bytes(token["children"][0]["src"], config)
+            else:
+                raise NotImplementedError()
+            return_value = scalar
+        # what was this?
+        # elif (
+        #         token["type"] == "paragraph"
+        #         and token.get("children")
+        #         # and len(token["children"]) == 1
+        #         # and token["children"][0]["type"] == "text"
+        # ):
+        #     series_of_children = token["children"]
+        #     most_recent_key = handle_series_of_children(config, most_recent_key, outermost_dict, series_of_children)
+        #     current_key = None
+        elif token["type"] == "block_code":
+            # Treat block code as just more text, no "styling"
+            continuation_value: str = token["text"]
+            scalar = extract_scalar(continuation_value, config)
+            # continuation of text
+            if return_value:
+                return_value += "\n\n" + scalar
+            else:
+                return_value = scalar
+        elif token["type"] == "heading":
+            # handled elsewhere?
+            pass
+        # else:
+        #     raise NotImplementedError(token["type"])
+    return return_value
 
 
 def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
@@ -188,107 +287,16 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
     if len(result) == 1 and result[0]["type"] == "list":
         return process_list(result[0], config)
 
-    possible_dict: DictTypes = {}
-    current_key = None
-
-    # Use this key when we find more text, ie a subsequent token that is just more text.
-    most_recent_key = None
-
-    # Iterate through tokens in the parsed result
-    for token in result:
-        if token["type"] == "newline":
-            # Whitespace, no impact on datatype
-            continue
-
-        if token["type"] == "heading" and current_key is None:
-            # Dict key, value not found yet
-            if not all("text" in _ for _ in token["children"]):
-                print("uh oh")
-            current_key = ",".join([_["text"] for _ in token["children"]])
-            possible_dict[current_key] = None
-        elif token["type"] == "heading" and current_key is not None:
-            # New dict key, value not found yet
-            if not all("text" in _ for _ in token["children"]):
-                print("uh oh")
-            current_key = ",".join([_["text"] for _ in token["children"]])
-            possible_dict[current_key] = None
-        elif token["type"] == "list" and current_key is not None:
-            # Dict value of type list
-            if token["children"][0]["type"] == "text":
-                possible_dict[current_key] = [
-                    ",".join(_["text"] for _ in item["children"]) for item in token["children"]
-                ]
-                most_recent_key = current_key
-                current_key = None
-            elif token["children"][0]["type"] == "list_item":
-                possible_dict[current_key] = process_list(token, config)
-                most_recent_key = current_key
-                current_key = None
-            else:
-                raise NotImplementedError()
-
-        elif (
-            token["type"] == "paragraph"
-            and token.get("children")
-            and len(token["children"]) == 1
-            and token["children"][0]["type"] in ("text", "image")
-            and not possible_dict
-        ):
-            if token["children"][0]["type"] == "image":
-                return extract_bytes(token["children"][0]["src"], config)
-
-            # Root scalar
-            current_text_value: str = token["children"][0]["text"]
-            if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
-                return python_to_tables.parse_table_with_regex(current_text_value)
-
-            return extract_scalar(current_text_value, config)
-
-        elif (
-            token["type"] == "paragraph"
-            and token.get("children")
-            and len(token["children"]) == 1
-            and token["children"][0]["type"] == "text"
-            and possible_dict
-            and current_key
-        ):
-            # Root scalar
-            if token["children"][0]["type"] == "text":
-                current_value: str = token["children"][0]["text"]
-                scalar = extract_scalar(current_value, config)
-            elif token["children"][0]["type"] == "image":
-                scalar = extract_bytes(token["children"][0]["src"], config)
-            else:
-                raise NotImplementedError()
-            possible_dict[current_key] = scalar
-            most_recent_key = current_key
-            current_key = None
-        elif (
-            token["type"] == "paragraph"
-            and token.get("children")
-            # and len(token["children"]) == 1
-            # and token["children"][0]["type"] == "text"
-            and possible_dict
-            and most_recent_key
-            and not current_key
-        ):
-            series_of_children = token["children"]
-            most_recent_key = handle_series_of_children(config, most_recent_key, possible_dict, series_of_children)
-            current_key = None
-        elif token["type"] == "block_code" and possible_dict:
-            # Treat block code as just more text, no "styling"
-            continuation_value: str = token["text"]
-            scalar = extract_scalar(continuation_value, config)
-            # continuation of text
-            if most_recent_key and not current_key:
-                possible_dict[most_recent_key] += "\n\n" + scalar
-                current_key = None
-            elif current_key:
-                possible_dict[current_key] = scalar
-            else:
-                raise TypeError("This shouldn't happen")
-        else:
-            raise NotImplementedError(token["type"])
+    dict_wrapper = False
+    # handle ATX-dict-like headers
+    has_headers = any(True if item["type"] == "heading" else False for item in result)
+    if has_headers:
+        minimum = min(item["level"] if item["type"] == "heading" else 100000000 for item in result)
+        outermost_dict = parse_outermost_dict(result, minimum)
+        outermost_dict = walk_dict(outermost_dict, config)
+    else:
+        dict_wrapper = True
+        outermost_dict = {None: process_list_of_tokens(result, config)}
 
     # if possible_dict and possible_dict.get("python_type"):
     #     python_type = possible_dict.get("python_type")
@@ -300,9 +308,25 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
 
     # really? do I misunderstand this?
     if object_hook:
-        return object_hook(possible_dict)
+        return object_hook(outermost_dict)
 
-    return possible_dict
+    if dict_wrapper:
+        # Not ATX
+        return outermost_dict.get(None)
+    return outermost_dict
+
+
+def walk_dict(outermost_dict: dict[str, Any], config: Config):
+    """Process all lists of tokens found anywhere in this dictionary"""
+    if isinstance(outermost_dict, dict):
+        for current_key, list_or_dict_of_tokens in outermost_dict.items():
+            if isinstance(list_or_dict_of_tokens, list):
+                outermost_dict[current_key] = process_list_of_tokens(list_or_dict_of_tokens, config)
+            elif isinstance(list_or_dict_of_tokens, dict):
+                outermost_dict[current_key] = walk_dict(list_or_dict_of_tokens, config)
+            else:
+                raise NotImplementedError("Expected list or dict")
+    return outermost_dict
 
 
 def handle_series_of_children(config: Config, most_recent_key: str, possible_dict: dict[str, Any], series_of_children):
@@ -319,6 +343,5 @@ def handle_series_of_children(config: Config, most_recent_key: str, possible_dic
         scalar = extract_scalar(continuation_value, config)
         # continuation of text
         possible_dict[most_recent_key] += "\n\n" + scalar
-        most_recent_key = most_recent_key
 
     return most_recent_key

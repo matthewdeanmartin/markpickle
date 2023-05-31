@@ -1,7 +1,5 @@
 # cat
-
-## Frisky
-
+Frisky
+---
 # dog
-
 Fido

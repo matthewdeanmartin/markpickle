@@ -71,7 +71,8 @@ repos:
             -   id: python-no-eval
             -   id: python-no-log-warn
             -   id: text-unicode-replacement-char
-    -   repo: https://github.com/executablebooks/mdformat
-        rev: 0.7.16
-        hooks:
-            -   id: mdformat
+# Strips out ---, adds ##, flattens nested lists if they have the same bullet! Buggy!
+#    -   repo: https://github.com/executablebooks/mdformat
+#        rev: 0.7.16
+#        hooks:
+#            -   id: mdformat

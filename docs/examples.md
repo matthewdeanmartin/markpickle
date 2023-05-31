@@ -3,7 +3,6 @@
 ## Single Documents
 
 ### scalar
-
 ```python
 6
 ```
@@ -15,7 +14,6 @@
 Roundtripable? Yes
 
 ### binary
-
 ```python
 b'hello world'
 ```
@@ -27,7 +25,6 @@ b'hello world'
 Roundtripable? Yes
 
 ### list of scalars
-
 ```python
 [1, 2, 3]
 ```
@@ -40,8 +37,23 @@ Roundtripable? Yes
 
 Roundtripable? Yes
 
-### list of binary
+### list of scalars and lists
+```python
+[1, 2, 3, ['a', 'b', 'c']]
+```
 
+```markdown
+- 1
+- 2
+- 3
+ - a
+ - b
+ - c
+```
+
+Roundtripable? No
+
+### list of binary
 ```python
 [b'hello world', b'hello universe']
 ```
@@ -54,7 +66,6 @@ Roundtripable? Yes
 Roundtripable? No
 
 ### list of dictionaries
-
 ```python
 [{'animal': 'cat', 'name': 'Frisky'}, {'animal': 'dog', 'name': 'Fido'}]
 ```
@@ -69,7 +80,6 @@ Roundtripable? No
 Roundtripable? No
 
 ### dictionaries of strings
-
 ```python
 {'animal': 'cat', 'name': 'Frisky'}
 ```
@@ -84,7 +94,6 @@ Frisky
 Roundtripable? Yes
 
 ### dictionaries of binary
-
 ```python
 {'animal': b'hello world', 'name': b'hello universe'}
 ```
@@ -96,10 +105,9 @@ Roundtripable? Yes
 ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
 ```
 
-Roundtripable? No
+Roundtripable? Yes
 
 ### dictionary of lists
-
 ```python
 {'ages': [24, 59, 45], 'countries': ['US', 'Canada', 'Iceland']}
 ```
@@ -118,7 +126,6 @@ Roundtripable? No
 Roundtripable? No
 
 ### dictionary of dictionaries
-
 ```python
 {'Best Cat': {'animal': 'cat', 'name': 'Frisky'}, 'Best Dog': {'animal': 'dog', 'name': 'Fido'}}
 ```
@@ -140,10 +147,32 @@ Roundtripable? No
 
 Roundtripable? No
 
+### complex nested
+```python
+{'Description': 'This is an example file', 'Authors': ['Nate Vack', 'Vendor Packages', ['docopt', 'CommonMark-py']], 'Versions': {'Version 1': 'Here\'s something about Version 1; I said "Hooray!"', 'Version 2': "Here's something about Version 2"}}
+```
+
+```markdown
+# Description
+This is an example file
+- Authors
+ - Nate Vack
+ - Vendor Packages
+  - docopt
+  - CommonMark-py
+# Versions
+
+ | Version 1                                          | Version 2                        |
+ | -------------------------------------------------- | -------------------------------- |
+ | Here's something about Version 1; I said "Hooray!" | Here's something about Version 2 |
+
+```
+
+Roundtripable? No
+
 ## Examples of multiple document in one file
 
 ### two scalar documents
-
 ```python
 ['abc', 123]
 ```
@@ -155,7 +184,6 @@ abc
 ```
 
 ### two dictionary documents
-
 ```python
 [{'cat': 'Frisky'}, {'dog': 'Fido'}]
 ```
@@ -167,3 +195,4 @@ Frisky
 # dog
 Fido
 ```
+

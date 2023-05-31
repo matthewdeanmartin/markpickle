@@ -10,8 +10,6 @@ import logging
 import textwrap
 from typing import Callable, Optional, TextIO, Union
 
-import mdformat
-
 import markpickle.python_to_tables as python_to_tables
 import markpickle.simplify_types as simplify_types
 import markpickle.third_party_tables as third_party_tables
@@ -80,8 +78,9 @@ def dumps(
 
     builder.seek(0)
     result = builder.read()
-    if config.serialize_run_formatter:
-        result = mdformat.text(result)
+    # Strips out ---, adds ##, flattens nested lists if they have the same bullet! Buggy!
+    # if config.serialize_run_formatter:
+    #     result = mdformat.text(result)
 
     # results in a copy! ugh!
     if result.endswith("\n"):
@@ -250,6 +249,7 @@ def render_dict(
             if config.serialize_child_dict_as_table:
                 success = False
                 if config.serialize_tables_tabulate_style:
+                    # pylint: disable=broad-exception-caught
                     try:
                         table = third_party_tables.to_table_tablulate_style(item)
                         table = textwrap.indent(table, prefix=" " * (indent + 1))
@@ -271,7 +271,7 @@ def render_dict(
                 builder.write(table)
             except Exception as ex:
                 logging.warning(f"Tabulate can't handle it either: {ex}")
-                raise NotImplementedError()
+                raise NotImplementedError() from ex
     return indent
 
 

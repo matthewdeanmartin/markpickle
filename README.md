@@ -1,6 +1,6 @@
 # markpickle
 
-Markpickle is a Python library for lossy serialization of markdown to simple python data types and back. It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST). I created this because I wanted a way to turn json into Markdown.
+Markpickle is a Python library for lossy serialization of markdown to simple python data types and back. It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST). I created this because I wanted a way to turn json into Markdown. It is an accidental successor to [markdown-to-json](https://github.com/njvack/markdown-to-json).
 
 For example this
 
@@ -98,11 +98,11 @@ People normally want to convert json to markdown. Json looks like python dict, s
 
 Most libraries turn markdown into document object model. Markdown-to-json is the most similar to markpickle's goal of turning a markdown document into a python data types, in this case nested dicts.
 
-[markdown-to-json](https://github.com/njvack/markdown-to-json)
+[markdown-to-json](https://github.com/njvack/markdown-to-json) is the library most similar to markpickle, but is somewhat broken, unmaintained and depends on the unmaintained commonmark library.
 
 [mistune](https://pypi.org/project/mistune/) will turn markdown into an Abstract Syntax Tree. The AST is faithful representation of the Markdown, including concepts that have no semantic equivalent to python datatypes.
 
-## [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
+[beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
 
 ## Schema Validation for Markdown
 
@@ -111,6 +111,10 @@ In the case of a serialization library, you'd want something that would indicate
 I haven't really found anything that says, for example, "This markdown document shall have one # Header and a 3 column table and nothing else."
 
 - [schema-markdown-js](https://craigahobbs.github.io/schema-markdown-js/language/) A json schema that happens to be using markdown as its syntax.
+
+## Credits
+
+I copied the ATX-dictionary-like header parsing from [markdown-to-json](https://github.com/njvack/markdown-to-json).
 
 ## Documentation
 

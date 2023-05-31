@@ -1,7 +1,4 @@
 # animal
-
 cat
-
 # name
-
 Frisky
