@@ -1,5 +1,9 @@
 # People on StackOverflow Solving similar problems
 
+## Youtube
+
+- [Asking ChatGPT to do it for you](https://www.youtube.com/watch?v=koEzP2ZE7fM)
+
 ## Deserializing
 
 - [Convert markdown table to json with python](https://stackoverflow.com/questions/66185838/python-convert-markdown-table-to-json-with)
