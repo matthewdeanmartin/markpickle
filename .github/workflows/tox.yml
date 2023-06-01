@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest ]
-        # Uses 3.8 type annotations.
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12" ]
+        # Uses 3.9 type annotations.
+        python-version: ["3.9", "3.10", "3.11", "3.12" ]
     steps:
       - uses: actions/checkout@v3
       - name: Using Python ${{ matrix.python-version }}

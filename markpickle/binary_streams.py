@@ -3,7 +3,7 @@ Add support for binary streams via images and data URLs
 """
 import base64
 import io
-from typing import Optional, Union
+from typing import Any, Optional
 
 from PIL import Image
 
@@ -19,7 +19,8 @@ def bytes_to_markdown(key: Optional[str], value: bytes) -> str:
     return f"![{key}](data:application/octet-stream;base64,{base64_data})"
 
 
-def extract_bytes(src: str, config: Config) -> Optional[Union[bytes, Image]]:
+# Can't correctly type the return value because Pillow's Image module acts like module and class.
+def extract_bytes(src: str, config: Config) -> Any:
     """
     Extract bytes from a markdown image or pillow Image
     """
