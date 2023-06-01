@@ -238,11 +238,13 @@ def render_dict(
                     header = f"{header_level * '#'} {key}\n"
                     builder.write(header)
                 else:
-                    header = f"{indent * ' '}{config.list_bullet_style} {key}\n"
+                    # Some markdown parsers treat 1 space indents as 0!
+                    header = f"{indent * '  '}{config.list_bullet_style} {key}\n"
                     builder.write(header)
                 python_to_tables.list_of_dict_to_markdown(builder, item, indent)
             else:
-                builder.write(f"{indent * ' '}{config.list_bullet_style} {key}\n")
+                # Some markdown parsers treat 1 space indents as 0!
+                builder.write(f"{indent * '  '}{config.list_bullet_style} {key}\n")
                 render_list(builder, item, config, indent + 1)
         elif isinstance(item, dict):
             builder.write(f"{'#' * header_level} {key}\n\n")

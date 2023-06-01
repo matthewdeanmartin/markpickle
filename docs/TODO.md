@@ -80,8 +80,7 @@
 | Carol | 35  | Los Angeles  |
 ```
 
-## Deserialing real world english
+## Deserializing real world english
 
-- deerialize bold/italic to f string-like thing (possible? not possible?)
-- treat code block as eval
+- deserialize bold/italic to f string-like thing (possible? not possible?)
 - treat 2nd unexpected data structure as generator stream? (essentially another variation on handing `---`

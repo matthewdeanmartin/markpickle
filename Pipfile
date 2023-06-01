@@ -28,6 +28,7 @@ flake8-markdown = "*"
 pytest-markdown-docs = "*"
 # good pytest 7 required
 pytest-codeblocks = "*"
+markdown-to-json = "*"
 
 [requires]
 python_version = "3.11"

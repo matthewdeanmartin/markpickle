@@ -77,7 +77,7 @@ Roundtripable? No
 | dog    | Fido   |
 ```
 
-Roundtripable? No
+Roundtripable? Yes
 
 ### dictionaries of strings
 ```python
@@ -142,29 +142,6 @@ Roundtripable? No
  | animal | name |
  | ------ | ---- |
  | dog    | Fido |
-
-```
-
-Roundtripable? No
-
-### complex nested
-```python
-{'Description': 'This is an example file', 'Authors': ['Nate Vack', 'Vendor Packages', ['docopt', 'CommonMark-py']], 'Versions': {'Version 1': 'Here\'s something about Version 1; I said "Hooray!"', 'Version 2': "Here's something about Version 2"}}
-```
-
-```markdown
-# Description
-This is an example file
-- Authors
- - Nate Vack
- - Vendor Packages
-  - docopt
-  - CommonMark-py
-# Versions
-
- | Version 1                                          | Version 2                        |
- | -------------------------------------------------- | -------------------------------- |
- | Here's something about Version 1; I said "Hooray!" | Here's something about Version 2 |
 
 ```
 

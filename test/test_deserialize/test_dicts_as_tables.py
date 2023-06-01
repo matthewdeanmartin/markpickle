@@ -9,7 +9,18 @@ def test_deserialized_dict_serialized_as_table():
 """
     config = markpickle.Config()
     config.tables_become_list_of_tuples = True
-    # with pytest.raises(NotImplementedError):
     result = markpickle.loads(marks, config)
-    assert result == [["1"], ("2",)]
-    # {"1": datetime.date(2000, 1, 1)}
+    assert result == [["1"], ("2000-01-01",)]
+
+
+def test_deserialized_dict_serialized_as_table_version_two():
+    marks = """
+| head1      | head2      |
+| ---------- | ---------- |
+| row1-head1 | row1-head2 |
+| row2-head1 | row2-head2 |
+"""
+    config = markpickle.Config()
+    config.tables_become_list_of_tuples = False
+    result = markpickle.loads(marks, config)
+    assert result == [{"head1": "row1-head1", "head2": "row1-head2"}, {"head1": "row2-head1", "head2": "row2-head2"}]

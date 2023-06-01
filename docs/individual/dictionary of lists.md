@@ -1,8 +1,8 @@
 - ages
- - 24
- - 59
- - 45
+  - 24
+  - 59
+  - 45
 - countries
- - US
- - Canada
- - Iceland
+  - US
+  - Canada
+  - Iceland

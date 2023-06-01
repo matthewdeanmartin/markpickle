@@ -75,9 +75,25 @@ def dict_to_markdown(
     return f"{indentation}{table}"
 
 
+def parse_table_to_list_of_dict(md_table: str) -> list[dict[str, str]]:
+    """Treat tables as list of dictionaries"""
+    tuple_stuff = parse_table_with_regex(md_table)
+    headers = tuple_stuff[0]
+    rows = tuple_stuff[1:]
+    dict_stuff = []
+    for row in rows:
+        dict_row = {}
+        for column_id, column in enumerate(row):
+            dict_row[headers[column_id]] = column
+        dict_stuff.append(dict_row)
+    return dict_stuff
+
+
 def parse_table_with_regex(md_table: str) -> list[tuple[str, ...]]:
     """
-    Created by ChatGPT 3.5 Turbo model
+    Created by ChatGPT 3.5 Turbo model.
+
+    First element is headers, subsequent elements are rows.
     """
     rows = md_table.strip().split("\n")
     # Get the column names from the first row
@@ -88,7 +104,8 @@ def parse_table_with_regex(md_table: str) -> list[tuple[str, ...]]:
     # Parse the remaining rows
     for row in rows[2:]:
         # Split the row into cells
-        cells = re.findall(r"\| *([^\|\n]+?) *", row)
+        # cells = re.findall(r"\| *([^\|\n]+?) *", row)
+        cells = [_.strip() for _ in row.strip().split("|")[1:-1]]
         # Check that the row has the correct number of cells
         if len(cells) != num_cols:
             raise ValueError(f"Row has {len(cells)} cells, but expected {num_cols}")

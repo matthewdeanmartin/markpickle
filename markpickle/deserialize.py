@@ -205,6 +205,8 @@ def process_list_of_tokens(list_of_tokens: list[dict[str, Any]], config: Config)
             current_text_value: str = token["children"][0]["text"]
             if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
                 return python_to_tables.parse_table_with_regex(current_text_value)
+            elif current_text_value.count("|") >= 2:
+                return python_to_tables.parse_table_to_list_of_dict(current_text_value)
 
             return extract_scalar(current_text_value, config)
 
