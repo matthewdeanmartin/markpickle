@@ -202,6 +202,10 @@ def dump(
         raise NotImplementedError()
 
 
+def python_to_atx_header(builder: Union[io.IOBase, TextIO], data: list[DictTypes], header_level: int, indent: int):
+    pass
+
+
 def render_dict(
     builder: Union[io.IOBase, TextIO], value: DictTypes, config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
@@ -244,7 +248,10 @@ def render_dict(
                     header = f"{indent * '  '}{config.list_bullet_style} {key}\n"
                     builder.write(header)
                 # assume if first is dict, they all are
-                python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
+                if config.serialize_child_dict_as_table:
+                    python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
+                else:
+                    python_to_atx_header(builder, cast(list[DictTypes], item), header_level, indent)
             else:
                 # Some markdown parsers treat 1 space indents as 0!
                 builder.write(f"{indent * '  '}{config.list_bullet_style} {key}\n")
