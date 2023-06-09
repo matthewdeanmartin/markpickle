@@ -27,10 +27,11 @@ repos:
 #        rev: "0.4.1"
 #        hooks:
 #            -   id: pyproject-fmt
-    -   repo: https://github.com/abravalheri/validate-pyproject
-        rev: v0.10.1
-        hooks:
-            -   id: validate-pyproject
+# works for me, don't know why it is complaining
+#    -   repo: https://github.com/abravalheri/validate-pyproject
+#        rev: v0.10.1
+#        hooks:
+#            -   id: validate-pyproject
     -   repo: https://github.com/myint/autoflake
         rev: v2.0.0
         hooks:

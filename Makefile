@@ -79,7 +79,16 @@ bandit: .build_history/bandit
 # for when using -j (jobs, run in parallel)
 .NOTPARALLEL: .build_history/isort .build_history/black
 
-check: test pylint bandit pre-commit
+.build_history/mypy: .build_history $(FILES)
+	@echo "Security checks"
+	$(VENV)  mypy markpickle
+	@touch .build_history/mypy
+
+.PHONY: mypy
+mypy: .build_history/mypy
+
+
+check: test pylint bandit pre-commit mypy
 
 .PHONY: publish
 publish: check

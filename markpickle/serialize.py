@@ -8,18 +8,18 @@ import datetime
 import io
 import logging
 import textwrap
-from typing import Callable, Optional, TextIO, Union
+from typing import Any, Callable, Optional, TextIO, Union, cast
 
 import markpickle.python_to_tables as python_to_tables
 import markpickle.simplify_types as simplify_types
 import markpickle.third_party_tables as third_party_tables
 from markpickle.binary_streams import bytes_to_markdown
 from markpickle.config_class import Config
-from markpickle.mypy_types import ScalarTypes, SerializableTypes
+from markpickle.mypy_types import DictTypes, SerializableTypes
 
 
 def dumps_all(
-    value: SerializableTypes,
+    value: list[SerializableTypes],
     config: Optional[Config] = None,
     default: Optional[Callable[[object], str]] = None,
 ) -> str:
@@ -89,7 +89,7 @@ def dumps(
 
 
 def dump_all(
-    value: SerializableTypes,
+    value: list[SerializableTypes],
     stream: Union[io.IOBase, TextIO],
     config: Optional[Config] = None,
     default: Optional[Callable[[object], str]] = None,
@@ -108,7 +108,7 @@ def dump_all(
 
 
 def render_scalar(
-    builder: io.IOBase,
+    builder: Union[io.IOBase, TextIO],
     value: SerializableTypes,
     config: Config,
     indent: int = 0,
@@ -167,13 +167,14 @@ def dump(
 
     outtermost_type = type(value).__qualname__
 
-    if hasattr(value, "__getstate__") and value.__getstate__():
-        value = value.__getstate__()
+    # mypy doesn't use info from the hadattr check.
+    if hasattr(value, "__getstate__") and cast(Any, value).__getstate__():
+        value = cast(Any, value).__getstate__()
         if isinstance(value, dict) and config.serialize_include_python_type:
             value["python_type"] = outtermost_type
 
     if isinstance(value, list):
-        render_list(builder, value, config, indent=0, header_level=header_level)
+        render_list(builder, cast(list[SerializableTypes], value), config, indent=0, header_level=header_level)
     # elif isinstance(value, dict) and all(isinstance(_, dict) for _ in value.values()):
     #     for key, item in value.items():
     #         builder.write(f"{ '#' * header_level} {key}")
@@ -202,7 +203,7 @@ def dump(
 
 
 def render_dict(
-    builder: io.IOBase, value: SerializableTypes, config: Config, indent: int = 0, header_level: int = 1
+    builder: Union[io.IOBase, TextIO], value: DictTypes, config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
     """Convert a Python dictionary to Markdown.
 
@@ -216,6 +217,7 @@ def render_dict(
     Returns:
         The current indentation level.
     """
+
     for key, item in value.items():
         if not isinstance(item, (list, dict, set)):
             # `- key : value` is not markdown
@@ -230,7 +232,7 @@ def render_dict(
                 minibuilder = io.StringIO()
                 render_scalar(minibuilder, item, config)
                 seralialized_scalar = minibuilder.getvalue()
-                builder.write(f"{indent * ' '}{config.list_bullet_style} {key} : {seralialized_scalar}\n")
+                builder.write(f"{indent * '  '}{config.list_bullet_style} {key} : {seralialized_scalar}\n")
         elif isinstance(item, list):
             if item and isinstance(item[0], dict):
                 if config.serialize_headers_are_dict_keys and indent == 0:
@@ -241,11 +243,12 @@ def render_dict(
                     # Some markdown parsers treat 1 space indents as 0!
                     header = f"{indent * '  '}{config.list_bullet_style} {key}\n"
                     builder.write(header)
-                python_to_tables.list_of_dict_to_markdown(builder, item, indent)
+                # assume if first is dict, they all are
+                python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
             else:
                 # Some markdown parsers treat 1 space indents as 0!
                 builder.write(f"{indent * '  '}{config.list_bullet_style} {key}\n")
-                render_list(builder, item, config, indent + 1)
+                render_list(builder, cast(list[SerializableTypes], item), config, indent + 1)
         elif isinstance(item, dict):
             builder.write(f"{'#' * header_level} {key}\n\n")
             if config.serialize_child_dict_as_table:
@@ -278,7 +281,11 @@ def render_dict(
 
 
 def render_list(
-    builder: io.IOBase, value: list[SerializableTypes], config: Config, indent: int = 0, header_level: int = 1
+    builder: Union[io.IOBase, TextIO],
+    value: list[SerializableTypes],
+    config: Config,
+    indent: int = 0,
+    header_level: int = 1,
 ) -> int:
     """
     Convert a Python list to Markdown.
@@ -297,7 +304,7 @@ def render_list(
         return indent
     # This list is a list of dictionaries and we want a big table.
     if value and all(isinstance(_, dict) for _ in value):
-        python_to_tables.list_of_dict_to_markdown(builder, value, indent)
+        python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], value), indent)
         return indent
 
     # The list is not of dictionaries or we don't want tables.
@@ -306,12 +313,13 @@ def render_list(
             minibuilder = io.StringIO()
             render_scalar(minibuilder, item, config)
             seralialized_scalar = minibuilder.getvalue()
-            builder.write(f"{indent * ' '}{config.list_bullet_style} {seralialized_scalar}\n")
+            builder.write(f"{indent * '  '}{config.list_bullet_style} {seralialized_scalar}\n")
         elif isinstance(item, list):
             if item and isinstance(item[0], dict):
-                python_to_tables.list_of_dict_to_markdown(builder, item, indent)
+                # assuming if the first is dict, they all are dict.
+                python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
             else:
-                render_list(builder, item, config, indent + 1, header_level)
+                render_list(builder, cast(list[SerializableTypes], item), config, indent + 1, header_level)
         elif isinstance(item, dict):
             # We don't want tables or we'd have handled it above.
             render_dict(builder, item, config, indent + 1, header_level)
@@ -320,7 +328,7 @@ def render_list(
     return indent
 
 
-def unsafe_falsy_type(value: ScalarTypes) -> bool:
+def unsafe_falsy_type(value: SerializableTypes) -> bool:
     """
     Warn the user that blank structures don't have an equivalent in Markdown.
 
@@ -350,7 +358,7 @@ def unsafe_falsy_type(value: ScalarTypes) -> bool:
     return False
 
 
-def unsafe_scalar_type(value: ScalarTypes) -> bool:
+def unsafe_scalar_type(value: SerializableTypes) -> bool:
     """
       Warn the user that non-string types won't round trip.
 

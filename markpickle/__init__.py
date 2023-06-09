@@ -19,4 +19,8 @@ __all__ = [
     "dumps_all",
     "Config",
     "split_file",
+    "convert_json_to_markdown",
+    "convert_markdown_to_json",
 ]
+
+from markpickle.sugar import convert_json_to_markdown, convert_markdown_to_json

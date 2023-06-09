@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mistune = "*"
+mistune = "<3.0.0"
 mdformat = "*"
 tabulate = "*"
 pillow = "*"
+types-tabulate = "*"
+types-pillow = "*"
 
 [dev-packages]
 # marko = "*"

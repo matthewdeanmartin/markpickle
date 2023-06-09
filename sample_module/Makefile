@@ -27,4 +27,4 @@ lint: black
 	@echo "Linting code"
 	$(VENV) flake8-markdown **/*.md
 
-check: black lint test
+check: black lint markdown_tests

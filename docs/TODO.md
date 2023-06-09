@@ -2,34 +2,51 @@
 
 ## Features
 
-- support links as ParseResult (urllib)
-- json to markdown utility function
-- support multiple 3rd party table makers
 - support  `__getstate__()`
   - Easy! Just check if well behaved python type would rather serialize a proxy.
 - and `__setstate__()`
   - Difficult! Most likely custom types implemente `__setstate__()`
   - Don't have meta data extensions.
-- anti-tamper signature
 - schema? Markdown schema?
-- use code block to put source code of class so you can deserialize to that at target.
+
+## Yaml-like metadata header 
+
+Metadata for deserializing to something other that dict/list/scalar
+- anti-tamper signature in header?
+
+## use code block to put source code of class so you can deserialize to that at target.
+
+
+```python
+class Foobar():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+```
+# x
+123
+# y
+456
+
+Would deserialize back to a Foobar
+
 - Using serialization format as a database format, e.g. Shelve - key value store for serialized things? A persistent dictionary.
+
+Dict-Key-Is-Tag-Name
 - investigate json to markdown using mapping (key to md tag) e.g. https://github.com/snjyor/jsonvalue2markdown
+
+Special Types- Links, Images
 - using urlparse/yarl/furl serialize object representing url to a textual url. maybe doing same for links.
 
-## Bugs
+## Mixed Paragraphs as tuples/ Mixed Paragraphs as long string.
+- e.g. para - list - para == tuple[str, list,  str]
 
-- dictionary of dictionaries loses key of outer dictionary
-- date format fails on certain dates
-- 2nd paragraph in a series of paragraphs blows up instead of showing up as simple text.
+## Strip Markdown/Preserve bold & italic as terminal codes
 - Need some sort of fallback behavior for styled text (code block/quote/bold/italic)
 
 ## Build
-
-- devcontainer
-- github actions script
 - get hypothesis slow/flaky to pass
-- get passing mypyc for some modules?
+- get passing mypyc for some modules
 
 ## Config ideas from ChatGPT
 

@@ -59,3 +59,9 @@ class Config:
     serialize_images_to_pillow: bool = False
 
     default: Optional[Callable[[object], str]] = None
+
+    deserialized_add_missing_key: bool = True
+    """If document has ATX headers add missing initial ATX header"""
+
+    deserialized_missing_key_name: str = "Missing Key"
+    """Add `# Missing Key` to head of document if missing."""

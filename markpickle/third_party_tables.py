@@ -1,9 +1,9 @@
 """
 Use 3rd party library to create tables
 """
-import tabulate
+from typing import Any
 
-from markpickle.mypy_types import ScalarTypes
+import tabulate
 
 
 # from pytablewriter import MarkdownTableWriter
@@ -20,7 +20,7 @@ from markpickle.mypy_types import ScalarTypes
 #         ],
 #     )
 #     writer.write_table()
-def to_table_tablulate_style(value: list[list[ScalarTypes]]):
+def to_table_tablulate_style(value: Any) -> str:
     """
     The following tabular data types are supported:
 

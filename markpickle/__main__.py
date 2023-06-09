@@ -5,6 +5,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import markpickle
 
@@ -25,7 +26,7 @@ if __name__ == "__main__":
         parser.add_argument("outfile", nargs="?", type=Path, help="write the output of infile to outfile", default=None)
         options = parser.parse_args()
 
-        dump_args = {}
+        dump_args: dict[str, Any] = {}
 
         with options.infile as infile:
             try:

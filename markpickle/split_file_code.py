@@ -9,7 +9,7 @@ def split_file(file: io.FileIO) -> Generator[str, None, None]:
     """
     Split a file into a list of lines.
     """
-    current_section = []
+    current_section: list[str] = []
     last_row_is_blank = False
 
     def is_separator(row: bytes) -> bool:

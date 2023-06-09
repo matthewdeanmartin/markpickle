@@ -3,12 +3,12 @@ Function created with help of ChatGPT
 """
 import io
 import re
-from typing import Optional
+from typing import Optional, TextIO, Union, cast
 
-from markpickle.mypy_types import DictTypes, ScalarTypes
+from markpickle.mypy_types import ColumnsValuesTableType, DictTypes, ListTypes
 
 
-def list_of_dict_to_markdown(builder: io.IOBase, data: list[dict[str, ScalarTypes]], indent: int = 0):
+def list_of_dict_to_markdown(builder: Union[io.IOBase, TextIO], data: list[DictTypes], indent: int = 0) -> None:
     """
     Create a markdown table. Assumes dict are compatible (have similar keys) and shallow (no dicts of dict values)
     """
@@ -75,7 +75,7 @@ def dict_to_markdown(
     return f"{indentation}{table}"
 
 
-def parse_table_to_list_of_dict(md_table: str) -> list[dict[str, str]]:
+def parse_table_to_list_of_dict(md_table: str) -> ListTypes:
     """Treat tables as list of dictionaries"""
     tuple_stuff = parse_table_with_regex(md_table)
     headers = tuple_stuff[0]
@@ -86,10 +86,11 @@ def parse_table_to_list_of_dict(md_table: str) -> list[dict[str, str]]:
         for column_id, column in enumerate(row):
             dict_row[headers[column_id]] = column
         dict_stuff.append(dict_row)
-    return dict_stuff
+    # mypy complains, but list[dict[str,str]] is a subtype of ListTypes!
+    return cast(ListTypes, dict_stuff)
 
 
-def parse_table_with_regex(md_table: str) -> list[tuple[str, ...]]:
+def parse_table_with_regex(md_table: str) -> ColumnsValuesTableType:
     """
     Created by ChatGPT 3.5 Turbo model.
 
@@ -100,7 +101,7 @@ def parse_table_with_regex(md_table: str) -> list[tuple[str, ...]]:
     col_names = re.findall(r"\| *([^\|\n ]+) *", rows[0])
     num_cols = len(col_names)
     # Initialize the table data as a list of empty lists
-    table_data = [[] for i in range(num_cols)]
+    table_data: list[list[str]] = [[] for i in range(num_cols)]
     # Parse the remaining rows
     for row in rows[2:]:
         # Split the row into cells
@@ -116,7 +117,7 @@ def parse_table_with_regex(md_table: str) -> list[tuple[str, ...]]:
     return [col_names] + list(zip(*table_data))
 
 
-def parse_table(md_table: str) -> list[tuple[str, ...]]:
+def parse_table(md_table: str) -> ColumnsValuesTableType:
     """
     Created by ChatGPT 3.5 Turbo model
     """
@@ -125,7 +126,7 @@ def parse_table(md_table: str) -> list[tuple[str, ...]]:
     col_names = [cell.strip() for cell in rows[0].split("|")[1:-1]]
     num_cols = len(col_names)
     # Initialize the table data as a list of empty lists
-    table_data = [[] for i in range(num_cols)]
+    table_data: list[list[str]] = [[] for _ in range(num_cols)]
     # Parse the remaining rows
     for row in rows[2:]:
         # Split the row into cells
