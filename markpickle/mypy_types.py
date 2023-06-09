@@ -4,14 +4,15 @@ Subset of python types that markpickle will attempt to roundtrip
 from __future__ import annotations
 
 import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, TypeAlias
 
-try:
-    from typing_extensions import TypeAlias
-except ModuleNotFoundError:
-    from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
-except ImportError:
-    from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
+# this isn't 3.9 compatible. Can't catch ModuleNotFound!
+# try:
+#     from typing_extensions import TypeAlias
+# except ModuleNotFoundError:
+#     from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
+# except ImportError:
+#    from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
 
 
 # https://github.com/python/mypy/issues/14219#issuecomment-1528993478
