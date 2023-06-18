@@ -22,7 +22,8 @@ def test_rooted_dictionary_of_list_values():
 - c
   - 7
   - 8
-  - 9"""
+  - 9
+"""
     )
 
 
@@ -44,7 +45,8 @@ def test_rooted_dict_of_list_of_objects():
 | author | pub_date |
 | ------ | -------- |
 | john   | 1922     |
-| john   | 1800     |"""
+| john   | 1800     |
+"""
     )
 
 
@@ -60,7 +62,8 @@ def test_rooted_list_of_objects():
         == """| author | title          | pub_date |
 | ------ | -------------- | -------- |
 | jane   | the little one | 1988     |
-| janet  | the big one    | 2010     |"""
+| janet  | the big one    | 2010     |
+"""
     )
 
 
@@ -71,14 +74,14 @@ def test_dict_of_dicts_as_tables():
         markdown
         == """# Best Cat
 
- | animal | name   |
- | ------ | ------ |
- | cat    | Frisky |
+| animal | name   |
+| ------ | ------ |
+| cat    | Frisky |
 
 # Best Dog
 
- | animal | name |
- | ------ | ---- |
- | dog    | Fido |
+| animal | name |
+| ------ | ---- |
+| dog    | Fido |
 """
     )

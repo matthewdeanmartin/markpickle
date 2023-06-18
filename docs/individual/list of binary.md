@@ -1,2 +1,2 @@
-- ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
-- ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
+- ![bytes](data:image/png;base64,aGVsbG8gd29ybGQ=)
+- ![bytes](data:image/png;base64,aGVsbG8gdW5pdmVyc2U=)

@@ -19,7 +19,7 @@ b'hello world'
 ```
 
 ```markdown
-![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
+![bytes](data:image/png;base64,aGVsbG8gd29ybGQ=)
 ```
 
 Roundtripable? Yes
@@ -33,6 +33,7 @@ Roundtripable? Yes
 - 1
 - 2
 - 3
+
 ```
 
 Roundtripable? Yes
@@ -46,12 +47,13 @@ Roundtripable? Yes
 - 1
 - 2
 - 3
- - a
- - b
- - c
+  - a
+  - b
+  - c
+
 ```
 
-Roundtripable? No
+Roundtripable? Yes
 
 ### list of binary
 ```python
@@ -59,8 +61,9 @@ Roundtripable? No
 ```
 
 ```markdown
-- ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
-- ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
+- ![bytes](data:image/png;base64,aGVsbG8gd29ybGQ=)
+- ![bytes](data:image/png;base64,aGVsbG8gdW5pdmVyc2U=)
+
 ```
 
 Roundtripable? No
@@ -75,6 +78,7 @@ Roundtripable? No
 | ------ | ------ |
 | cat    | Frisky |
 | dog    | Fido   |
+
 ```
 
 Roundtripable? Yes
@@ -86,9 +90,13 @@ Roundtripable? Yes
 
 ```markdown
 # animal
+
 cat
+
 # name
+
 Frisky
+
 ```
 
 Roundtripable? Yes
@@ -100,9 +108,13 @@ Roundtripable? Yes
 
 ```markdown
 # animal
-![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)
+
+![bytes](data:image/png;base64,aGVsbG8gd29ybGQ=)
+
 # name
-![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)
+
+![bytes](data:image/png;base64,aGVsbG8gdW5pdmVyc2U=)
+
 ```
 
 Roundtripable? Yes
@@ -114,13 +126,14 @@ Roundtripable? Yes
 
 ```markdown
 - ages
- - 24
- - 59
- - 45
+  - 24
+  - 59
+  - 45
 - countries
- - US
- - Canada
- - Iceland
+  - US
+  - Canada
+  - Iceland
+
 ```
 
 Roundtripable? No
@@ -133,15 +146,15 @@ Roundtripable? No
 ```markdown
 # Best Cat
 
- | animal | name   |
- | ------ | ------ |
- | cat    | Frisky |
+| animal | name   |
+| ------ | ------ |
+| cat    | Frisky |
 
 # Best Dog
 
- | animal | name |
- | ------ | ---- |
- | dog    | Fido |
+| animal | name |
+| ------ | ---- |
+| dog    | Fido |
 
 ```
 
@@ -157,6 +170,7 @@ Roundtripable? No
 ```markdown
 abc
 ---
+
 123
 ```
 
@@ -167,9 +181,14 @@ abc
 
 ```markdown
 # cat
+
 Frisky
+
 ---
+
 # dog
+
 Fido
+
 ```
 

@@ -35,7 +35,10 @@ def dict_to_markdown(
     data: DictTypes, include_header: bool = True, column_widths: Optional[dict[str, int]] = None, indent: int = 0
 ) -> str:
     """Convert dict to a header-value pair, or a header-value pair where values can be tables."""
-    indentation = indent * " "
+    # indentation = indent * " "
+    if indent > 1:
+        raise TypeError("Formatters will remove leading space on tables.")
+
     # Extract the keys and values from the dictionary
     keys = list(data.keys())
     # values = list(data.values())
@@ -59,10 +62,10 @@ def dict_to_markdown(
     separator = ""
     if include_header:
         header = "| " + " | ".join([str(key).ljust(column_widths[key]) for key in keys]) + " |\n"
-        separator = f"{indentation}| " + " | ".join(["-" * column_widths[key] for key in keys]) + " |\n"
+        separator = "| " + " | ".join(["-" * column_widths[key] for key in keys]) + " |\n"
 
     # Build the rows of the table
-    row = f"{indentation}| "
+    row = "| "
     row += " | ".join(str(value).ljust(column_widths[key]) for key, value in data.items())
     row += " |\n"
 
@@ -72,7 +75,7 @@ def dict_to_markdown(
     else:
         table = row
 
-    return f"{indentation}{table}"
+    return f"{table}"
 
 
 def parse_table_to_list_of_dict(md_table: str) -> ListTypes:

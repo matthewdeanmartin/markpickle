@@ -28,7 +28,8 @@ def test_lists_to_serialize():
 - Item D
   - Sub Item D.1
   - Sub Item D.2
-- Item E"""
+- Item E
+"""
     )
 
 

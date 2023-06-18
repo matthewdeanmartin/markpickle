@@ -25,6 +25,7 @@ def convert_markup_to_terminal(markdown: str):
 if __name__ == "__main__":
 
     def run() -> None:
+        """Simple test"""
         text = "Some text in __bold__, *italic*, and --underline--"
         converted_text = convert_markup_to_terminal(text)
         print(converted_text)

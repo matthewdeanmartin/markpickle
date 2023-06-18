@@ -156,6 +156,7 @@ I copied the ATX-dictionary-like header parsing from [markdown-to-json](https://
 - [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
 - [TODO](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/TODO.md)
 - [People solving similar problems on StackOverflow](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/stackoverflow.md)
+- [Credits](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/credits.md)
 
 ## Change Log
 

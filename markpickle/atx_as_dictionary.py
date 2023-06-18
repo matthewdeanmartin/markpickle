@@ -20,17 +20,18 @@ def parse_outermost_dict(
 
     # recursive
     if isinstance(candidate, dict):
-        for token_key, token_list in candidate.items():
+        for token_key, inner_token_list in candidate.items():
             # Sometimes people skip a level!
             the_sequence = [
-                item["level"] if item["type"] == "heading" else 10000000 for item in cast(MistuneTokenList, token_list)
+                item["level"] if item["type"] == "heading" else 10000000
+                for item in cast(MistuneTokenList, inner_token_list)
             ]
             if not the_sequence:
                 next_level = level + 1
             else:
                 next_level = min(the_sequence)
 
-            candidate[token_key] = recursive_part(next_level, cast(MistuneTokenList, token_list))
+            candidate[token_key] = recursive_part(next_level, cast(MistuneTokenList, inner_token_list))
 
     if candidate:
         return candidate

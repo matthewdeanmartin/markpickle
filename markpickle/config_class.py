@@ -38,11 +38,15 @@ class Config:
     serialize_tables_tabulate_style: bool = False
     """If true, use tabulate to render tables. If false, use a custom renderer"""
 
+    serialize_force_final_newline: bool = False
+    """If true, all serializations must end in newline"""
+
+    serialize_bytes_mime_type: str = "image/png"
+    """If something reasonable, like `application/octet-stream`, some markdown parsers assume it is malicious 
+    and will treat the whole URL as text."""
+
     none_string: str = "None"
     """What to write when a value is None"""
-
-    serialize_run_formatter: bool = False
-    """If true, run the formatter on the output"""
 
     serialize_date_format: str = "%Y-%m-%d"
     """Strftime compatible format for dates"""

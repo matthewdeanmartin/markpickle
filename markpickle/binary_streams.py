@@ -10,13 +10,14 @@ from PIL import Image
 from markpickle.config_class import Config
 
 
-def bytes_to_markdown(key: Optional[str], value: bytes) -> str:
+def bytes_to_markdown(key: Optional[str], value: bytes, config: Config) -> str:
     """
     Convert bytes to markdown image
     """
     base64_data = base64.b64encode(value).decode("utf-8")
     key = key or "bytes"
-    return f"![{key}](data:application/octet-stream;base64,{base64_data})"
+    mime_type = config.serialize_bytes_mime_type
+    return f"![{key}](data:{mime_type};base64,{base64_data})"
 
 
 # Can't correctly type the return value because Pillow's Image module acts like module and class.
@@ -50,7 +51,3 @@ def extract_bytes(src: str, config: Config) -> Any:
         image = Image.open(stream)
         return image
     return image_bytes
-
-
-if __name__ == "__main__":
-    print(bytes_to_markdown("data", b"hello world"))
