@@ -5,13 +5,14 @@ name = "pypi"
 
 [packages]
 mistune = "<3.0.0"
-mdformat = "*"
 tabulate = "*"
 pillow = "*"
-types-tabulate = "*"
-types-pillow = "*"
+typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }
 
 [dev-packages]
+types-tabulate = "*"
+types-pillow = "*"
+mdformat = "*"
 # marko = "*"
 pytest = "===6.2.5"
 vermin = "*"
