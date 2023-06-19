@@ -32,6 +32,8 @@ pytest-markdown-docs = "*"
 # good pytest 7 required
 pytest-codeblocks = "*"
 markdown-to-json = "*"
+unmarkd = "*"
+html2text = "*"
 
 [requires]
 python_version = "3.11"

@@ -1,5 +1,7 @@
 # markpickle
 
+Markpickle treats markdown as a data serialization format.
+
 Markpickle is a Python library for lossy serialization of markdown to simple python data types and back. Imagine if markdown headers were used to define nested dictionaries and Markdown lists were python lists.
 
 It will create predictable markdown from a python object, but can't turn all markdown files into sensible python objects (for that use a markdown library that creates an AST). I created this because I wanted a way to turn json into Markdown. It is an accidental successor to [markdown-to-json](https://github.com/njvack/markdown-to-json).
@@ -27,7 +29,6 @@ Almost all markdown libraries use it as a way to generate HTML fragments from un
 
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/pypi/markpickle) [![Downloads](https://pepy.tech/badge/markpickle/month)](https://pepy.tech/project/markpickle/month)
 
-______________________________________________________________________
 
 ## Installation
 
@@ -38,8 +39,6 @@ pip install markpickle
 ## Capabilities
 
 This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python data structure. If you want an object model that faithfully represents each object in a Markdown document, use the AST of mistune or one of the other markdown parsers.
-
-______________________________________________________________________
 
 ### Supported Types
 
@@ -59,11 +58,9 @@ See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/ex
 - Blanks, falsy values, empty iterables don't round trip
 - Scalar type inference doesn't round trip. After a scalar is converted to a markdown string, there is no indication if the original was a string or not.
 
-______________________________________________________________________
 
 ## Serializing and Deserializing
 
-______________________________________________________________________
 
 ### Serializing
 

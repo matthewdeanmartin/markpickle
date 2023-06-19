@@ -1,5 +1,16 @@
 # TODO
 
+## Bugs
+
+- Doesn't deserialize python nexted dict to ATX headers, except 1st level
+- loads_all is just broken
+- test_dodgy failing (whitespace handling?)
+- nested lists failing again
+- Treat more mixed content as tuple?
+- strict mode to reject mixed content? (areas where no data expected or only 1 value)
+- treat multiple paragraphs with strong/bold/etc as one big string & strip formatting
+- Doesn't handle when a scalar/list/etc is wrapped in bold 
+
 ## Features
 
 - support  `__getstate__()`
@@ -100,4 +111,3 @@ Special Types- Links, Images
 ## Deserializing real world english
 
 - deserialize bold/italic to f string-like thing (possible? not possible?)
-- treat 2nd unexpected data structure as generator stream? (essentially another variation on handing `---`

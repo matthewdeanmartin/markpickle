@@ -117,6 +117,8 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
                         raise NotImplementedError(block_text["children"])
                 elif child["type"] == "list":
                     current_list.append(process_list(child, config))
+                elif child["type"] == "block_code":
+                    current_list.append(child["text"])
                 else:
                     raise NotImplementedError(child["type"])
         else:
@@ -262,11 +264,12 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             else:
                 raise TypeError("Malformed definition-as-dictionary")
         else:
+            pass
             # This is probably mixed content.
             # e.g. a paragraph + list + something + something
-            raise NotImplementedError(
-                f"Probably mixed content (tuple) where a single scalar/list/dict was expected. {token['type']}"
-            )
+            # raise NotImplementedError(
+            #     f"Probably mixed content (tuple) where a single scalar/list/dict was expected. {token['type']}"
+            # )
     if len(accumulate_a_tuple) == 0:
         # Found nothing.
         return None
