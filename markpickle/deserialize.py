@@ -117,6 +117,8 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
                         raise NotImplementedError(block_text["children"])
                 elif child["type"] == "list":
                     current_list.append(process_list(child, config))
+                elif child["type"] == "block_code":
+                    current_list.append(child["text"])
                 else:
                     raise NotImplementedError(child["type"])
         else:
@@ -205,7 +207,7 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             current_text_value: str = token["children"][0]["text"]
             if current_text_value.count("|") >= 2 and config.tables_become_list_of_tuples:
                 return python_to_tables.parse_table_with_regex(current_text_value)
-            elif current_text_value.count("|") >= 2:
+            if current_text_value.count("|") >= 2:
                 return python_to_tables.parse_table_to_list_of_dict(current_text_value)
 
             some_scalar = extract_scalar(current_text_value, config)
@@ -246,12 +248,28 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
         elif token["type"] == "heading":
             # handled elsewhere?
             raise TypeError("Unconsumed header... shouldn't be in AST by this point.")
+        elif token["type"] == "def_list":
+            list_header = None
+            list_item = None
+            for item in token["children"]:
+                if item["type"] == "def_list_header" and list_header is None:
+                    list_header = cast(str, item["text"])
+                elif item["type"] == "def_list_item" and list_item is None:
+                    list_item = cast(str, item["text"])
+                else:
+                    raise TypeError("Expected only list header/list item in definition list")
+            # TODO: Support full dictionary
+            if list_header and list_item:
+                accumulate_a_tuple.append({list_header: list_item})
+            else:
+                raise TypeError("Malformed definition-as-dictionary")
         else:
+            pass
             # This is probably mixed content.
             # e.g. a paragraph + list + something + something
-            raise NotImplementedError(
-                f"Probably mixed content (tuple) where a single scalar/list/dict was expected. {token['type']}"
-            )
+            # raise NotImplementedError(
+            #     f"Probably mixed content (tuple) where a single scalar/list/dict was expected. {token['type']}"
+            # )
     if len(accumulate_a_tuple) == 0:
         # Found nothing.
         return None
@@ -275,7 +293,7 @@ def missing_top_key(result: MistuneTokenList):
             possible_whitespace = strip_formatting(token)
             if possible_whitespace.strip() == "":
                 continue
-        if token["type"] == "heading" and found == []:
+        if token["type"] == "heading" and not found:
             return False
         found.append(token)
     return True
@@ -311,7 +329,8 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
         # Exists to improve round-tripping for unit tests
         return cast(SerializableTypes, config.empty_string_is)
 
-    parser = mistune.create_markdown(renderer="ast")
+    # Enable def_list by default for another dictionary format.
+    parser = mistune.create_markdown(renderer="ast", plugins=["def_list"])
     result = parser.parse(string_value)
 
     # Process a list
@@ -320,7 +339,7 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
 
     dict_wrapper = False
     # handle ATX-dict-like headers
-    has_headers = any(True if item["type"] == "heading" else False for item in result)
+    has_headers = any(item["type"] == "heading" for item in result)
 
     if has_headers:
         # handle people skipping to ## or ###

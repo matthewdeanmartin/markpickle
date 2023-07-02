@@ -3,8 +3,14 @@ Subset of python types that markpickle will attempt to roundtrip
 """
 from __future__ import annotations
 
+import sys
 import datetime
-from typing import Any, Optional, Union, TypeAlias
+from typing import Any, Optional, Union
+
+if sys.version_info < (3, 10):
+    from typing_extensions import TypeAlias
+else:
+    from typing import TypeAlias
 
 # this isn't 3.9 compatible. Can't catch ModuleNotFound!
 # try:

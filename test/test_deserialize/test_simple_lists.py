@@ -41,5 +41,6 @@ def test_list_of_dict_same_schema():
         == """| author | title          | pub_date |
 | ------ | -------------- | -------- |
 | jane   | the little one | 1988     |
-| janet  | the big one    | 2010     |"""
+| janet  | the big one    | 2010     |
+"""
     )

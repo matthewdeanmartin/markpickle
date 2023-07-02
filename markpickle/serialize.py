@@ -34,7 +34,7 @@ def dumps_all(
     builder = io.StringIO()
     for document in value:
         if docs > 0:
-            builder.write("\n---\n")
+            builder.write("\n---\n\n")
         builder.write(dumps(document, config, default))
         docs += 1
     builder.seek(0)
@@ -58,7 +58,7 @@ def dumps(
         A string containing the serialized Markdown.
 
     >>> dumps([1,2])
-    '- 1\\n- 2'
+    '- 1\\n- 2\\n'
     """
     if default and config:
         config.default = default
@@ -78,13 +78,16 @@ def dumps(
 
     builder.seek(0)
     result = builder.read()
-    # Strips out ---, adds ##, flattens nested lists if they have the same bullet! Buggy!
-    # if config.serialize_run_formatter:
-    #     result = mdformat.text(result)
 
     # results in a copy! ugh!
-    if result.endswith("\n"):
-        result = result[0:-1]
+    if config.serialize_force_final_newline and not result.endswith("\n"):
+        # add missing single final new line
+        result += "\n"
+    while result.endswith("\n\n"):
+        # remove extras down to one
+        if result.endswith("\n"):
+            result = result[0:-1]
+
     return result
 
 
@@ -103,7 +106,7 @@ def dump_all(
     docs = 0
     for document in value:
         if docs > 0:
-            stream.write("---\n")
+            stream.write("---\n\n")
         dump(document, stream, config, default)
 
 
@@ -111,8 +114,8 @@ def render_scalar(
     builder: Union[io.IOBase, TextIO],
     value: SerializableTypes,
     config: Config,
-    indent: int = 0,
-    header_level: int = 1,
+    _indent: int = 0,
+    _header_level: int = 1,
 ) -> None:
     """Render a scalar value to Markdown"""
     if isinstance(value, (str, int, float, bool)):
@@ -130,7 +133,7 @@ def render_scalar(
     elif value is None:
         builder.write(config.none_string)
     elif isinstance(value, bytes):
-        builder.write(bytes_to_markdown(None, value))
+        builder.write(bytes_to_markdown(None, value, config))
     elif config.default:
         # fall back to user preferred, e.g. str()
         builder.write(config.default(value))
@@ -182,13 +185,13 @@ def dump(
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
     elif isinstance(value, (str, int, float, bool)):
-        render_scalar(builder, value, config, indent=0, header_level=header_level)
+        render_scalar(builder, value, config)
     elif isinstance(value, (datetime.date,)):
-        render_scalar(builder, value, config, indent=0, header_level=header_level)
+        render_scalar(builder, value, config)
     elif isinstance(value, (datetime.datetime,)):
-        render_scalar(builder, value, config, indent=0, header_level=header_level)
+        render_scalar(builder, value, config)
     elif value is None:
-        render_scalar(builder, value, config, indent=0, header_level=header_level)
+        render_scalar(builder, value, config)
     elif simplify_types.can_class_to_dict(value):
         candidate_dict = simplify_types.class_to_dict(value)
         render_dict(builder, candidate_dict, config, indent=0, header_level=header_level)
@@ -196,14 +199,15 @@ def dump(
         attempt = default(value)
         builder.write(attempt)
     elif isinstance(value, (bytes,)):
-        image_text = bytes_to_markdown("bytes", value)
+        image_text = bytes_to_markdown("bytes", value, config)
         builder.write(image_text)
     else:
         raise NotImplementedError()
 
 
-def python_to_atx_header(builder: Union[io.IOBase, TextIO], data: list[DictTypes], header_level: int, indent: int):
-    pass
+def python_to_atx_header(_builder: Union[io.IOBase, TextIO], _data: list[DictTypes], _header_level: int, _indent: int):
+    """Write a nested dictionary as a series of ATX header sections"""
+    print("Not implemented yet")
 
 
 def render_dict(
@@ -221,6 +225,9 @@ def render_dict(
     Returns:
         The current indentation level.
     """
+    if value is None:
+        # Nothing to write.
+        return indent
 
     for key, item in value.items():
         if not isinstance(item, (list, dict, set)):
@@ -230,7 +237,7 @@ def render_dict(
                 minibuilder = io.StringIO()
                 render_scalar(minibuilder, item, config)
                 seralialized_scalar = minibuilder.getvalue()
-                builder.write(f"{header_level * '#'} {key}\n" f"{seralialized_scalar}\n")
+                builder.write(f"{header_level * '#'} {key}\n\n" f"{seralialized_scalar}\n\n")
             else:
                 # This is ad hoc and not a markdown standard.
                 minibuilder = io.StringIO()
@@ -276,7 +283,7 @@ def render_dict(
             else:
                 render_dict(builder, item, config, indent + 1)
             builder.write("\n")
-        else:
+        elif config.serialize_child_dict_as_table:
             try:
                 table = third_party_tables.to_table_tablulate_style(item)
                 table = textwrap.indent(table, prefix=" " * (indent + 1))
@@ -284,6 +291,9 @@ def render_dict(
             except Exception as ex:
                 logging.warning(f"Tabulate can't handle it either: {ex}")
                 raise NotImplementedError() from ex
+        else:
+            raise NotImplementedError()
+
     return indent
 
 
@@ -310,7 +320,7 @@ def render_list(
     if not value:
         return indent
     # This list is a list of dictionaries and we want a big table.
-    if value and all(isinstance(_, dict) for _ in value):
+    if value and all(isinstance(_, dict) for _ in value) and config.serialize_child_dict_as_table:
         python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], value), indent)
         return indent
 
@@ -322,9 +332,11 @@ def render_list(
             seralialized_scalar = minibuilder.getvalue()
             builder.write(f"{indent * '  '}{config.list_bullet_style} {seralialized_scalar}\n")
         elif isinstance(item, list):
-            if item and isinstance(item[0], dict):
+            if item and isinstance(item[0], dict) and config.serialize_child_dict_as_table:
                 # assuming if the first is dict, they all are dict.
                 python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
+            elif item and isinstance(item[0], dict):
+                raise NotImplementedError()
             else:
                 render_list(builder, cast(list[SerializableTypes], item), config, indent + 1, header_level)
         elif isinstance(item, dict):

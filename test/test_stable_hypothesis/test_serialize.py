@@ -25,7 +25,6 @@ import markpickle.serialize
     serialize_child_dict_as_table=st.booleans(),
     serialize_tables_tabulate_style=st.booleans(),
     none_string=st.text(),
-    serialize_run_formatter=st.booleans(),
     serialize_date_format=st.text(),
     serialized_datetime_format=st.text(),
 )
@@ -40,7 +39,6 @@ def test_fuzz_Config(
     serialize_child_dict_as_table: bool,
     serialize_tables_tabulate_style: bool,
     none_string: str,
-    serialize_run_formatter: bool,
     serialize_date_format: str,
     serialized_datetime_format: str,
 ) -> None:
@@ -55,7 +53,6 @@ def test_fuzz_Config(
         serialize_child_dict_as_table=serialize_child_dict_as_table,
         serialize_tables_tabulate_style=serialize_tables_tabulate_style,
         none_string=none_string,
-        serialize_run_formatter=serialize_run_formatter,
         serialize_date_format=serialize_date_format,
         serialized_datetime_format=serialized_datetime_format,
     )

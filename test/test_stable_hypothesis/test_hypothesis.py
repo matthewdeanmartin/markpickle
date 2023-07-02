@@ -22,7 +22,6 @@ import markpickle.config_class
     serialize_dict_as_table=st.booleans(),
     serialize_child_dict_as_table=st.booleans(),
     none_string=st.text(),
-    serialize_run_formatter=st.booleans(),
 )
 def test_fuzz_Config(
     infer_scalar_types: bool,
@@ -34,7 +33,6 @@ def test_fuzz_Config(
     serialize_dict_as_table: bool,
     serialize_child_dict_as_table: bool,
     none_string: str,
-    serialize_run_formatter: bool,
 ) -> None:
     markpickle.Config(
         infer_scalar_types=infer_scalar_types,
@@ -46,7 +44,6 @@ def test_fuzz_Config(
         serialize_dict_as_table=serialize_dict_as_table,
         serialize_child_dict_as_table=serialize_child_dict_as_table,
         none_string=none_string,
-        serialize_run_formatter=serialize_run_formatter,
     )
 
 
