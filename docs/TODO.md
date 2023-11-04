@@ -2,28 +2,28 @@
 
 ## Bugs
 
-- Doesn't deserialize python nexted dict to ATX headers, except 1st level
-- loads_all is just broken
-- test_dodgy failing (whitespace handling?)
-- nested lists failing again
-- Treat more mixed content as tuple?
-- strict mode to reject mixed content? (areas where no data expected or only 1 value)
-- treat multiple paragraphs with strong/bold/etc as one big string & strip formatting
-- Doesn't handle when a scalar/list/etc is wrapped in bold 
+- [ ] Doesn't deserialize python nexted dict to ATX headers, except 1st level
+- [ ] loads_all is just broken
+- [ ] test_dodgy failing (whitespace handling?)
+- [ ] nested lists failing again
+- [ ] Treat more mixed content as tuple?
+- [ ] strict mode to reject mixed content? (areas where no data expected or only 1 value)
+- [ ] treat multiple paragraphs with strong/bold/etc as one big string & strip formatting
+- [ ] Doesn't handle when a scalar/list/etc is wrapped in bold 
 
 ## Features
 
-- support  `__getstate__()`
-  - Easy! Just check if well behaved python type would rather serialize a proxy.
-- and `__setstate__()`
-  - Difficult! Most likely custom types implemente `__setstate__()`
-  - Don't have meta data extensions.
-- schema? Markdown schema?
+- [ ] support  `__getstate__()`
+  - [ ] Easy! Just check if well behaved python type would rather serialize a proxy.
+- [ ] and `__setstate__()`
+  - [ ] Difficult! Most likely custom types implemente `__setstate__()`
+  - [ ] Don't have meta data extensions.
+- [ ] schema? Markdown schema?
 
 ## Yaml-like metadata header 
 
 Metadata for deserializing to something other that dict/list/scalar
-- anti-tamper signature in header?
+- [ ] anti-tamper signature in header?
 
 ## use code block to put source code of class so you can deserialize to that at target.
 
@@ -34,10 +34,13 @@ class Foobar():
         self.x = x
         self.y = y
 ```
+
+```markdown
 # x
 123
 # y
 456
+```
 
 Would deserialize back to a Foobar
 
@@ -110,4 +113,4 @@ Special Types- Links, Images
 
 ## Deserializing real world english
 
-- deserialize bold/italic to f string-like thing (possible? not possible?)
+- [ ] deserialize bold/italic to f string-like thing (possible? not possible?)

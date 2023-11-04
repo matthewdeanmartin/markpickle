@@ -3,8 +3,8 @@ Subset of python types that markpickle will attempt to roundtrip
 """
 from __future__ import annotations
 
-import sys
 import datetime
+import sys
 from typing import Any, Optional, Union
 
 if sys.version_info < (3, 10):

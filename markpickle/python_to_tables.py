@@ -16,7 +16,7 @@ def list_of_dict_to_markdown(builder: Union[io.IOBase, TextIO], data: list[DictT
 
     column_widths: dict[str, int] = {}
     for schema in data:
-        column_widths = column_widths | {key: 0 for key in schema.keys()}
+        column_widths = column_widths | {key: 0 for key in schema}
 
     for datum in data:
         for key, value in datum.items():
@@ -50,7 +50,7 @@ def dict_to_markdown(
     # max_value_length = max(len(str(value)) for value in values)
 
     if not column_widths:
-        column_widths = {key: 0 for key in data.keys()}
+        column_widths = {key: 0 for key in data}
         for key, value in data.items():
             # TODO: doesn't handle complex types (and maybe can't? markdown doesn't support nested tables, AFAIK)
             max_width = max(len(str(key)), len(str(value)))
@@ -117,7 +117,7 @@ def parse_table_with_regex(md_table: str) -> ColumnsValuesTableType:
         for i, cell in enumerate(cells):
             table_data[i].append(cell)
     # Combine the column names with the table data and return the result
-    return [col_names] + list(zip(*table_data))
+    return [col_names] + list(zip(*table_data, strict=True))
 
 
 def parse_table(md_table: str) -> ColumnsValuesTableType:
@@ -141,4 +141,4 @@ def parse_table(md_table: str) -> ColumnsValuesTableType:
         for i, cell in enumerate(cells):
             table_data[i].append(cell)
     # Combine the column names with the table data and return the result
-    return [col_names] + list(zip(*table_data))
+    return [col_names] + list(zip(*table_data, strict=True))

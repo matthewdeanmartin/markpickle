@@ -10,9 +10,7 @@ import logging
 import textwrap
 from typing import Any, Callable, Optional, TextIO, Union, cast
 
-import markpickle.python_to_tables as python_to_tables
-import markpickle.simplify_types as simplify_types
-import markpickle.third_party_tables as third_party_tables
+from markpickle import python_to_tables, simplify_types, third_party_tables
 from markpickle.binary_streams import bytes_to_markdown
 from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, SerializableTypes
@@ -184,13 +182,7 @@ def dump(
     #         render_dict(builder, item, config, indent=1, header_level=header_level)
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
-    elif isinstance(value, (str, int, float, bool)):
-        render_scalar(builder, value, config)
-    elif isinstance(value, (datetime.date,)):
-        render_scalar(builder, value, config)
-    elif isinstance(value, (datetime.datetime,)):
-        render_scalar(builder, value, config)
-    elif value is None:
+    elif isinstance(value, bool | datetime.date | datetime.datetime | float | int | str):
         render_scalar(builder, value, config)
     elif simplify_types.can_class_to_dict(value):
         candidate_dict = simplify_types.class_to_dict(value)
@@ -201,8 +193,10 @@ def dump(
     elif isinstance(value, (bytes,)):
         image_text = bytes_to_markdown("bytes", value, config)
         builder.write(image_text)
+    elif value is None:
+        builder.write("")
     else:
-        raise NotImplementedError()
+        raise NotImplementedError(f"Can't dump type of {type(value)} with value of {value}")
 
 
 def python_to_atx_header(_builder: Union[io.IOBase, TextIO], _data: list[DictTypes], _header_level: int, _indent: int):
@@ -361,7 +355,7 @@ def unsafe_falsy_type(value: SerializableTypes) -> bool:
         # falsies will not roundtrip.
         return True
     if isinstance(value, dict):
-        if any(key in ([], {}, (), "", "0", None) for key in value.keys()):
+        if any(key in ([], {}, (), "", "0", None) for key in value):
             return True
         if any(dict_value in ([], {}, (), "", "0", None) for dict_value in value.values()):
             return True
@@ -370,7 +364,7 @@ def unsafe_falsy_type(value: SerializableTypes) -> bool:
             return True
         for inner in value:
             if isinstance(inner, dict):
-                if any(key in ([], {}, (), "", "0", None) for key in inner.keys()):
+                if any(key in ([], {}, (), "", "0", None) for key in inner):
                     return True
                 if any(dict_value in ([], {}, (), "", "0", None) for dict_value in inner.values()):
                     return True
@@ -409,7 +403,7 @@ def unsafe_scalar_type(value: SerializableTypes) -> bool:
                     datetime.date,
                 ),
             )
-            for key in value.keys()
+            for key in value
         ):
             return True
         if any(
@@ -424,17 +418,16 @@ def unsafe_scalar_type(value: SerializableTypes) -> bool:
             for dict_value in value.values()
         ):
             return True
-    if isinstance(value, list):
-        if any(
-            isinstance(
-                list_value,
-                (
-                    int,
-                    float,
-                    datetime.date,
-                ),
-            )
-            for list_value in value
-        ):
-            return True
+    if isinstance(value, list) and any(
+        isinstance(
+            list_value,
+            (
+                int,
+                float,
+                datetime.date,
+            ),
+        )
+        for list_value in value
+    ):
+        return True
     return False

@@ -8,22 +8,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Install poetry and pipx
+        run: |
+          pip install poetry && pip install pipx
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-          cache: 'pipenv' # caching pipenv dependencies
-      - name: Install pipenv and pipx
-        run: |
-          pip install pipenv && pip install pipx
+          cache: 'poetry'
 
       - name: Install Dependencies
-        run: pipenv install --dev --skip-lock
+        run: poetry install --with dev
       - name: Install global dependencies
         run: |
           pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
           pipx install pre-commit && pipx install poetry
       - name: Run make
-        run: pipenv run make publish
+        run: poetry run make publish
       - name: Upload Package
         uses: actions/upload-artifact@v3.1.2
         with:

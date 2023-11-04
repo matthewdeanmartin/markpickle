@@ -31,10 +31,8 @@ def run() -> None:
         try:
             objs = (load(infile),)
 
-            if options.outfile is None:
-                out = sys.stdout
-            else:
-                out = options.outfile.open("w", encoding="utf-8")
+            out = sys.stdout if options.outfile is None else options.outfile.open("w", encoding="utf-8")
+
             with out as outfile:
                 for obj in objs:
                     json.dump(obj, outfile, **dump_args)

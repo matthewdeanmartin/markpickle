@@ -14,12 +14,12 @@ echo
 echo "Formatting markdown files with mdformat"
 echo
 for file in $FILES; do
-    pipenv run mdformat "$file"
+    poetry run mdformat "$file"
 done
 
 
 echo
 echo "Are the links okay?"
 echo
-pipenv run linkcheckMarkdown docs
-pipenv run linkcheckMarkdown *.md
+poetry run linkcheckMarkdown docs
+poetry run linkcheckMarkdown *.md

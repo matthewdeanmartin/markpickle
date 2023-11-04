@@ -2,7 +2,7 @@ md_lint:
     npx markdownlint-cli docs/individual
 
 test:
-    pipenv shell pytest test
+    poetry run pytest test
 
 hypothesis:
-    pipenv shell pytest test_hypothesis
+    poetry shell pytest test_hypothesis

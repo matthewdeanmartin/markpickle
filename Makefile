@@ -5,14 +5,14 @@ FILES := $(wildcard **/*.py)
 
 # if you wrap everything in pipenv run, it runs slower.
 ifeq ($(origin VIRTUAL_ENV),undefined)
-    VENV := pipenv run
+    VENV := poetry run
 else
     VENV :=
 endif
 
-Pipfile.lock: Pipfile
+poetry.lock: pyproject.toml
 	@echo "Installing dependencies"
-	@pipenv install --dev
+	@poetry lock && poetry install --with dev
 
 clean-pyc:
 	@echo "Removing compiled files"
@@ -29,7 +29,7 @@ clean: clean-pyc clean-test
 
 # tests can't be expected to pass if dependencies aren't installed.
 # tests are often slow and linting is fast, so run tests on linted code.
-test: clean .build_history/pylint .build_history/bandit Pipfile.lock
+test: clean .build_history/pylint .build_history/bandit poetry.lock
 	@echo "Running unit tests"
 	$(VENV) pytest markpickle --doctest-modules
 	$(VENV) python -m unittest discover
@@ -64,7 +64,7 @@ pre-commit: .build_history/pre-commit
 
 .build_history/bandit: .build_history $(FILES)
 	@echo "Security checks"
-	$(VENV)  bandit .
+	$(VENV)  bandit markpickle -r
 	@touch .build_history/bandit
 
 .PHONY: bandit

@@ -15,7 +15,7 @@ def run() -> None:
 
     # don't really work at all
 
-    response = requests.get(mp)
+    response = requests.get(mp, timeout=60)
     marks = html2text.html2text(response.text)
     marks = marks.replace("* * *\n", "---\n")
     for item in marks.split("---\n"):

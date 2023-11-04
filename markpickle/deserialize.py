@@ -14,7 +14,7 @@ from typing import Any, Generator, Optional, cast
 
 import mistune
 
-import markpickle.python_to_tables as python_to_tables
+from markpickle import python_to_tables
 from markpickle.atx_as_dictionary import parse_outermost_dict, strip_formatting
 from markpickle.binary_streams import extract_bytes
 from markpickle.config_class import Config
@@ -84,7 +84,8 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
             return float(value)
 
     # Attempt to parse as a date
-    if value.count("-") == 2:
+    dashes_in_year_month = 2
+    if value.count("-") == dashes_in_year_month:
         try:
             return datetime.datetime.strptime(value, "%Y-%m-%d").date()
         except ValueError:
