@@ -115,6 +115,8 @@ Most libraries turn markdown into document object model. Markdown-to-json is the
 
 [beautifulsoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) will let you navigate the HTML DOM. So you can turn the markdown into HTML, then parse with Beautiful Soup.
 
+[keepachangelog](https://pypi.org/project/keepachangelog/) is a single-schema Markdown to python dict tool.
+
 ## Representable Types
 
 There is one optional root dictionary representable with ATX headers, e.g. `#`, `##`, etc. Lists are nestable lists or dicts. For the most part, this looks like the types that JSON can represent.

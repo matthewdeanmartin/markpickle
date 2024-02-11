@@ -3,7 +3,7 @@
 
 FILES := $(wildcard **/*.py)
 
-# if you wrap everything in pipenv run, it runs slower.
+# if you wrap everything in poetry run, it runs slower.
 ifeq ($(origin VIRTUAL_ENV),undefined)
     VENV := poetry run
 else
