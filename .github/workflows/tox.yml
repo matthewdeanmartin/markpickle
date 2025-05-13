@@ -19,7 +19,7 @@ jobs:
         python-version: [
           # Still got 3.9 problems with annotations.
           # "3.9",
-          "3.10", "3.11",
+          "3.11", "3.12",
           # waste of cpu right now
           # "3.12"
         ]
