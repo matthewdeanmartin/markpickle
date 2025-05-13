@@ -14,14 +14,14 @@ jobs:
     - uses: actions/setup-python@v5.6.0
       with:
         python-version: '3.13'
-        cache: 'poetry'
+        # cache: 'poetry'
 
     - name: Install Dependencies
       run: uv sync
     - name: Install global dependencies
       run: |
         pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
-        pipx install pre-commit && pipx install poetry
+        pipx install pre-commit && pipx install uv
     - name: Run make
       run: uv run make publish
     - name: Upload Package

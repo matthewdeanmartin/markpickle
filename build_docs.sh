@@ -14,12 +14,12 @@ echo
 echo "Formatting markdown files with mdformat"
 echo
 for file in $FILES; do
-    poetry run mdformat "$file"
+    uv run mdformat "$file"
 done
 
 
 echo
 echo "Are the links okay?"
 echo
-poetry run linkcheckMarkdown docs
-poetry run linkcheckMarkdown *.md
+uv run linkcheckMarkdown docs
+uv run linkcheckMarkdown *.md
