@@ -11,10 +11,9 @@ jobs:
     - name: Install uv and pipx
       run: |
         pip install uv && pip install pipx
-    - uses: actions/setup-python@v5.6.0
+    - uses: actions/setup-python@v6.0.1
       with:
         python-version: '3.13'
-        # cache: 'poetry'
     - name: Install uv
       uses: astral-sh/setup-uv@v5
 
