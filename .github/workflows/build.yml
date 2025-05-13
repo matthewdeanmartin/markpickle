@@ -15,13 +15,15 @@ jobs:
       with:
         python-version: '3.13'
         # cache: 'poetry'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
     - name: Install Dependencies
       run: uv sync
     - name: Install global dependencies
       run: |
         pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
-        pipx install pre-commit && pipx install uv
+        pipx install pre-commit
     - name: Run make
       run: uv run make publish
     - name: Upload Package

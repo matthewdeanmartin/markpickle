@@ -70,7 +70,8 @@ dev = [
 "pytest-codeblocks==0.17.0",
 "markdown-to-json>=2.1.0",
 "unmarkd>=1.1.1",
-"html2text>=2020.1.16"
+"html2text>=2020.1.16",
+"build>=1.2.1"
 ]
 
 [tool.uv]
