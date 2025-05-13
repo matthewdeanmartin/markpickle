@@ -1,0 +1,220 @@
+[tool.poetry]
+name = "markpickle"
+version = "1.6.2"
+description = "Lossy python to markdown serializer"
+authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
+keywords = ["serializer", "deserializer", "markdown",]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+include = [
+    "markpickle/**/*.py",
+    "markpickle/**/*.md",
+    "markpickle/**/*.txt",
+    "markpickle/**/*.html",
+    "markpickle/**/*.jinja",
+]
+exclude = [
+]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/matthewdeanmartin/markpickle"
+homepage = "https://github.com/matthewdeanmartin/markpickle"
+documentation ="https://github.com/matthewdeanmartin/markpickle"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/matthewdeanmartin/markpickle/issues"
+"Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGES.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8, <4.0"
+# DOM parser
+mistune = "<3.0.0"
+# support more types to table
+tabulate = "*"
+# image/binary support
+pillow = ">=8.1"
+# 3.8/3/9 support
+typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }
+
+[tool.poetry.dev-dependencies]
+types-tabulate = "*"
+types-pillow = "*"
+mdformat = ">=0.7.17"
+# marko = "*"
+pytest = ">=7.4.3"
+vermin = ">=1.5.2"
+hypothesis = {extras = ["cli"], version = ">=6.88.1"}
+pre-commit = ">=3.5.0"
+mypy = ">=1.6.1"
+pytest-cov = ">=4.1.0"
+ruff = ">=0.1.4"
+linkcheckmd = ">=1.4.0"
+tox = ">=4.11.3"
+2to3 = ">=1.0"
+scriv = ">=1.5.0"
+blacken-docs = ">=1.16.0"
+flake8-markdown = ">=0.5.0"
+# good pytest 7 required
+pytest-markdown-docs = ">=0.4.3"
+# good pytest 7 required
+pytest-codeblocks = "0.17.0"
+markdown-to-json = ">=2.1.0"
+unmarkd = ">=1.1.1"
+html2text = ">=2020.1.16"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+include = '\.pyi?$'
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+junit_family = "xunit1"
+norecursedirs = ["vendor", "scripts"]
+# don't know how to do this in toml
+#addopts = "--strict-markers"
+#markers =
+#	slow: marks tests as slow (deselect with '-m "not slow"')
+#	fast: marks tests as fast (deselect with '-m "not fast"')
+
+[tool.isort]
+default_section = "THIRDPARTY"
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = ["markpickle"]
+line_length = 88
+multi_line_output = 3
+use_parentheses = true
+
+[tool.ruff]
+line-length = 1000
+
+# Enable Pyflakes `E` and `F` codes by default.
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  # "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  # "I",
+  # bandit
+  "S",
+    # flake8-builtins
+    "A",
+    # flake8 pytest style
+    "PT",
+    # Pylint
+    "PL"
+]
+ignore = [
+    "E722", # no bare-except
+    "S603", # subprocess should not use shell (?)
+    "S101", # assert is fine in a test!
+    "PT018", # double asserts sometimes okay
+    "PLR0912", # too many branches
+    "PLR0915", # too many something
+    "PLR0911", # too many returns
+    "PLR0913", # too many arguments
+    "PLC0414", # name of import
+    "E501", # formatting
+    "PLR2004", # not all literal numbers need to be named constants
+    "SIM108", # not all trinary if improves readability
+]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "dead_code",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "hide"
+]
+per-file-ignores = { }
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py311"
+
+[tool.scriv]
+format = "md"
+version = "literal: pyproject.toml: project.version"
+
+[tool.hatch.version]
+path = "markpickle/__init__.py"
+output_file = "CHANGELOG.${config:format}"
+
+#[tool.setuptools]
+## find = {}
+#py-modules = ["markpickle",
+#    "markpickle.deserialize",
+#    "markpickle.python_to_tables",
+#    "markpickle.serialize",
+#]
+
+[mypy]
+warn_return_any = true
+warn_unused_configs = true
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["mistune.*"]
+ignore_missing_imports = true

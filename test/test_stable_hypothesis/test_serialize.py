@@ -93,7 +93,7 @@ def test_fuzz_Config(
         st.text(),
     ),
     stream=st.just(io.StringIO()),
-    config=st.from_type(typing.Optional[markpickle.config_class.Config]),
+    config=st.just(markpickle.config_class.Config()),
 )
 def test_fuzz_dump(
     value: typing.Union[
@@ -158,7 +158,7 @@ def test_fuzz_dump(
         ),
         st.text(),
     ),
-    config=st.from_type(typing.Optional[markpickle.config_class.Config]),
+    config=st.just(markpickle.config_class.Config()),
 )
 def test_fuzz_dumps(
     value: typing.Union[
