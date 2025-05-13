@@ -1,6 +1,7 @@
 """
 Function created with help of ChatGPT
 """
+
 import io
 import re
 from typing import Optional, TextIO, Union, cast
@@ -22,13 +23,11 @@ def list_of_dict_to_markdown(builder: Union[io.IOBase, TextIO], data: list[DictT
         for key, value in datum.items():
             # TODO: doesn't handle complex types (and maybe can't? markdown doesn't support nested tables, AFAIK)
             max_width = max(len(str(key)), len(str(value)))
-            if max_width > column_widths[key]:
-                column_widths[key] = max_width
+            column_widths[key] = max(column_widths[key], max_width)
 
-    for datum in data:
+    for row_id, datum in enumerate(data):
         include_header = row_id == 0
         builder.write(dict_to_markdown(datum, include_header, column_widths, indent))
-        row_id += 1
 
 
 def dict_to_markdown(
@@ -54,8 +53,7 @@ def dict_to_markdown(
         for key, value in data.items():
             # TODO: doesn't handle complex types (and maybe can't? markdown doesn't support nested tables, AFAIK)
             max_width = max(len(str(key)), len(str(value)))
-            if max_width > column_widths[key]:
-                column_widths[key] = max_width
+            column_widths[key] = max(column_widths[key], max_width)
 
     # Build the header row
     header = ""

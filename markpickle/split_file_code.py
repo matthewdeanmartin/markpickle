@@ -1,6 +1,7 @@
 """
 Handle a convention for putting multiple serialized objects into a single file.
 """
+
 import io
 from typing import Generator
 

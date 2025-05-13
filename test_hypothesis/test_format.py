@@ -1,6 +1,7 @@
 """
 Does it generate clean Markdown?
 """
+
 from test.examples_of_supported_types import EXAMPLES
 
 import mdformat

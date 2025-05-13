@@ -1,6 +1,7 @@
 """
 Public utility functions
 """
+
 import json
 
 from markpickle.deserialize import loads

@@ -8,22 +8,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install poetry and pipx
+      - name: Install uv and pipx
         run: |
-          pip install poetry && pip install pipx
+          pip install uv && pip install pipx
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13'
           cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry install --with dev
+        run: uv sync
       - name: Install global dependencies
         run: |
           pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
           pipx install pre-commit && pipx install poetry
       - name: Run make
-        run: poetry run make publish
+        run: uv run make publish
       - name: Upload Package
         uses: actions/upload-artifact@v3.1.2
         with:

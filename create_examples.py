@@ -16,7 +16,7 @@ EXAMPLES = {
     "dictionary of dictionaries": {
         "Best Cat": {"animal": "cat", "name": "Frisky"},
         "Best Dog": {"animal": "dog", "name": "Fido"},
-    }
+    },
     # Markdown to python is fine, but python to markdown isn't sensible!
     # "complex nested": {'Description': 'This is an example file',
     #                    'Authors': ['Nate Vack', 'Vendor Packages', ['docopt', 'CommonMark-py']],

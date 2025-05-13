@@ -3,6 +3,7 @@ Increase odds of successful serialization by converting to simpler types
 """
 
 from dataclasses import is_dataclass
+from types import MappingProxyType
 from typing import Any
 
 
@@ -12,12 +13,10 @@ def can_class_to_dict(obj) -> bool:
         return True
     if isinstance(obj, type):
         return True
-    if hasattr(obj, "__dict__"):
-        return True
-    return False
+    return bool(hasattr(obj, "__dict__"))
 
 
-def class_to_dict(obj) -> dict[str, Any]:
+def class_to_dict(obj) -> dict[str, Any] | MappingProxyType[str, Any]:
     """
     Converts classes to dict
 

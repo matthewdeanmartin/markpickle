@@ -1,6 +1,7 @@
 """
 Subset of python types that markpickle will attempt to roundtrip
 """
+
 from __future__ import annotations
 
 import datetime

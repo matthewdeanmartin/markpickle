@@ -1,6 +1,7 @@
 """
 CLI support
 """
+
 import argparse
 import json
 import sys

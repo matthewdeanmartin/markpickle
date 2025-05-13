@@ -1,8 +1,13 @@
-[tool.poetry]
+[project]
 name = "markpickle"
 version = "1.6.2"
 description = "Lossy python to markdown serializer"
-authors = ["Matthew Martin <matthewdeanmartin@gmail.com>"]
+authors = [
+    {name = "Matthew Martin", email = "matthewdeanmartin@gmail.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8,<4.0"
 keywords = ["serializer", "deserializer", "markdown",]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -13,63 +18,63 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    # DOM Parser
+    "mistune<3.0.0",
+    # support more type to table patterns
+    "tabulate",
+    # image/binary support
+    "pillow>=8.1",
 
+#     3.8/3/9 support
+#    typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }
 ]
-include = [
-    "markpickle/**/*.py",
-    "markpickle/**/*.md",
-    "markpickle/**/*.txt",
-    "markpickle/**/*.html",
-    "markpickle/**/*.jinja",
-]
-exclude = [
-]
-license = "MIT"
-readme = "README.md"
-repository = "https://github.com/matthewdeanmartin/markpickle"
-homepage = "https://github.com/matthewdeanmartin/markpickle"
-documentation ="https://github.com/matthewdeanmartin/markpickle"
+#repository = "https://github.com/matthewdeanmartin/markpickle"
+#homepage = "https://github.com/matthewdeanmartin/markpickle"
+#documentation ="https://github.com/matthewdeanmartin/markpickle"
 
-[tool.poetry.urls]
+[project.urls]
 "Bug Tracker" = "https://github.com/matthewdeanmartin/markpickle/issues"
 "Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGES.md"
 
-[tool.poetry.dependencies]
-python = ">=3.8, <4.0"
-# DOM parser
-mistune = "<3.0.0"
-# support more types to table
-tabulate = "*"
-# image/binary support
-pillow = "*"
-# 3.8/3/9 support
-typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry.dev-dependencies]
-types-tabulate = "*"
-types-pillow = "*"
-mdformat = ">=0.7.17"
-# marko = "*"
-pytest = ">=7.4.3"
-vermin = ">=1.5.2"
-hypothesis = {extras = ["cli"], version = ">=6.88.1"}
-pre-commit = ">=3.5.0"
-mypy = ">=1.6.1"
-pytest-cov = ">=4.1.0"
-ruff = ">=0.1.4"
-linkcheckmd = ">=1.4.0"
-tox = ">=4.11.3"
-2to3 = ">=1.0"
-scriv = ">=1.5.0"
-blacken-docs = ">=1.16.0"
-flake8-markdown = ">=0.5.0"
-# good pytest 7 required
-pytest-markdown-docs = ">=0.4.3"
-# good pytest 7 required
-pytest-codeblocks = "0.17.0"
-markdown-to-json = ">=2.1.0"
-unmarkd = ">=1.1.1"
-html2text = ">=2020.1.16"
+[tool.hatch.build.targets.wheel]
+      packages = ["infra"]
+
+
+[dependency-groups]
+dev = [
+"types-tabulate",
+"types-pillow",
+"mdformat>=0.7.17",
+"pytest>=7.4.3",
+"vermin>=1.5.2",
+"hypothesis[cli]>=6.88.1",
+"pre-commit>=3.5.0",
+"mypy>=1.6.1",
+"pytest-cov>=4.1.0",
+"ruff>=0.1.4",
+"linkcheckmd>=1.4.0",
+"tox>=4.11.3",
+"2to3>=1.0",
+"scriv>=1.5.0",
+"blacken-docs>=1.16.0",
+"flake8-markdown>=0.5.0",
+"pytest-markdown-docs>=0.4.3",
+"pytest-codeblocks==0.17.0",
+"markdown-to-json>=2.1.0",
+"unmarkd>=1.1.1",
+"html2text>=2020.1.16"
+]
+
+[tool.uv]
+default-groups = ["dev"]
 
 [tool.black]
 line-length = 120
@@ -94,9 +99,6 @@ exclude = '''
                      # the root of the project
 )
 '''
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -111,6 +113,7 @@ norecursedirs = ["vendor", "scripts"]
 #	slow: marks tests as slow (deselect with '-m "not slow"')
 #	fast: marks tests as fast (deselect with '-m "not fast"')
 
+
 [tool.isort]
 default_section = "THIRDPARTY"
 force_grid_wrap = 0
@@ -124,7 +127,7 @@ use_parentheses = true
 line-length = 1000
 
 # Enable Pyflakes `E` and `F` codes by default.
-select = [
+lint.select = [
   # pycodestyle
   "E",
   # Pyflakes
@@ -146,7 +149,7 @@ select = [
     # Pylint
     "PL"
 ]
-ignore = [
+lint.ignore = [
     "E722", # no bare-except
     "S603", # subprocess should not use shell (?)
     "S101", # assert is fine in a test!
@@ -185,13 +188,13 @@ exclude = [
     "venv",
     "hide"
 ]
-per-file-ignores = { }
+lint.per-file-ignores = { }
 
 # Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.10.
-target-version = "py311"
+# Assume Python 3.13.
+target-version = "py313"
 
 [tool.scriv]
 format = "md"
@@ -217,3 +220,19 @@ strict = true
 [[tool.mypy.overrides]]
 module = ["mistune.*"]
 ignore_missing_imports = true
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]

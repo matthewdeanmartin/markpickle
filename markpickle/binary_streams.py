@@ -1,6 +1,7 @@
 """
 Add support for binary streams via images and data URLs
 """
+
 import base64
 import io
 from typing import Any, Optional

@@ -5,14 +5,14 @@ FILES := $(wildcard **/*.py)
 
 # if you wrap everything in poetry run, it runs slower.
 ifeq ($(origin VIRTUAL_ENV),undefined)
-    VENV := poetry run
+    VENV := uv run
 else
     VENV :=
 endif
 
-poetry.lock: pyproject.toml
+uv.lock: pyproject.toml
 	@echo "Installing dependencies"
-	@poetry lock && poetry install --with dev
+	@uv lock && uv sync
 
 clean-pyc:
 	@echo "Removing compiled files"
@@ -29,10 +29,10 @@ clean: clean-pyc clean-test
 
 # tests can't be expected to pass if dependencies aren't installed.
 # tests are often slow and linting is fast, so run tests on linted code.
-test: clean .build_history/pylint .build_history/bandit poetry.lock
+test: clean .build_history/pylint .build_history/bandit uv.lock
 	@echo "Running unit tests"
 	$(VENV) pytest markpickle --doctest-modules
-	$(VENV) python -m unittest discover
+	# $(VENV) python -m unittest discover
 	$(VENV) py.test test --cov=markpickle --cov-report=html --cov-fail-under 50
 
 .build_history:
@@ -48,7 +48,7 @@ isort: .build_history/isort
 
 .build_history/black: .build_history .build_history/isort $(FILES)
 	@echo "Formatting code"
-	$(VENV) black . --exclude .virtualenv
+	$(VENV) black . --exclude .virtualenv --exclude .venv
 	@touch .build_history/black
 
 .PHONY: black
@@ -92,7 +92,7 @@ check: test pylint bandit pre-commit mypy
 
 .PHONY: publish
 publish: check
-	rm -rf dist && poetry build
+	rm -rf dist && python -m build
 
 # Use github to publish
 #.PHONY: publish

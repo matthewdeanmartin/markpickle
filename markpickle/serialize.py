@@ -28,13 +28,12 @@ def dumps_all(
         config = Config()
         config.default = default
 
-    docs = 0
     builder = io.StringIO()
-    for document in value:
+    for docs, document in enumerate(value):
         if docs > 0:
             builder.write("\n---\n\n")
         builder.write(dumps(document, config, default))
-        docs += 1
+
     builder.seek(0)
     return builder.read()
 
@@ -185,7 +184,7 @@ def dump(
     elif isinstance(value, bool | datetime.date | datetime.datetime | float | int | str):
         render_scalar(builder, value, config)
     elif simplify_types.can_class_to_dict(value):
-        candidate_dict = simplify_types.class_to_dict(value)
+        candidate_dict = cast(Any, simplify_types.class_to_dict(value))
         render_dict(builder, candidate_dict, config, indent=0, header_level=header_level)
     elif default:
         attempt = default(value)
@@ -418,7 +417,7 @@ def unsafe_scalar_type(value: SerializableTypes) -> bool:
             for dict_value in value.values()
         ):
             return True
-    if isinstance(value, list) and any(
+    if isinstance(value, list) and any(  # noqa: SIM103
         isinstance(
             list_value,
             (

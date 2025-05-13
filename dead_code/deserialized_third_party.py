@@ -6,6 +6,7 @@ The Commonmark library is unmaintained.
 The "successor", markdown-it-py, is so different from the early common mark, it is a lot of
 work to update to latest.
 """
+
 from markdown_to_json.markdown_to_json import CMarkASTNester, Renderer
 from markdown_to_json.vendor import CommonMark
 

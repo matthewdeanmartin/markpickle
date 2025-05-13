@@ -1,6 +1,7 @@
 """
 Use 3rd party library to create tables
 """
+
 from typing import Any
 
 import tabulate
