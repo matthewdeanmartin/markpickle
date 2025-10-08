@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     # DOM Parser
@@ -28,6 +29,8 @@ dependencies = [
     "tabulate",
     # image/binary support
     "pillow>=8.1",
+    "pillow>=11.3.0; python_version >= '3.14'",
+
 
 #     3.8/3/9 support
 #    typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }

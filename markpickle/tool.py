@@ -1,8 +1,8 @@
-r"""Command-line tool to validate and pretty-print Markdown as simple Python types
+r"""Command-line tool to pretty-print Markdown after round tripping it through Python types
 
 Usage::
 
-    $ echo '-a\n-b\n-c' | python -m markpickle.tool
+    $ echo '- a\n- b\n- c' | python -m markpickle.tool
     ["a", "b", "c"]
 
 Source code modeled after json.tool https://github.com/python/cpython/blob/3.11/Lib/json/tool.py

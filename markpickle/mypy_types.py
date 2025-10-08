@@ -13,14 +13,6 @@ if sys.version_info < (3, 10):
 else:
     from typing import TypeAlias
 
-# this isn't 3.9 compatible. Can't catch ModuleNotFound!
-# try:
-#     from typing_extensions import TypeAlias
-# except ModuleNotFoundError:
-#     from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
-# except ImportError:
-#    from typing import TypeAlias  # type: ignore[no-redef,attr-defined]
-
 
 # https://github.com/python/mypy/issues/14219#issuecomment-1528993478
 ScalarTypes = Union[
