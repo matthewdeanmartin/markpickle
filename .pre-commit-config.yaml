@@ -7,7 +7,7 @@ repos:
             -   id: check-added-large-files
             -   id: check-yaml
             -   id: check-builtin-literals
-            -   id: check-byte-order-marker
+            -   id: fix-byte-order-marker
             -   id: check-case-conflict
             -   id: check-merge-conflict
             -   id: check-symlinks
