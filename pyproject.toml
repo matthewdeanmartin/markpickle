@@ -129,7 +129,7 @@ multi_line_output = 3
 use_parentheses = true
 
 [tool.ruff]
-line-length = 1000
+line-length = 320
 
 # Enable Pyflakes `E` and `F` codes by default.
 lint.select = [
