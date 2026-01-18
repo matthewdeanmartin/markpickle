@@ -98,7 +98,9 @@ def parse_table_with_regex(md_table: str) -> ColumnsValuesTableType:
     """
     rows = md_table.strip().split("\n")
     # Get the column names from the first row
-    col_names = [r.strip() for r in rows[0].split("|") if r.strip()]
+    col_names = [r.strip() for r in rows[0].strip().split("|")]
+    # Ignore before the first and after the last pipe mark
+    col_names = col_names[1:-1]
     num_cols = len(col_names)
     # Initialize the table data as a list of empty lists
     table_data: list[list[str]] = [[] for i in range(num_cols)]
