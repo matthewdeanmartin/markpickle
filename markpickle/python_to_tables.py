@@ -3,7 +3,6 @@ Function created with help of ChatGPT
 """
 
 import io
-import re
 from typing import Optional, TextIO, Union, cast
 
 from markpickle.mypy_types import ColumnsValuesTableType, DictTypes, ListTypes
@@ -99,7 +98,7 @@ def parse_table_with_regex(md_table: str) -> ColumnsValuesTableType:
     """
     rows = md_table.strip().split("\n")
     # Get the column names from the first row
-    col_names = [r.strip() for r in rows[0].split('|') if r.strip()]
+    col_names = [r.strip() for r in rows[0].split("|") if r.strip()]
     num_cols = len(col_names)
     # Initialize the table data as a list of empty lists
     table_data: list[list[str]] = [[] for i in range(num_cols)]

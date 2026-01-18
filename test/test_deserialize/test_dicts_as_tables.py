@@ -42,6 +42,7 @@ def test_deserialized_dict_serialized_as_table_version_two():
     result = markpickle.loads(marks, config)
     assert result == [{"head1": "row1-head1", "head2": "row1-head2"}, {"head1": "row2-head1", "head2": "row2-head2"}]
 
+
 def test_deserialized_dict_with_multi_word_headings():
     marks = """
 | head1      | head2 with words |
@@ -52,4 +53,7 @@ def test_deserialized_dict_with_multi_word_headings():
     config = markpickle.Config()
     config.tables_become_list_of_tuples = False
     result = markpickle.loads(marks, config)
-    assert result == [{"head1": "row1-head1", "head2 with words": "row1-head2"}, {"head1": "row2-head1", "head2 with words": "row2-head2"}]
+    assert result == [
+        {"head1": "row1-head1", "head2 with words": "row1-head2"},
+        {"head1": "row2-head1", "head2 with words": "row2-head2"},
+    ]
