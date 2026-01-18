@@ -10,7 +10,7 @@ def test_deserialized_dict_serialized_as_table():
     config = markpickle.Config()
     config.tables_become_list_of_tuples = True
     result = markpickle.loads(marks, config)
-    assert result == [["1"], ("2000-01-01",)]
+    assert result == [["1"], ["2000-01-01"]]
 
 
 def test_panda_style():
@@ -24,9 +24,9 @@ def test_panda_style():
     result = markpickle.loads(marks, config)
     assert result == [
         ["weekday", "temperature", "precipitation"],
-        ("monday", "20", "100"),
-        ("thursday", "30", "200"),
-        ("wednesday", "25", "150"),
+        ["monday", "20", "100"],
+        ["thursday", "30", "200"],
+        ["wednesday", "25", "150"],
     ]
 
 
