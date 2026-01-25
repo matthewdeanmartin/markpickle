@@ -85,7 +85,7 @@ def test_deserialized_dict_with_duplicate_headings():
     config = markpickle.Config()
     config.tables_become_list_of_lists = False
     try:
-        result = markpickle.loads(marks, config)
+        markpickle.loads(marks, config)
         raise AssertionError("Duplicate Headers were not forbidden")
     except ValueError:
         return
