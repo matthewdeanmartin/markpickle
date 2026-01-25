@@ -103,5 +103,5 @@ def test_fuzz_parse_table(md_table) -> None:
 
 
 @given(md_table=st.text())
-def test_fuzz_parse_table_with_regex(md_table: str) -> None:
-    markpickle.python_to_tables.parse_table_with_regex(md_table=md_table)
+def test_fuzz_parse_table_to_lists(md_table: str) -> None:
+    markpickle.python_to_tables.parse_table_to_lists(md_table=md_table)

@@ -8,9 +8,9 @@ def test_deserialized_dict_serialized_as_table():
 | 2000-01-01 |
 """
     config = markpickle.Config()
-    config.tables_become_list_of_tuples = True
+    config.tables_become_list_of_lists = True
     result = markpickle.loads(marks, config)
-    assert result == [["1"], ("2000-01-01",)]
+    assert result == [["1"], ["2000-01-01"]]
 
 
 def test_panda_style():
@@ -20,13 +20,13 @@ def test_panda_style():
 | thursday  |            30 |             200 |
 | wednesday |            25 |             150 |"""
     config = markpickle.Config()
-    config.tables_become_list_of_tuples = True
+    config.tables_become_list_of_lists = True
     result = markpickle.loads(marks, config)
     assert result == [
         ["weekday", "temperature", "precipitation"],
-        ("monday", "20", "100"),
-        ("thursday", "30", "200"),
-        ("wednesday", "25", "150"),
+        ["monday", "20", "100"],
+        ["thursday", "30", "200"],
+        ["wednesday", "25", "150"],
     ]
 
 
@@ -38,6 +38,54 @@ def test_deserialized_dict_serialized_as_table_version_two():
 | row2-head1 | row2-head2 |
 """
     config = markpickle.Config()
-    config.tables_become_list_of_tuples = False
+    config.tables_become_list_of_lists = False
     result = markpickle.loads(marks, config)
     assert result == [{"head1": "row1-head1", "head2": "row1-head2"}, {"head1": "row2-head1", "head2": "row2-head2"}]
+
+
+def test_deserialized_dict_with_multi_word_headings():
+    marks = """
+| head1      | head2 with words |
+| ---------- | ---------------- |
+| row1-head1 | row1-head2       |
+| row2-head1 | row2-head2       |
+"""
+    config = markpickle.Config()
+    config.tables_become_list_of_lists = False
+    result = markpickle.loads(marks, config)
+    assert result == [
+        {"head1": "row1-head1", "head2 with words": "row1-head2"},
+        {"head1": "row2-head1", "head2 with words": "row2-head2"},
+    ]
+
+
+def test_deserialized_dict_with_empty_headings():
+    marks = """
+| head1      |                | head3      |
+| ---------- | -------------- | ---------- |
+| row1-head1 | row1-blankhead | row1-head3 |
+| row2-head1 | row2-blankhead | row2-head3 |
+"""
+    config = markpickle.Config()
+    config.tables_become_list_of_lists = False
+    result = markpickle.loads(marks, config)
+    assert result == [
+        {"head1": "row1-head1", "": "row1-blankhead", "head3": "row1-head3"},
+        {"head1": "row2-head1", "": "row2-blankhead", "head3": "row2-head3"},
+    ]
+
+
+def test_deserialized_dict_with_duplicate_headings():
+    marks = """
+| head1      | head1          | head3      |
+| ---------- | -------------- | ---------- |
+| row1-head1 | row1-blankhead | row1-head3 |
+| row2-head1 | row2-blankhead | row2-head3 |
+"""
+    config = markpickle.Config()
+    config.tables_become_list_of_lists = False
+    try:
+        markpickle.loads(marks, config)
+        raise AssertionError("Duplicate Headers were not forbidden")
+    except ValueError:
+        return
