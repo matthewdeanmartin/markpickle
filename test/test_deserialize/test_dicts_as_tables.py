@@ -59,7 +59,7 @@ def test_deserialized_dict_with_multi_word_headings():
     ]
 
 
-def test_deserialized_dict_with_multi_empty_headings():
+def test_deserialized_dict_with_empty_headings():
     marks = """
 | head1      |                | head3      |
 | ---------- | -------------- | ---------- |
@@ -73,3 +73,19 @@ def test_deserialized_dict_with_multi_empty_headings():
         {"head1": "row1-head1", "": "row1-blankhead", "head3": "row1-head3"},
         {"head1": "row2-head1", "": "row2-blankhead", "head3": "row2-head3"},
     ]
+
+
+def test_deserialized_dict_with_duplicate_headings():
+    marks = """
+| head1      | head1          | head3      |
+| ---------- | -------------- | ---------- |
+| row1-head1 | row1-blankhead | row1-head3 |
+| row2-head1 | row2-blankhead | row2-head3 |
+"""
+    config = markpickle.Config()
+    config.tables_become_list_of_lists = False
+    try:
+        result = markpickle.loads(marks, config)
+        raise AssertionError("Duplicate Headers were not forbidden")
+    except ValueError:
+        return
