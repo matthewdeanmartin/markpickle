@@ -79,6 +79,9 @@ def parse_table_to_list_of_dict(md_table: str) -> ListTypes:
     """Treat tables as list of dictionaries"""
     tuple_stuff = parse_table_to_lists(md_table)
     headers = tuple_stuff[0]
+    if len(headers)!=len(set(headers)):
+        # There is a duplicate heading and the dicts can't be formed
+        raise ValueError("Duplicate Headings detected, use the lists interface")
     rows = tuple_stuff[1:]
     dict_stuff = []
     for row in rows:
