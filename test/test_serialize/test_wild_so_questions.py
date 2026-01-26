@@ -17,9 +17,7 @@ def test_lists_to_serialize():
     ]
     markdown = markpickle.dumps(data)
 
-    assert (
-        markdown
-        == """- Item A
+    assert markdown == """- Item A
 - Item B
 - Item C
   - Sub Item C.1
@@ -30,7 +28,6 @@ def test_lists_to_serialize():
   - Sub Item D.2
 - Item E
 """
-    )
 
 
 def test_ip_who_is():

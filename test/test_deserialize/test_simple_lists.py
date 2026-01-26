@@ -36,11 +36,8 @@ def test_list_of_dict_same_schema():
             {"author": "janet", "title": "the big one", "pub_date": 2010},
         ]
     )
-    assert (
-        result
-        == """| author | title          | pub_date |
+    assert result == """| author | title          | pub_date |
 | ------ | -------------- | -------- |
 | jane   | the little one | 1988     |
 | janet  | the big one    | 2010     |
 """
-    )
