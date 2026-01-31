@@ -9,11 +9,8 @@ def test_list_of_dict_to_markdown():
     list_of_dict_to_markdown(stream, data)
     stream.seek(0)
     markdown = stream.read()
-    assert (
-        markdown
-        == """| a | b |
+    assert markdown == """| a | b |
 | - | - |
 | 1 | 2 |
 | 3 | 4 |
 """
-    )
