@@ -24,7 +24,7 @@ class Config:
 
     empty_string_is: str = ""
 
-    tables_become_list_of_tuples = False
+    tables_become_list_of_lists = False
     """If true, tables become list of tuples. If false, tables become list of dicts"""
 
     serialize_headers_are_dict_keys: bool = True
