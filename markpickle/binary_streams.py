@@ -31,7 +31,7 @@ def extract_bytes(src: str, config: Config) -> Any:
 
     # Extract the mime type and data portion from the src
     try:
-        mime_type = src.split(",")[0].split(":")[1].split(";")[0]
+        mime_type = src.split(",", maxsplit=1)[0].split(":")[1].split(";")[0]
     except IndexError:
         mime_type = "application/octet-stream"
 
