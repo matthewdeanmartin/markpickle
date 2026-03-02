@@ -128,7 +128,9 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
     return current_list
 
 
-def load_all(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> Generator[SerializableTypes, None, None]:
+def load_all(
+    value: io.StringIO, config: Optional[Config] = None, object_hook=None
+) -> Generator[SerializableTypes, None, None]:
     """Load multiple documents from a single stream"""
     part = io.StringIO()
     has_data = True
@@ -152,7 +154,9 @@ def load_all(value: io.StringIO, config: Optional[Config] = None, object_hook=No
         yield load(part, config, object_hook)
 
 
-def loads_all(value: str, config: Optional[Config] = None, object_hook=None) -> Generator[SerializableTypes, None, None]:
+def loads_all(
+    value: str, config: Optional[Config] = None, object_hook=None
+) -> Generator[SerializableTypes, None, None]:
     """Load multiple documents from a single string"""
     part = io.StringIO()
     has_data = False
@@ -192,7 +196,12 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             else:
                 raise NotImplementedError()
 
-        elif token["type"] == "paragraph" and token.get("children") and len(token["children"]) == 1 and token["children"][0]["type"] in ("text", "image"):
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            and len(token["children"]) == 1
+            and token["children"][0]["type"] in ("text", "image")
+        ):
             if token["children"][0]["type"] == "image":
                 return extract_bytes(token["children"][0]["src"], config)
 
@@ -207,12 +216,21 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             some_scalar = extract_scalar(current_text_value, config)
             accumulate_a_tuple.append(some_scalar)
 
-        elif token["type"] == "paragraph" and token.get("children") and all(_.get("type") in ("text", "codespan", "strong") for _ in token["children"]):
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            and all(_.get("type") in ("text", "codespan", "strong") for _ in token["children"])
+        ):
             # E.g. "Cat *and* Dog", which is 3 child tokens because of formatting
             current_value: str = strip_formatting(token)
             scalar = extract_scalar(current_value, config)
             accumulate_a_tuple.append(scalar)
-        elif token["type"] == "paragraph" and token.get("children") and len(token["children"]) == 1 and token["children"][0]["type"] == "text":
+        elif (
+            token["type"] == "paragraph"
+            and token.get("children")
+            and len(token["children"]) == 1
+            and token["children"][0]["type"] == "text"
+        ):
             # Handle images
             if token["children"][0]["type"] == "image":
                 scalar = extract_bytes(token["children"][0]["src"], config)
@@ -364,7 +382,9 @@ def walk_dict(outermost_dict: PossibleDictTypes, config: Config):
             if list_or_dict_of_tokens is None:
                 continue
             if isinstance(list_or_dict_of_tokens, list):
-                outermost_dict[current_key] = process_list_of_tokens(cast(MistuneTokenList, list_or_dict_of_tokens), config)
+                outermost_dict[current_key] = process_list_of_tokens(
+                    cast(MistuneTokenList, list_or_dict_of_tokens), config
+                )
             elif isinstance(list_or_dict_of_tokens, dict):
                 outermost_dict[current_key] = walk_dict(cast(PossibleDictTypes, list_or_dict_of_tokens), config)
             else:

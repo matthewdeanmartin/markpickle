@@ -1,4 +1,3 @@
-import markpickle
 from markpickle import loads
 
 

@@ -11,7 +11,9 @@ from typing import Any, Optional, cast
 from markpickle.mypy_types import MistuneTokenList, PossibleDictTypes
 
 
-def parse_outermost_dict(token_list: list[PossibleDictTypes], level: int) -> PossibleDictTypes:  # was dict[Optional[str], list[dict[Optional[str], Any]]]
+def parse_outermost_dict(
+    token_list: list[PossibleDictTypes], level: int
+) -> PossibleDictTypes:  # was dict[Optional[str], list[dict[Optional[str], Any]]]
     """
     ATX headers, e.g. # Header, ## Subheader, can be used for a single set of nested dictionaries.
     """
@@ -23,7 +25,10 @@ def parse_outermost_dict(token_list: list[PossibleDictTypes], level: int) -> Pos
             if inner_token_list is None:
                 continue
             # Sometimes people skip a level!
-            the_sequence = [item["level"] if item["type"] == "heading" else 10000000 for item in cast(MistuneTokenList, inner_token_list)]
+            the_sequence = [
+                item["level"] if item["type"] == "heading" else 10000000
+                for item in cast(MistuneTokenList, inner_token_list)
+            ]
             if not the_sequence:
                 next_level = level + 1
             else:

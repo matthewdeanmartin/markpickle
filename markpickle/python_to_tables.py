@@ -3,7 +3,7 @@ Function created with help of ChatGPT
 """
 
 import io
-from typing import Optional, TextIO, Union, cast
+from typing import Any, Optional, TextIO, Union, cast
 
 from markpickle.mypy_types import ColumnsValuesTableType, DictTypes, ListTypes
 
@@ -99,7 +99,7 @@ def parse_table_to_lists(md_table: str) -> ColumnsValuesTableType:
     """
     rows = md_table.strip().split("\n")
     rows = [r for r in rows if len(set(r) - set("|- :"))]
-    table = []
+    table: list[tuple[str, ...] | list[Any]] = []
     for i, row in enumerate(rows):
         cells = [_.strip() for _ in row.split("|")[1:-1]]
         if i == 0:

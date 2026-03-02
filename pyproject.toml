@@ -1,6 +1,6 @@
 [project]
 name = "markpickle"
-version = "1.6.2"
+version = "1.6.3"
 description = "Lossy python to markdown serializer"
 authors = [
     { name = "Matthew Martin", email = "matthewdeanmartin@gmail.com" },
@@ -58,7 +58,8 @@ dev = [
     # Docs
     "mdformat>=0.7.17",
     "linkcheckmd>=1.4.0",
-    "blacken-docs>=1.16.0",
+    "black",
+   "blacken-docs>=1.16.0",
     # test
     "pytest>=7.4.3",
     "hypothesis[cli]>=6.88.1",
