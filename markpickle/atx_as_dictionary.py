@@ -11,9 +11,7 @@ from typing import Any, Optional, cast
 from markpickle.mypy_types import MistuneTokenList, PossibleDictTypes
 
 
-def parse_outermost_dict(
-    token_list: list[PossibleDictTypes], level: int
-) -> PossibleDictTypes:  # was dict[Optional[str], list[dict[Optional[str], Any]]]
+def parse_outermost_dict(token_list: list[PossibleDictTypes], level: int) -> PossibleDictTypes:  # was dict[Optional[str], list[dict[Optional[str], Any]]]
     """
     ATX headers, e.g. # Header, ## Subheader, can be used for a single set of nested dictionaries.
     """
@@ -22,11 +20,10 @@ def parse_outermost_dict(
     # recursive
     if isinstance(candidate, dict):
         for token_key, inner_token_list in candidate.items():
+            if inner_token_list is None:
+                continue
             # Sometimes people skip a level!
-            the_sequence = [
-                item["level"] if item["type"] == "heading" else 10000000
-                for item in cast(MistuneTokenList, inner_token_list)
-            ]
+            the_sequence = [item["level"] if item["type"] == "heading" else 10000000 for item in cast(MistuneTokenList, inner_token_list)]
             if not the_sequence:
                 next_level = level + 1
             else:
@@ -41,9 +38,9 @@ def parse_outermost_dict(
     return cast(PossibleDictTypes, {None: token_list})
 
 
-def recursive_part(level: int, token_list: MistuneTokenList):
+def recursive_part(level: int, token_list: MistuneTokenList) -> Any:
     """Recursive part of processing headers"""
-    candidate = {}
+    candidate: dict[Optional[str], Any] = {}
     key = None
     between_values: list[dict[Optional[str], Any]] = []
     # First pass, yields candidate full of keys and lists of tokens
@@ -61,8 +58,8 @@ def recursive_part(level: int, token_list: MistuneTokenList):
         between_values.append(cast(dict[Optional[str], Any], item))
 
     # left overs
-    if key and between_values:
-        candidate[key] = between_values
+    if key:
+        candidate[key] = between_values if between_values else None
     if not candidate:
         return between_values
     return candidate

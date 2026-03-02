@@ -21,7 +21,7 @@ Ringo
 Felix
 ```
 
-becomes the python list `{"cat":{"Name":"Ringo","Species":"Felix"}`
+becomes the python list `{"cat":{"Name":"Ringo","Species":"Felix"}}`
 
 See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md) for representable types.
 
@@ -126,11 +126,13 @@ SerializableTypes: TypeAlias = Union[
     ColumnsValuesTableType,
     dict[str, "SerializableTypes"],
     list["SerializableTypes"],
+    tuple["SerializableTypes"],
     str,
     int,
     float,
     bool,
     datetime.date,
+    datetime.datetime,
     None,
 ]
 ```
