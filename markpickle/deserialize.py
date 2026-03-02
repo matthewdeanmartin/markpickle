@@ -210,8 +210,7 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             if current_text_value.count("|") >= 2:
                 if config.tables_become_list_of_lists:
                     return python_to_tables.parse_table_to_lists(current_text_value)
-                else:
-                    return python_to_tables.parse_table_to_list_of_dict(current_text_value)
+                return python_to_tables.parse_table_to_list_of_dict(current_text_value)
 
             some_scalar = extract_scalar(current_text_value, config)
             accumulate_a_tuple.append(some_scalar)

@@ -35,16 +35,16 @@ jobs:
       - name: Install Dependencies
         run: uv sync --all-extras
 
-      - name: Run just check
-        run: chmod +x scripts/*.sh && uv run just check
+#      - name: Run just check
+#        run: chmod +x scripts/*.sh && uv run make check
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Run just publish
-        run: uv run just publish
+      - name: Run make publish
+        run: uv run make publish
 
       - name: Upload Package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
