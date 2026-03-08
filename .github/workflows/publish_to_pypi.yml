@@ -46,6 +46,29 @@ jobs:
       - name: Run make publish
         run: uv run make publish
 
+      - name: Validate wheel contents
+        run: |
+          pip install check-wheel-contents
+          check-wheel-contents dist/*.whl
+
+      - name: Verify wheel is non-empty
+        run: |
+          python - <<'EOF'
+          import zipfile, glob, sys
+          wheels = glob.glob("dist/*.whl")
+          if not wheels:
+              print("ERROR: No wheel found in dist/")
+              sys.exit(1)
+          for whl in wheels:
+              with zipfile.ZipFile(whl) as z:
+                  py_files = [f for f in z.namelist() if f.endswith('.py') and 'dist-info' not in f]
+                  print(f"{whl}: {len(py_files)} .py files")
+                  if len(py_files) < 5:
+                      print(f"ERROR: Only {len(py_files)} .py files in wheel — may be empty or broken!")
+                      sys.exit(1)
+          print("OK: Wheel contents look valid")
+          EOF
+
       - name: Upload Package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -79,6 +102,13 @@ jobs:
         with:
           name: packages
           path: dist/
+
+      - name: Smoke test installed package
+        run: |
+          pip install dist/*.whl
+          python -c "import markpickle; print(markpickle.__version__)"
+          python -c "import markpickle; assert hasattr(markpickle, 'dumps'), 'missing dumps'"
+          python -c "import markpickle; assert hasattr(markpickle, 'loads'), 'missing loads'"
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
