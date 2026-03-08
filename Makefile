@@ -43,7 +43,15 @@ mypy:
 	@echo "Security checks"
 	$(VENV)  mypy markpickle
 
-check: test pylint bandit pre-commit mypy
+pip-audit:
+	@echo "Auditing dependencies"
+	$(VENV) pip-audit || (echo "Vulnerability found, attempting to relock..." && uv lock --upgrade && uv sync && $(VENV) pip-audit)
+
+benchmark:
+	@echo "Running benchmarks"
+	$(VENV) pytest test/test_benchmark.py --benchmark-only
+
+check: test pylint bandit pre-commit mypy pip-audit
 
 .PHONY: publish
 publish: check

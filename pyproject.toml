@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8,<4.0"
 keywords = ["serializer", "deserializer", "markdown", ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -69,6 +69,8 @@ dev = [
     # build tools
     "pre-commit>=3.5.0",
     "ruff>=0.1.4",
+    "pip-audit",
+    "pytest-benchmark",
 
     "2to3>=1.0",
     # markdown stuff
