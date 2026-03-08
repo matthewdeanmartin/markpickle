@@ -22,6 +22,8 @@ __all__ = [
     "split_file",
     "convert_json_to_markdown",
     "convert_markdown_to_json",
+    "__version__"
 ]
 
 from markpickle.sugar import convert_json_to_markdown, convert_markdown_to_json
+from markpickle.__about__ import __version__

@@ -22,6 +22,7 @@ isort:
 
 black:  isort 
 	@echo "Formatting code"
+	$(VENV) metametameta pep621
 	$(VENV) black . --exclude .virtualenv --exclude .venv
 
 pre-commit:  isort black

@@ -81,6 +81,7 @@ dev = [
     # backwards compat
     "vermin>=1.5.2",
     "tox>=4.11.3",
+    "metametameta"
 ]
 
 [tool.uv]
