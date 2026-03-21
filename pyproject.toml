@@ -83,11 +83,19 @@ dev = [
     # backwards compat
     "vermin>=1.5.2",
     "tox>=4.11.3",
-    "metametameta"
+    "metametameta",
+    # Rust extension build tool – used by `make build-rust` / `make build-rust-debug`
+    "maturin>=1.4,<2.0",
 ]
 
 [tool.uv]
 default-groups = ["dev"]
+
+[tool.maturin]
+# Compiled extension is placed inside the markpickle package as _markpickle
+module-name = "markpickle._markpickle"
+python-source = "."
+features = ["pyo3/extension-module"]
 
 [tool.black]
 line-length = 120

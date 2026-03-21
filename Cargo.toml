@@ -1,0 +1,18 @@
+[package]
+name = "markpickle"
+version = "0.1.0"
+edition = "2021"
+description = "Rust-accelerated internals for markpickle"
+license = "MIT"
+
+[lib]
+name = "_markpickle"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.21", features = ["extension-module"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

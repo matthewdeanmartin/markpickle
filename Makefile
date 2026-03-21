@@ -51,6 +51,56 @@ benchmark:
 	@echo "Running benchmarks"
 	$(VENV) pytest test/test_benchmark.py --benchmark-only
 
+# ---------------------------------------------------------------------------
+# Rust / maturin targets
+#
+# Prerequisites:
+#   - Rust toolchain  (https://rustup.rs)
+#   - maturin         (installed via `uv sync`)
+#
+# build-rust        Compile an optimised release build and install into the
+#                   current venv so `import markpickle._markpickle` works.
+# build-rust-debug  Same but with debug symbols (faster compile, slower runtime).
+# build-rust-wheel  Produce a distributable .whl in dist/.
+# check-rust        Run `cargo check` + clippy on the Rust source.
+# test-rust         Run Rust unit tests via `cargo test`.
+# clean-rust        Remove Rust build artefacts and any installed .pyd/.so.
+#
+# The Python package works without these; they are purely optional speedups.
+# ---------------------------------------------------------------------------
+
+.PHONY: build-rust
+build-rust:
+	@echo "Building Rust extension (release) with maturin"
+	$(VENV) maturin develop --release
+
+.PHONY: build-rust-debug
+build-rust-debug:
+	@echo "Building Rust extension (debug) with maturin"
+	$(VENV) maturin develop
+
+.PHONY: build-rust-wheel
+build-rust-wheel:
+	@echo "Building Rust wheel with maturin"
+	$(VENV) maturin build --release --out dist
+
+.PHONY: check-rust
+check-rust:
+	@echo "Checking Rust code"
+	cargo check
+	cargo clippy -- -D warnings
+
+.PHONY: test-rust
+test-rust:
+	@echo "Running Rust unit tests"
+	cargo test
+
+.PHONY: clean-rust
+clean-rust:
+	@echo "Removing Rust build artefacts"
+	cargo clean 2>/dev/null || true
+	rm -f markpickle/_markpickle*.so markpickle/_markpickle*.pyd 2>/dev/null || true
+
 check: test pylint bandit pre-commit mypy pip-audit
 
 .PHONY: publish
