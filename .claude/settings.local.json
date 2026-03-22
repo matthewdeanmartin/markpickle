@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.py$\")",
+      "Bash(grep -E \"^/e/github/markpickle/test/[^/]+\\\\.py$|test_\")",
+      "Bash(python -m pytest test/ -x -q --tb=short)",
+      "Bash(pip show:*)",
+      "Bash(uv run:*)"
+    ]
+  }
+}

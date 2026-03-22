@@ -12,7 +12,7 @@ __all__ = [
 ]
 
 __title__ = "markpickle"
-__version__ = "1.6.4"
+__version__ = "2.0.0"
 __description__ = "Lossy python to markdown serializer"
 __credits__ = [{"name": "Matthew Martin", "email": "matthewdeanmartin@gmail.com"}]
 __readme__ = "README.md"

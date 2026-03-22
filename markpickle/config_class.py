@@ -20,7 +20,7 @@ class Config:
     """What to write when a value is True or False"""
 
     none_values: list[str] = dataclasses.field(default_factory=lambda: ["None", "nil", "nil"])
-    """What to write when a value is None"""
+    """What strings are recognized as None during deserialization"""
 
     empty_string_is: str = ""
 
@@ -34,7 +34,7 @@ class Config:
     """If true, serialize a dict as a table if it is not a child of a dict"""
 
     serialize_child_dict_as_table: bool = True
-    """If true, serialize a dict as a table if it is a child of a dict"""
+    """If true, serialize a flat child dict as a table. Non-flat dicts always use ATX headers."""
 
     serialize_tables_tabulate_style: bool = False
     """If true, use tabulate to render tables. If false, use a custom renderer"""
@@ -43,7 +43,7 @@ class Config:
     """If true, all serializations must end in newline"""
 
     serialize_bytes_mime_type: str = "image/png"
-    """If something reasonable, like `application/octet-stream`, some markdown parsers assume it is malicious 
+    """If something reasonable, like `application/octet-stream`, some markdown parsers assume it is malicious
     and will treat the whole URL as text."""
 
     none_string: str = "None"
@@ -70,3 +70,26 @@ class Config:
 
     deserialized_missing_key_name: str = "Missing Key"
     """Add `# Missing Key` to head of document if missing."""
+
+    # --- New in 2.0.0 ---
+
+    serialize_tuples_as_ordered_lists: bool = True
+    """If true, serialize tuples as ordered (numbered) lists instead of unordered lists"""
+
+    ordered_list_as_tuple: bool = True
+    """If true, deserialize ordered (numbered) lists as tuples"""
+
+    infer_complex_types: bool = False
+    """If true, detect complex number patterns (e.g. 3+4j) during deserialization"""
+
+    infer_decimal_types: bool = False
+    """If true, parse numeric strings as Decimal instead of float"""
+
+    infer_uuid_types: bool = False
+    """If true, detect UUID patterns (8-4-4-4-12 hex) during deserialization"""
+
+    preserve_formatting_as_unicode: bool = False
+    """If true, convert markdown bold/italic/code to Unicode math symbols instead of stripping"""
+
+    parse_yaml_frontmatter: bool = False
+    """If true, detect and parse YAML front matter (---...---) at start of document"""

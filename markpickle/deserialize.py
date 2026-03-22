@@ -7,10 +7,13 @@ Arbitrary strings might not pass or may pass but create values that still have u
 """
 
 import datetime
+import decimal
 import io
 import logging
+import re
 import textwrap
 import urllib.parse
+import uuid
 from typing import Any, Generator, Optional, cast
 
 import mistune
@@ -27,6 +30,18 @@ from markpickle.mypy_types import (
     ScalarTypes,
     SerializableTypes,
 )
+
+_UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
+_COMPLEX_RE = re.compile(r"^\(?[+-]?(\d+\.?\d*|\d*\.?\d+)[+-](\d+\.?\d*|\d*\.?\d+)j\)?$")
+
+
+def _is_int(value: str) -> bool:
+    """Check if a string represents an integer, including negative numbers."""
+    if not value:
+        return False
+    if value[0] in "+-":
+        return value[1:].isdigit() if len(value) > 1 else False
+    return value.isdigit()
 
 
 def loads(value: str, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
@@ -66,23 +81,43 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
     >>> extract_scalar("1",Config())
     1
     """
+    if not config.infer_scalar_types:
+        # When inference is off, return everything as a string
+        return value
+
     # Handle special cases for None, True, and False
-    if value == config.none_string:
+    if value in config.none_values or value == config.none_string:
         return None
     if value in config.true_values:
         return True
     if value in config.false_values:
         return False
 
-    # Attempt to parse as int or float if infer_scalar_types is enabled
-    if config.infer_scalar_types:
-        if value.isnumeric():
+    # UUID detection (before numeric, since UUIDs contain hex digits)
+    if config.infer_uuid_types and _UUID_RE.match(value):
+        return cast(Any, uuid.UUID(value))
+
+    # Complex number detection
+    if config.infer_complex_types and _COMPLEX_RE.match(value):
+        try:
+            return cast(Any, complex(value))
+        except ValueError:
+            pass
+
+    # Attempt to parse as int or float
+    if _is_int(value):
+        try:
+            return int(value)
+        except ValueError:
+            pass
+    if config.infer_decimal_types:
+        if is_float(value) and not value.isalpha():
             try:
-                return int(value)
-            except ValueError:
+                return cast(Any, decimal.Decimal(value))
+            except decimal.InvalidOperation:
                 pass
-        if is_float(value):
-            return float(value)
+    elif is_float(value):
+        return float(value)
 
     # Attempt to parse as a date
     dashes_in_year_month = 2
@@ -126,6 +161,11 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
         else:
             raise NotImplementedError()
     return current_list
+
+
+def _is_ordered_list(list_ast: Any) -> bool:
+    """Check if an AST list node represents an ordered (numbered) list."""
+    return list_ast.get("attrs", {}).get("ordered", False) or list_ast.get("ordered", False)
 
 
 def load_all(
@@ -186,8 +226,11 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             continue
 
         if token["type"] == "list":
-            # Dict value of type list
-            if token["children"][0]["type"] == "text":
+            # Check if it's an ordered list -> tuple
+            if _is_ordered_list(token) and config.ordered_list_as_tuple:
+                sublist = process_list(token, config)
+                accumulate_a_tuple.append(tuple(sublist))
+            elif token["children"][0]["type"] == "text":
                 list_contents_as_text = cast(Optional[ListTypes], strip_formatting(token, ","))
                 accumulate_a_tuple.append(list_contents_as_text)
             elif token["children"][0]["type"] == "list_item":
@@ -221,7 +264,12 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             and all(_.get("type") in ("text", "codespan", "strong") for _ in token["children"])
         ):
             # E.g. "Cat *and* Dog", which is 3 child tokens because of formatting
-            current_value: str = strip_formatting(token)
+            if config.preserve_formatting_as_unicode:
+                from markpickle.unicode_text import markdown_inline_to_unicode
+                current_value: str = _reconstruct_inline_markdown(token)
+                current_value = markdown_inline_to_unicode(current_value)
+            else:
+                current_value = strip_formatting(token)
             scalar = extract_scalar(current_value, config)
             accumulate_a_tuple.append(scalar)
         elif (
@@ -248,8 +296,14 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             else:
                 accumulate_a_tuple.append(scalar)
         elif token["type"] == "heading":
-            # handled elsewhere?
-            raise TypeError("Unconsumed header... shouldn't be in AST by this point.")
+            # This used to crash with TypeError. Now we handle sub-headers
+            # by treating them as a nested dict structure.
+            remaining_tokens = list_of_tokens[list_of_tokens.index(token):]
+            sub_dict = _process_sub_headers(remaining_tokens, config)
+            if sub_dict:
+                accumulate_a_tuple.append(cast(SerializableTypes, sub_dict))
+            # We consumed all remaining tokens
+            break
         elif token["type"] == "def_list":
             list_header = None
             list_item = None
@@ -284,6 +338,58 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
     return cast(SerializableTypes, tuple(accumulate_a_tuple))
 
 
+def _reconstruct_inline_markdown(token: dict) -> str:
+    """Reconstruct inline markdown from AST children (bold, italic, code)."""
+    parts = []
+    for child in token.get("children", []):
+        if child["type"] == "text":
+            parts.append(child.get("text", ""))
+        elif child["type"] == "strong":
+            inner = strip_formatting(child)
+            parts.append(f"**{inner}**")
+        elif child["type"] == "emphasis":
+            inner = strip_formatting(child)
+            parts.append(f"*{inner}*")
+        elif child["type"] == "codespan":
+            parts.append(f"`{child.get('text', '')}`")
+        else:
+            parts.append(strip_formatting(child))
+    return "".join(parts)
+
+
+def _process_sub_headers(tokens: MistuneTokenList, config: Config) -> Optional[dict]:
+    """Process heading tokens found inside a value position (3+ level nesting)."""
+    if not tokens:
+        return None
+
+    parser = mistune.create_markdown(renderer="ast", plugins=["def_list"])
+
+    # Find the minimum heading level
+    min_level = min(t["level"] for t in tokens if t["type"] == "heading")
+
+    result: dict = {}
+    current_key = None
+    current_tokens: MistuneTokenList = []
+
+    for token in tokens:
+        if token["type"] == "newline":
+            continue
+        if token["type"] == "heading" and token["level"] == min_level:
+            if current_key is not None:
+                # Process accumulated tokens for previous key
+                result[current_key] = process_list_of_tokens(current_tokens, config)
+            current_key = strip_formatting(token)
+            current_tokens = []
+        else:
+            current_tokens.append(token)
+
+    # Process last key
+    if current_key is not None:
+        result[current_key] = process_list_of_tokens(current_tokens, config)
+
+    return result if result else None
+
+
 def missing_top_key(result: MistuneTokenList):
     """The ATX-header root dictionary will discard the top part of the document without an starting key,
     e.g. a h1/# token"""
@@ -301,6 +407,98 @@ def missing_top_key(result: MistuneTokenList):
     return True
 
 
+def _strip_yaml_frontmatter(text: str) -> tuple[Optional[dict], str]:
+    """Extract YAML front matter from the beginning of a document.
+
+    Returns (frontmatter_dict, remaining_body) or (None, original_text).
+    """
+    if not text.startswith("---"):
+        return None, text
+
+    lines = text.split("\n")
+    end_idx = None
+    for i in range(1, len(lines)):
+        if lines[i].strip() == "---":
+            end_idx = i
+            break
+
+    if end_idx is None:
+        return None, text
+
+    frontmatter_lines = lines[1:end_idx]
+    body = "\n".join(lines[end_idx + 1:])
+
+    # Simple YAML parser for key: value pairs
+    fm_dict: dict[str, Any] = {}
+    for line in frontmatter_lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if ":" in line:
+            key, _, val = line.partition(":")
+            key = key.strip()
+            val = val.strip()
+            # Simple type inference for front matter values
+            if val.lower() in ("true", "yes"):
+                fm_dict[key] = True
+            elif val.lower() in ("false", "no"):
+                fm_dict[key] = False
+            elif val.startswith("[") and val.endswith("]"):
+                # Simple list: [a, b, c]
+                items = [item.strip().strip("'\"") for item in val[1:-1].split(",")]
+                fm_dict[key] = items
+            else:
+                # Try numeric
+                try:
+                    fm_dict[key] = int(val)
+                except ValueError:
+                    try:
+                        fm_dict[key] = float(val)
+                    except ValueError:
+                        fm_dict[key] = val
+
+    return fm_dict, body
+
+
+def loads_with_frontmatter(value: str, config: Optional[Config] = None) -> tuple[Optional[dict], SerializableTypes]:
+    """Parse a markdown document with optional YAML front matter.
+
+    Returns (frontmatter_dict, body_object). frontmatter_dict is None if no front matter found.
+    """
+    if not config:
+        config = Config()
+    frontmatter, body = _strip_yaml_frontmatter(value)
+    body_obj = loads(body, config)
+    return frontmatter, body_obj
+
+
+def dumps_with_frontmatter(
+    body: SerializableTypes,
+    frontmatter: dict,
+    config: Optional[Config] = None,
+) -> str:
+    """Serialize a Python object to markdown with YAML front matter."""
+    from markpickle.serialize import dumps as _dumps
+
+    if not config:
+        config = Config()
+
+    parts = ["---\n"]
+    for key, val in frontmatter.items():
+        if isinstance(val, list):
+            parts.append(f"{key}: [{', '.join(str(v) for v in val)}]\n")
+        elif isinstance(val, bool):
+            parts.append(f"{key}: {'true' if val else 'false'}\n")
+        else:
+            parts.append(f"{key}: {val}\n")
+    parts.append("---\n\n")
+
+    body_md = _dumps(body, config)
+    parts.append(body_md)
+
+    return "".join(parts)
+
+
 def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown streams into simple Python types
@@ -312,22 +510,17 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
     if not config:
         config = Config()
 
-    # too much is RawText?
-    # d = Document([marks.read()])
-    # output = ast_renderer.get_ast(d)
-    # assert output
-
-    # Better!
-    # markdown = marko.Markdown(renderer=ASTRenderer)
-    # rerendered = markdown(marks.read())
-    # assert rerendered
-
     string_value = value.read()
     # TODO: maybe only do this if top level is block_code
     string_value = textwrap.dedent(string_value)
 
+    # Handle YAML front matter if enabled
+    frontmatter = None
+    if config.parse_yaml_frontmatter:
+        frontmatter, string_value = _strip_yaml_frontmatter(string_value)
+
     # Empty document
-    if not string_value:
+    if not string_value or not string_value.strip():
         # Exists to improve round-tripping for unit tests
         return cast(SerializableTypes, config.empty_string_is)
 
@@ -337,6 +530,8 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
 
     # Process a list
     if len(result) == 1 and result[0]["type"] == "list":
+        if _is_ordered_list(result[0]) and config.ordered_list_as_tuple:
+            return cast(SerializableTypes, tuple(process_list(result[0], config)))
         return process_list(result[0], config)
 
     dict_wrapper = False
@@ -353,14 +548,6 @@ def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) 
     else:
         dict_wrapper = True
         outermost_dict = {None: process_list_of_tokens(result, config)}
-
-    # if possible_dict and possible_dict.get("python_type"):
-    #     python_type = possible_dict.get("python_type")
-    #     if constructor := globals().get(python_type):
-    #         if hasattr(constructor, "__getstate__"):
-    #             possible_dict = constructor.__setstate__(possible_dict)
-    #         else:
-    #             constructor(**possible_dict)
 
     # really? do I misunderstand this?
     if object_hook:

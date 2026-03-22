@@ -1,0 +1,43 @@
+site_name: "markpickle"
+site_url: "https://markpickle.readthedocs.io/"
+site_author: "Matthew Dean Martin <matthewdeanmartin@gmail.com>"
+site_description: "Lossy Python to Markdown serialization and back"
+
+repo_url: "https://github.com/matthewdeanmartin/markpickle"
+
+theme:
+  name: readthedocs
+  features:
+    - navigation.footer
+
+edit_uri: edit/main/docs/
+
+markdown_extensions:
+  - attr_list
+  - codehilite
+  - toc:
+      permalink: true
+
+nav:
+  - "Home": "index.md"
+  - "Getting Started": "getting_started.md"
+  - "Examples": "examples.md"
+  - "Configuration": "configuration.md"
+  - "Things That Will Not Work": "limitations.md"
+  - "Choosing a Library": "choosing_a_library.md"
+  - "How It Works": "how_it_works.md"
+  - "Conversion Grid": "conversion_grid.md"
+  - "Prior Art & Links": "stackoverflow.md"
+  - "Credits": "credits.md"
+  - "Change Log": "CHANGELOG.md"
+
+validation:
+  nav:
+    omitted_files: warn
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+plugins:
+  - search

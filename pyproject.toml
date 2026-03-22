@@ -1,6 +1,6 @@
 [project]
 name = "markpickle"
-version = "1.6.4"
+version = "2.0.0"
 description = "Lossy python to markdown serializer"
 authors = [
     { name = "Matthew Martin", email = "matthewdeanmartin@gmail.com" },

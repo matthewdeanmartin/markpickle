@@ -135,3 +135,6 @@ test/test_serialize/data/
 TestResults/
 
 node_modules/
+
+# mkdocs build output
+site/

@@ -16,10 +16,11 @@ def parse_outermost_dict(
 ) -> PossibleDictTypes:  # was dict[Optional[str], list[dict[Optional[str], Any]]]
     """
     ATX headers, e.g. # Header, ## Subheader, can be used for a single set of nested dictionaries.
+    Recursively processes all nesting levels.
     """
     candidate = recursive_part(level, cast(MistuneTokenList, token_list))
 
-    # recursive
+    # recursive - process ALL deeper levels, not just one
     if isinstance(candidate, dict):
         for token_key, inner_token_list in candidate.items():
             if inner_token_list is None:
@@ -34,7 +35,27 @@ def parse_outermost_dict(
             else:
                 next_level = min(the_sequence)
 
-            candidate[token_key] = recursive_part(next_level, cast(MistuneTokenList, inner_token_list))
+            inner_result = recursive_part(next_level, cast(MistuneTokenList, inner_token_list))
+
+            # Recurse deeper if inner_result is a dict with more headings
+            if isinstance(inner_result, dict):
+                for inner_key, inner_val in inner_result.items():
+                    if inner_val is None:
+                        continue
+                    if isinstance(inner_val, list) and any(
+                        item.get("type") == "heading" for item in inner_val if isinstance(item, dict)
+                    ):
+                        # There are deeper headings - recurse
+                        deeper_seq = [
+                            item["level"] for item in inner_val if isinstance(item, dict) and item.get("type") == "heading"
+                        ]
+                        if deeper_seq:
+                            deeper_level = min(deeper_seq)
+                            inner_result[inner_key] = parse_outermost_dict(
+                                cast(list[PossibleDictTypes], inner_val), deeper_level
+                            )
+
+            candidate[token_key] = inner_result
 
     if candidate:
         return candidate
