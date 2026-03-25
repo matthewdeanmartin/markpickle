@@ -25,5 +25,5 @@ __all__ = [
     "__version__",
 ]
 
-from markpickle.sugar import convert_json_to_markdown, convert_markdown_to_json
 from markpickle.__about__ import __version__
+from markpickle.sugar import convert_json_to_markdown, convert_markdown_to_json

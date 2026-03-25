@@ -18,4 +18,4 @@ __credits__ = [{"name": "Matthew Martin", "email": "matthewdeanmartin@gmail.com"
 __readme__ = "README.md"
 __requires_python__ = ">=3.8,<4.0"
 __keywords__ = ["serializer", "deserializer", "markdown"]
-__status__ = "3 - Alpha"
+__status__ = "4 - Beta"
