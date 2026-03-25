@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -42,6 +43,18 @@ def _col(text: str, width: int) -> str:
     return text.ljust(width)
 
 
+def _load_config(args: argparse.Namespace):
+    """Load config from --config path or auto-discovered pyproject.toml."""
+    from markpickle.config_file import load_config
+
+    config_path = getattr(args, "config", None)
+    try:
+        return load_config(config_path)
+    except (FileNotFoundError, ImportError) as exc:
+        print(f"error loading config: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+
 # ---------------------------------------------------------------------------
 # Subcommand: doctor
 # ---------------------------------------------------------------------------
@@ -66,6 +79,22 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
         marker = "ok" if ok else "!!"
         print(f"[{marker}] {_col(name, w0 - 5)} {status}")
     print(sep)
+
+    # Show active config file if one was found
+    pyproject = Path.cwd() / "pyproject.toml"
+    if pyproject.exists():
+        try:
+            from markpickle.config_file import _read_toml, _extract_markpickle_section
+
+            data = _read_toml(pyproject)
+            section = _extract_markpickle_section(data, pyproject)
+            if section:
+                print(f"\nConfig: {pyproject} ([tool.markpickle] found, {len(section)} key(s))")
+            else:
+                print(f"\nConfig: {pyproject} (no [tool.markpickle] section)")
+        except Exception:
+            pass
+
     hint = "pip install markpickle[all]  # installs tabulate, Pillow, mdformat"
     print(f"\nTo install all optional extras:\n  {hint}\n")
     return 0
@@ -79,6 +108,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
 def cmd_convert(args: argparse.Namespace) -> int:
     from markpickle.deserialize import load
 
+    config = _load_config(args)
     infile_arg: str = args.infile
     outfile_arg: Optional[str] = args.outfile
 
@@ -93,7 +123,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
             infile = path.open(encoding="utf-8")
 
         with infile:
-            obj = load(infile)
+            obj = load(infile, config=config)
 
         result = json.dumps(obj, default=str, indent=2)
 
@@ -118,6 +148,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
 def cmd_validate(args: argparse.Namespace) -> int:
     import markpickle
 
+    config = _load_config(args)
     path = Path(args.infile)
     if not path.exists():
         print(f"error: file not found: {args.infile}", file=sys.stderr)
@@ -129,9 +160,9 @@ def cmd_validate(args: argparse.Namespace) -> int:
         with path.open(encoding="utf-8") as fh:
             original_text = fh.read()
 
-        obj = markpickle.loads(original_text)
-        round_tripped = markpickle.dumps(obj)
-        obj2 = markpickle.loads(round_tripped)
+        obj = markpickle.loads(original_text, config=config)
+        round_tripped = markpickle.dumps(obj, config=config)
+        obj2 = markpickle.loads(round_tripped, config=config)
 
         if obj != obj2:
             issues.append("Round-trip produced a different object (lossy conversion).")
@@ -173,6 +204,15 @@ def cmd_gui(_args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 
+def _add_config_arg(p: argparse.ArgumentParser) -> None:
+    p.add_argument(
+        "--config",
+        metavar="FILE",
+        default=None,
+        help="TOML config file (default: pyproject.toml in current directory)",
+    )
+
+
 def run(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         prog="markpickle",
@@ -180,12 +220,13 @@ def run(argv: Optional[list[str]] = None) -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 examples:
-  markpickle convert data.md             # convert to JSON, print to stdout
-  markpickle convert data.md out.json    # convert to JSON file
-  markpickle convert -                   # read markdown from stdin
-  markpickle validate data.md            # check if file round-trips safely
-  markpickle doctor                      # show optional library status
-  markpickle gui                         # launch the GUI
+  markpickle convert data.md                      # convert to JSON, print to stdout
+  markpickle convert data.md out.json             # convert to JSON file
+  markpickle convert -                            # read markdown from stdin
+  markpickle convert data.md --config my.toml    # use custom config
+  markpickle validate data.md                     # check if file round-trips safely
+  markpickle doctor                               # show optional library status
+  markpickle gui                                  # launch the GUI
 """,
     )
     parser.add_argument("--version", action="version", version=f"markpickle {_version('markpickle')}")
@@ -194,20 +235,14 @@ examples:
 
     # convert
     p_convert = sub.add_parser("convert", help="Convert a markdown file to JSON")
-    p_convert.add_argument(
-        "infile",
-        help="markdown file to convert, or '-' to read from stdin",
-    )
-    p_convert.add_argument(
-        "outfile",
-        nargs="?",
-        default=None,
-        help="output file (default: stdout)",
-    )
+    p_convert.add_argument("infile", help="markdown file to convert, or '-' to read from stdin")
+    p_convert.add_argument("outfile", nargs="?", default=None, help="output file (default: stdout)")
+    _add_config_arg(p_convert)
 
     # validate
     p_validate = sub.add_parser("validate", help="Check if a markdown file can be safely round-tripped")
     p_validate.add_argument("infile", help="markdown file to validate")
+    _add_config_arg(p_validate)
 
     # doctor
     sub.add_parser("doctor", help="Show installed optional libraries and diagnostic info")
