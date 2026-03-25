@@ -5,7 +5,7 @@ Will not be able to meaningfully serialize all Markdown to a sensible python typ
 """
 
 from markpickle.config_class import Config
-from markpickle.deserialize import load, load_all, loads, loads_all, loads_with_frontmatter, dumps_with_frontmatter
+from markpickle.deserialize import load, load_all, loads, loads_all
 from markpickle.serialize import dump, dump_all, dumps, dumps_all
 from markpickle.split_file_code import split_file
 
@@ -22,9 +22,7 @@ __all__ = [
     "split_file",
     "convert_json_to_markdown",
     "convert_markdown_to_json",
-    "loads_with_frontmatter",
-    "dumps_with_frontmatter",
-    "__version__"
+    "__version__",
 ]
 
 from markpickle.sugar import convert_json_to_markdown, convert_markdown_to_json
