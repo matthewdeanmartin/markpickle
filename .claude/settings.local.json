@@ -3,7 +3,8 @@
     "allow": [
       "Bash(uv run:*)",
       "Bash(cd:*)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(xargs wc:*)"
     ]
   }
 }
