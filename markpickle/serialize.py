@@ -5,22 +5,15 @@ This module provides functions to serialize many Python types to Markdown.
 """
 
 import datetime
-import decimal
 import io
 import logging
 import textwrap
-import uuid
 from typing import Any, Callable, Optional, TextIO, Union, cast
 
 from markpickle import python_to_tables, simplify_types, third_party_tables
 from markpickle.binary_streams import bytes_to_markdown
 from markpickle.config_class import Config
 from markpickle.mypy_types import DictTypes, SerializableTypes
-
-
-def is_flat_dict(d: dict) -> bool:
-    """True if all values are scalars (no nested dicts/lists/sets/tuples)."""
-    return all(not isinstance(v, (dict, list, set, tuple)) for v in d.values())
 
 
 def dumps_all(
@@ -107,7 +100,8 @@ def dump_all(
     if default and not config:
         config = Config()
         config.default = default
-    for docs, document in enumerate(value):
+    docs = 0
+    for document in value:
         if docs > 0:
             stream.write("---\n\n")
         dump(document, stream, config, default)
@@ -121,27 +115,18 @@ def render_scalar(
     _header_level: int = 1,
 ) -> None:
     """Render a scalar value to Markdown"""
-    # Check datetime BEFORE date since datetime is a subclass of date
-    if isinstance(value, datetime.datetime):
-        try:
-            builder.write(value.strftime(config.serialized_datetime_format))
-        except UnicodeEncodeError:
-            builder.write(str(config.serialized_datetime_format))
-    elif isinstance(value, datetime.date):
+    if isinstance(value, (str, int, float, bool)):
+        builder.write(str(value))
+    elif isinstance(value, (datetime.date,)):
         try:
             builder.write(value.strftime(config.serialize_date_format))
         except UnicodeEncodeError:
             builder.write(str(config.serialize_date_format))
-    elif isinstance(value, bool):
-        builder.write(str(value))
-    elif isinstance(value, complex):
-        builder.write(repr(value))
-    elif isinstance(value, decimal.Decimal):
-        builder.write(str(value))
-    elif isinstance(value, uuid.UUID):
-        builder.write(str(value))
-    elif isinstance(value, (str, int, float)):
-        builder.write(str(value))
+    elif isinstance(value, (datetime.datetime,)):
+        try:
+            builder.write(value.strftime(config.serialized_datetime_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialize_date_format))
     elif value is None:
         builder.write(config.none_string)
     elif isinstance(value, bytes):
@@ -188,17 +173,15 @@ def dump(
         if isinstance(value, dict) and config.serialize_include_python_type:
             value["python_type"] = outtermost_type
 
-    if isinstance(value, tuple) and config.serialize_tuples_as_ordered_lists:
-        render_ordered_list(builder, list(value), config, indent=0)
-    elif isinstance(value, (list, tuple)):
-        render_list(builder, cast(list[SerializableTypes], list(value) if isinstance(value, tuple) else value), config, indent=0, header_level=header_level)
+    if isinstance(value, list):
+        render_list(builder, cast(list[SerializableTypes], value), config, indent=0, header_level=header_level)
     # elif isinstance(value, dict) and all(isinstance(_, dict) for _ in value.values()):
     #     for key, item in value.items():
     #         builder.write(f"{ '#' * header_level} {key}")
     #         render_dict(builder, item, config, indent=1, header_level=header_level)
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
-    elif isinstance(value, bool | datetime.datetime | datetime.date | float | int | str | complex | decimal.Decimal | uuid.UUID):
+    elif isinstance(value, bool | datetime.date | datetime.datetime | float | int | str):
         render_scalar(builder, value, config)
     elif simplify_types.can_class_to_dict(value):
         candidate_dict = cast(Any, simplify_types.class_to_dict(value))
@@ -210,7 +193,7 @@ def dump(
         image_text = bytes_to_markdown("bytes", value, config)
         builder.write(image_text)
     elif value is None:
-        builder.write("")
+        render_scalar(builder, value, config)
     else:
         raise NotImplementedError(f"Can't dump type of {type(value)} with value of {value}")
 
@@ -240,7 +223,7 @@ def render_dict(
         return indent
 
     for key, item in value.items():
-        if not isinstance(item, (list, dict, set, tuple)):
+        if not isinstance(item, (list, dict, set)):
             # `- key : value` is not markdown
             if config.serialize_headers_are_dict_keys and indent == 0:
                 # headers dict keys. Can't nest.
@@ -265,8 +248,7 @@ def render_dict(
                     header = f"{indent * '  '}{config.list_bullet_style} {key}\n"
                     builder.write(header)
                 # assume if first is dict, they all are
-                # Only table-ify if all dicts are flat
-                if config.serialize_child_dict_as_table and all(is_flat_dict(d) for d in item if isinstance(d, dict)):
+                if config.serialize_child_dict_as_table:
                     python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
                 else:
                     python_to_atx_header(builder, cast(list[DictTypes], item), header_level, indent)
@@ -276,8 +258,7 @@ def render_dict(
                 render_list(builder, cast(list[SerializableTypes], item), config, indent + 1)
         elif isinstance(item, dict):
             builder.write(f"{'#' * header_level} {key}\n\n")
-            # Only use tables for flat dicts
-            if config.serialize_child_dict_as_table and is_flat_dict(item):
+            if config.serialize_child_dict_as_table:
                 success = False
                 if config.serialize_tables_tabulate_style:
                     # pylint: disable=broad-exception-caught
@@ -293,15 +274,8 @@ def render_dict(
                     table = python_to_tables.dict_to_markdown(item, include_header=True, indent=indent + 1)
                     builder.write(table)
             else:
-                # Non-flat dict: recurse with deeper header level
-                render_dict(builder, item, config, indent, header_level + 1)
+                render_dict(builder, item, config, indent + 1)
             builder.write("\n")
-        elif isinstance(item, tuple) and config.serialize_tuples_as_ordered_lists:
-            if config.serialize_headers_are_dict_keys and indent == 0:
-                builder.write(f"{header_level * '#'} {key}\n\n")
-            else:
-                builder.write(f"{indent * '  '}{config.list_bullet_style} {key}\n")
-            render_ordered_list(builder, list(item), config, indent + 1)
         elif config.serialize_child_dict_as_table:
             try:
                 table = third_party_tables.to_table_tablulate_style(item)
@@ -314,26 +288,6 @@ def render_dict(
             raise NotImplementedError()
 
     return indent
-
-
-def render_ordered_list(
-    builder: Union[io.IOBase, TextIO],
-    value: list[SerializableTypes],
-    config: Config,
-    indent: int = 0,
-) -> None:
-    """Render a tuple/list as a markdown ordered list (1. item, 2. item, ...)."""
-    for i, item in enumerate(value, 1):
-        if not isinstance(item, (list, dict, set, tuple)):
-            minibuilder = io.StringIO()
-            render_scalar(minibuilder, item, config)
-            serialized_scalar = minibuilder.getvalue()
-            builder.write(f"{indent * '  '}{i}. {serialized_scalar}\n")
-        elif isinstance(item, (list, tuple)):
-            # Nested list inside ordered list - render as unordered sub-list
-            render_list(builder, cast(list[SerializableTypes], list(item) if isinstance(item, tuple) else item), config, indent + 1)
-        else:
-            raise NotImplementedError(f"Can't serialize {type(item)} inside an ordered list")
 
 
 def render_list(
@@ -359,19 +313,13 @@ def render_list(
     if not value:
         return indent
     # This list is a list of dictionaries and we want a big table.
-    # Only table-ify if all dicts are flat
-    if (
-        value
-        and all(isinstance(_, dict) for _ in value)
-        and config.serialize_child_dict_as_table
-        and all(is_flat_dict(d) for d in value if isinstance(d, dict))
-    ):
+    if value and all(isinstance(_, dict) for _ in value) and config.serialize_child_dict_as_table:
         python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], value), indent)
         return indent
 
     # The list is not of dictionaries or we don't want tables.
     for item in value:
-        if not isinstance(item, (list, dict, set, tuple)):
+        if not isinstance(item, (list, dict, set)):
             minibuilder = io.StringIO()
             render_scalar(minibuilder, item, config)
             seralialized_scalar = minibuilder.getvalue()
@@ -379,10 +327,7 @@ def render_list(
         elif isinstance(item, list):
             if item and isinstance(item[0], dict) and config.serialize_child_dict_as_table:
                 # assuming if the first is dict, they all are dict.
-                if all(is_flat_dict(d) for d in item if isinstance(d, dict)):
-                    python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
-                else:
-                    raise NotImplementedError()
+                python_to_tables.list_of_dict_to_markdown(builder, cast(list[DictTypes], item), indent)
             elif item and isinstance(item[0], dict):
                 raise NotImplementedError()
             else:

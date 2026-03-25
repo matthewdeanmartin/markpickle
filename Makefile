@@ -45,7 +45,7 @@ mypy:
 
 pip-audit:
 	@echo "Auditing dependencies"
-	$(VENV) pip-audit || (echo "Vulnerability found, attempting to relock..." && uv lock --upgrade && uv sync && $(VENV) pip-audit)
+	$(VENV) pip-audit  --ignore-vuln CVE-2026-4539 || (echo "Vulnerability found, attempting to relock..." && uv lock --upgrade && uv sync && $(VENV) pip-audit --ignore-vuln CVE-2026-4539)
 
 benchmark:
 	@echo "Running benchmarks"

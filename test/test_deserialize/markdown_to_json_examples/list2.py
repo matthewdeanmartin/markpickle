@@ -1,1 +1,1 @@
-X = {"Heading": ["a", "b", ["b.a", "b.b"], "c"]}
+X = {'Heading': ['a', 'b', ['b.a', 'b.b'], 'c']}

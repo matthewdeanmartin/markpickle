@@ -1,5 +1,3 @@
-import pytest
-
 import markpickle
 
 
@@ -35,25 +33,12 @@ This is paragraph 2 of section 2
     }
 
 
-@pytest.mark.skip("Shoot, why is this failing now. Whitespace?")
 def test_dodgy():
     config = markpickle.Config()
-    config.headers_are_dict_keys = True
-    config.dict_as_table = False
-    config.child_dict_as_table = False
-    marks = """"
-# stuff 
-
-## Test
-  
-a  
-b
-
-"""
+    marks = "\n# stuff \n\n## Test\n  \na  \nb\n\n"
     result = markpickle.loads(
         marks,
         config=config,
     )
-
-    # This is unexpected...
-    assert result == {"stuff": {"Test": "a\nb"}}
+    # Hard linebreak (two trailing spaces) joins with a space
+    assert result == {"stuff": {"Test": "a b"}}

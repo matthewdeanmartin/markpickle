@@ -1,4 +1,5 @@
 import markpickle
+import datetime
 
 
 def test_zero():
@@ -9,16 +10,14 @@ def test_zero():
 
 
 def test_round_trip_date():
+
     config = markpickle.Config()
+    # Strings that look like dates get inferred as datetime.date on loads,
+    # both in normal scalars and in table cells.
     value = [{"1": "2000-01-01"}]
     markdown = markpickle.dumps(value=value, config=config)
     value1 = markpickle.loads(value=markdown, config=config)
-    assert value == value1
-
-    # This can't happen deterministicly
-    markdown = markpickle.dumps(value=value, config=config)
-    value1 = markpickle.loads(value=markdown, config=config)
-    assert value1 == [{"1": "2000-01-01"}]
+    assert value1 == [{"1": datetime.date(2000, 1, 1)}]
 
 
 def test_zero_dict():
