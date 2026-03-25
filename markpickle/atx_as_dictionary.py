@@ -47,7 +47,9 @@ def parse_outermost_dict(
                     ):
                         # There are deeper headings - recurse
                         deeper_seq = [
-                            item["level"] for item in inner_val if isinstance(item, dict) and item.get("type") == "heading"
+                            item["level"]
+                            for item in inner_val
+                            if isinstance(item, dict) and item.get("type") == "heading"
                         ]
                         if deeper_seq:
                             deeper_level = min(deeper_seq)

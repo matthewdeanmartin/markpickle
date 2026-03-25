@@ -136,8 +136,9 @@ def test_round_trip_as_strings(data: Any) -> None:
     def stringify(val: Any) -> Any:
         if val is None:
             return None
+        # With infer_scalar_types=False, bools/ints/floats/dates all come back as strings
         if isinstance(val, bool):
-            return val
+            return str(val)
         if isinstance(val, (int, float, datetime.date)):
             return str(val)
         if isinstance(val, list):

@@ -23,19 +23,30 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    # DOM Parser
-    "mistune<3.0.0",
-    # support more type to table patterns
-    "tabulate",
-    # image/binary support
-    "pillow>=8.1",
+    # DOM Parser — hard dependency, AST renderer required
+    "mistune>=2.0.0,<3.0.0",
+]
+
+[project.optional-dependencies]
+tables = ["tabulate"]
+images = [
+    "pillow>=8.1; python_version < '3.14'",
     "pillow>=11.3.0; python_version >= '3.14'",
-    #     3.8/3/9 support
-    #    typing-extensions = { version = ">=4.0.0, <5.0", python = "<=3.9" }
+]
+format = ["mdformat>=0.7.17"]
+all = [
+    "tabulate",
+    "pillow>=8.1; python_version < '3.14'",
+    "pillow>=11.3.0; python_version >= '3.14'",
+    "mdformat>=0.7.17",
 ]
 #repository = "https://github.com/matthewdeanmartin/markpickle"
 #homepage = "https://github.com/matthewdeanmartin/markpickle"
 #documentation ="https://github.com/matthewdeanmartin/markpickle"
+
+[project.scripts]
+markpickle = "markpickle.__main__:run"
+markpickle-gui = "markpickle.gui.app:launch_gui"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/matthewdeanmartin/markpickle/issues"

@@ -68,6 +68,10 @@ def dumps(
     if unsafe_scalar_type(value):
         logging.warning("Unsafe non-string types, round tripping won't be possible")
 
+    # Top-level None serializes to empty string (not round-trippable, but consistent)
+    if value is None:
+        return ""
+
     if not config:
         config = Config()
     builder = io.StringIO()
@@ -100,8 +104,7 @@ def dump_all(
     if default and not config:
         config = Config()
         config.default = default
-    docs = 0
-    for document in value:
+    for docs, document in enumerate(value):
         if docs > 0:
             stream.write("---\n\n")
         dump(document, stream, config, default)
@@ -117,14 +120,15 @@ def render_scalar(
     """Render a scalar value to Markdown"""
     if isinstance(value, (str, int, float, bool)):
         builder.write(str(value))
-    elif isinstance(value, (datetime.date,)):
-        try:
-            builder.write(value.strftime(config.serialize_date_format))
-        except UnicodeEncodeError:
-            builder.write(str(config.serialize_date_format))
-    elif isinstance(value, (datetime.datetime,)):
+    elif isinstance(value, datetime.datetime):
+        # Must check datetime before date: datetime is a subclass of date
         try:
             builder.write(value.strftime(config.serialized_datetime_format))
+        except UnicodeEncodeError:
+            builder.write(str(config.serialized_datetime_format))
+    elif isinstance(value, datetime.date):
+        try:
+            builder.write(value.strftime(config.serialize_date_format))
         except UnicodeEncodeError:
             builder.write(str(config.serialize_date_format))
     elif value is None:
@@ -274,7 +278,7 @@ def render_dict(
                     table = python_to_tables.dict_to_markdown(item, include_header=True, indent=indent + 1)
                     builder.write(table)
             else:
-                render_dict(builder, item, config, indent + 1)
+                render_dict(builder, item, config, indent=0, header_level=header_level + 1)
             builder.write("\n")
         elif config.serialize_child_dict_as_table:
             try:

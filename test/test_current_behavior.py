@@ -17,7 +17,6 @@ import pytest
 import markpickle
 from markpickle import Config
 
-
 # ---------------------------------------------------------------------------
 # Scalar serialization
 # ---------------------------------------------------------------------------
@@ -449,7 +448,8 @@ class TestDeserializeTables:
     def test_table_to_list_of_dicts(self):
         md = "| a | b |\n| - | - |\n| 1 | 2 |\n| 3 | 4 |\n"
         result = markpickle.loads(md)
-        assert result == [{"a": "1", "b": "2"}, {"a": "3", "b": "4"}]
+        # Cell values are inferred: "1" becomes int 1
+        assert result == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
 
     def test_table_to_list_of_lists(self):
         c = Config()
@@ -474,7 +474,8 @@ class TestDeserializeTables:
     def test_table_empty_header(self):
         md = "| a |   | b |\n| - | - | - |\n| 1 | 2 | 3 |\n"
         result = markpickle.loads(md)
-        assert result == [{"a": "1", "": "2", "b": "3"}]
+        # Cell values are inferred: "1" becomes int 1
+        assert result == [{"a": 1, "": 2, "b": 3}]
 
     def test_table_multiword_headers(self):
         md = "| first name | last name |\n| ---------- | --------- |\n| Alice | Smith |\n"
@@ -485,11 +486,7 @@ class TestDeserializeTables:
         """Tables with colon alignment markers parse correctly."""
         c = Config()
         c.tables_become_list_of_lists = True
-        md = (
-            "| weekday   |   temp |\n"
-            "|:----------|-------:|\n"
-            "| monday    |     20 |\n"
-        )
+        md = "| weekday   |   temp |\n" "|:----------|-------:|\n" "| monday    |     20 |\n"
         result = markpickle.loads(md, config=c)
         assert result == [["weekday", "temp"], ["monday", "20"]]
 
@@ -552,7 +549,8 @@ class TestRoundTrip:
         assert markpickle.loads(markpickle.dumps(val)) == val
 
     def test_list_of_dicts_roundtrip(self):
-        val = [{"a": "1", "b": "2"}, {"a": "3", "b": "4"}]
+        # String values that look numeric will be inferred back as ints on loads
+        val = [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
         assert markpickle.loads(markpickle.dumps(val)) == val
 
     def test_nested_dict_roundtrip_becomes_list_of_dicts(self):

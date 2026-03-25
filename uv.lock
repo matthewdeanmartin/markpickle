@@ -2127,9 +2127,30 @@ version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "mistune" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "mdformat", version = "0.7.17", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "mdformat", version = "0.7.22", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
+    { name = "mdformat", version = "1.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pillow", version = "11.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
     { name = "pillow", version = "12.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "tabulate", version = "0.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "tabulate", version = "0.10.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+]
+format = [
+    { name = "mdformat", version = "0.7.17", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "mdformat", version = "0.7.22", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
+    { name = "mdformat", version = "1.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+]
+images = [
+    { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "pillow", version = "11.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
+    { name = "pillow", version = "12.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+]
+tables = [
     { name = "tabulate", version = "0.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "tabulate", version = "0.10.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
 ]
@@ -2190,11 +2211,17 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "mistune", specifier = "<3.0.0" },
-    { name = "pillow", specifier = ">=8.1" },
-    { name = "pillow", marker = "python_full_version >= '3.14'", specifier = ">=11.3.0" },
-    { name = "tabulate" },
+    { name = "mdformat", marker = "extra == 'all'", specifier = ">=0.7.17" },
+    { name = "mdformat", marker = "extra == 'format'", specifier = ">=0.7.17" },
+    { name = "mistune", specifier = ">=2.0.0,<3.0.0" },
+    { name = "pillow", marker = "python_full_version >= '3.14' and extra == 'all'", specifier = ">=11.3.0" },
+    { name = "pillow", marker = "python_full_version >= '3.14' and extra == 'images'", specifier = ">=11.3.0" },
+    { name = "pillow", marker = "python_full_version < '3.14' and extra == 'all'", specifier = ">=8.1" },
+    { name = "pillow", marker = "python_full_version < '3.14' and extra == 'images'", specifier = ">=8.1" },
+    { name = "tabulate", marker = "extra == 'all'" },
+    { name = "tabulate", marker = "extra == 'tables'" },
 ]
+provides-extras = ["tables", "images", "format", "all"]
 
 [package.metadata.requires-dev]
 dev = [

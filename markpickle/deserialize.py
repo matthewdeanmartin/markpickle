@@ -66,23 +66,27 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
     >>> extract_scalar("1",Config())
     1
     """
+    if not config.infer_scalar_types:
+        # When inference is disabled, return the raw string for everything
+        return value
+
     # Handle special cases for None, True, and False
-    if value == config.none_string:
+    all_none_values = set(config.none_values) | {config.none_string}
+    if value in all_none_values:
         return None
     if value in config.true_values:
         return True
     if value in config.false_values:
         return False
 
-    # Attempt to parse as int or float if infer_scalar_types is enabled
-    if config.infer_scalar_types:
-        # isnumeric() misses negative integers, so try int() first
-        try:
-            return int(value)
-        except ValueError:
-            pass
-        if is_float(value):
-            return float(value)
+    # Attempt to parse as int or float
+    # isnumeric() misses negative integers, so try int() first
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    if is_float(value):
+        return float(value)
 
     # Attempt to parse as a date
     dashes_in_year_month = 2
@@ -99,7 +103,8 @@ def extract_scalar(value: str, config: Config) -> ScalarTypes:
 
 def process_list(list_ast: Any, config: Config) -> ListTypes:
     """Deserialize a markdown list in AST form"""
-    current_list: ListTypes = []
+    is_ordered = list_ast.get("ordered", False)
+    current_list: list[Any] = []
     for token in list_ast["children"]:
         if token["type"] == "list_item":
             for child in token["children"]:
@@ -130,7 +135,9 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
                     raise NotImplementedError(child["type"])
         else:
             raise NotImplementedError()
-    return current_list
+    if is_ordered and config.ordered_list_as_tuple:
+        return cast(ListTypes, tuple(current_list))
+    return cast(ListTypes, current_list)
 
 
 def load_all(

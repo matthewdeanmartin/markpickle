@@ -12,20 +12,20 @@ Uses Unicode blocks:
 import re
 
 # Build translation tables
-_BOLD_UPPER = {ord('A') + i: 0x1D400 + i for i in range(26)}
-_BOLD_LOWER = {ord('a') + i: 0x1D41A + i for i in range(26)}
-_BOLD_DIGITS = {ord('0') + i: 0x1D7CE + i for i in range(10)}
+_BOLD_UPPER = {ord("A") + i: 0x1D400 + i for i in range(26)}
+_BOLD_LOWER = {ord("a") + i: 0x1D41A + i for i in range(26)}
+_BOLD_DIGITS = {ord("0") + i: 0x1D7CE + i for i in range(10)}
 BOLD_TABLE = {**_BOLD_UPPER, **_BOLD_LOWER, **_BOLD_DIGITS}
 
-_ITALIC_UPPER = {ord('A') + i: 0x1D434 + i for i in range(26)}
-_ITALIC_LOWER = {ord('a') + i: 0x1D44E + i for i in range(26)}
+_ITALIC_UPPER = {ord("A") + i: 0x1D434 + i for i in range(26)}
+_ITALIC_LOWER = {ord("a") + i: 0x1D44E + i for i in range(26)}
 # h is special in italic: U+210E (Planck constant)
-_ITALIC_LOWER[ord('h')] = 0x210E
+_ITALIC_LOWER[ord("h")] = 0x210E
 ITALIC_TABLE = {**_ITALIC_UPPER, **_ITALIC_LOWER}
 
-_MONO_UPPER = {ord('A') + i: 0x1D670 + i for i in range(26)}
-_MONO_LOWER = {ord('a') + i: 0x1D68A + i for i in range(26)}
-_MONO_DIGITS = {ord('0') + i: 0x1D7F6 + i for i in range(10)}
+_MONO_UPPER = {ord("A") + i: 0x1D670 + i for i in range(26)}
+_MONO_LOWER = {ord("a") + i: 0x1D68A + i for i in range(26)}
+_MONO_DIGITS = {ord("0") + i: 0x1D7F6 + i for i in range(10)}
 MONO_TABLE = {**_MONO_UPPER, **_MONO_LOWER, **_MONO_DIGITS}
 
 # Reverse tables for detection
@@ -130,8 +130,4 @@ def markdown_inline_to_unicode(text: str) -> str:
 
 def has_unicode_formatting(text: str) -> bool:
     """Check if a string contains any Unicode math-styled characters."""
-    return (
-        _detect_run(text, _REVERSE_BOLD)
-        or _detect_run(text, _REVERSE_ITALIC)
-        or _detect_run(text, _REVERSE_MONO)
-    )
+    return _detect_run(text, _REVERSE_BOLD) or _detect_run(text, _REVERSE_ITALIC) or _detect_run(text, _REVERSE_MONO)

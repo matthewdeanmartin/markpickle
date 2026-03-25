@@ -12,8 +12,7 @@ def test_zero():
 def test_round_trip_date():
 
     config = markpickle.Config()
-    # Strings that look like dates get inferred as datetime.date on loads,
-    # both in normal scalars and in table cells.
+    # Table cell values are inferred: date strings become datetime.date
     value = [{"1": "2000-01-01"}]
     markdown = markpickle.dumps(value=value, config=config)
     value1 = markpickle.loads(value=markdown, config=config)

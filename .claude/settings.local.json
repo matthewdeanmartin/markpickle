@@ -4,7 +4,9 @@
       "Bash(uv run:*)",
       "Bash(cd:*)",
       "Bash(grep -v \"^$\")",
-      "Bash(xargs wc:*)"
+      "Bash(xargs wc:*)",
+      "Bash(ls C:/github/markpickle/test*)",
+      "Bash(printf '# Colors\\\\n\\\\n- red\\\\n- green\\\\n- blue\\\\n')"
     ]
   }
 }

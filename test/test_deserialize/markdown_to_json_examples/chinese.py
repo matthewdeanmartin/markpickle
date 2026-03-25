@@ -1,1 +1,1 @@
-X = {'issues': {'紧急bug': None}}
+X = {"issues": {"紧急bug": None}}

@@ -11,6 +11,7 @@ Usage::
 
     result = dumps_fast(value)   # uses Rust when available, Python otherwise
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -19,11 +20,11 @@ from typing import Any
 # Try to import the compiled native extension
 # ---------------------------------------------------------------------------
 try:
-    from markpickle._markpickle import (  # type: ignore[import]
-        dumps_fast as _rust_dumps_fast,
-        has_rust_speedups as _rust_has,
-        loads_fast as _rust_loads_fast,
+    from markpickle._markpickle import (
+        dumps_fast as _rust_dumps_fast,  # type: ignore[import]
     )
+    from markpickle._markpickle import has_rust_speedups as _rust_has
+    from markpickle._markpickle import loads_fast as _rust_loads_fast
 
     HAS_RUST_SPEEDUPS: bool = True
 except ImportError:
