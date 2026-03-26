@@ -14,7 +14,11 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable, Optional
+
+_rust_has: Optional[Callable[[], bool]]
+_rust_dumps_fast: Optional[Callable[[Any], str]]
+_rust_loads_fast: Optional[Callable[[str], Any]]
 
 # ---------------------------------------------------------------------------
 # Try to import the compiled native extension

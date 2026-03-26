@@ -5,7 +5,10 @@ Holds a ConfigState that it pushes to whenever any field changes.
 Other panels subscribe to ConfigState to use the current config.
 """
 
+from __future__ import annotations
+
 import tkinter as tk
+from typing import Optional
 
 from markpickle.config_class import Config
 from markpickle.gui import theme as T
@@ -38,7 +41,13 @@ class ConfigPanel(tk.Frame):
     """
 
     def __init__(
-        self, parent, config: Config = None, config_source: str = "defaults", doc_state=None, config_state=None, **kw
+        self,
+        parent,
+        config: Optional[Config] = None,
+        config_source: str = "defaults",
+        doc_state=None,
+        config_state=None,
+        **kw,
     ):  # pylint: disable=too-many-positional-arguments
         super().__init__(parent, **T.frame_kw(), **kw)
         self._active_config: Config = config if config is not None else Config()
@@ -179,6 +188,7 @@ class ConfigPanel(tk.Frame):
 
         for i, field_name in enumerate(_EDITABLE_FIELDS):
             field_value = getattr(cfg, field_name)
+            var: tk.Variable
             row = tk.Frame(self._fields_frame, bg=T.BASE if i % 2 == 0 else T.SURFACE0)
             row.pack(fill="x", padx=4, pady=1)
 

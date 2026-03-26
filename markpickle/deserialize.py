@@ -11,7 +11,7 @@ import io
 import logging
 import textwrap
 import urllib.parse
-from typing import Any, Generator, Optional, cast
+from typing import Any, Generator, Optional, TextIO, cast
 
 import mistune
 
@@ -27,6 +27,7 @@ from markpickle.mypy_types import (
     ScalarTypes,
     SerializableTypes,
 )
+from markpickle.split_file_code import is_markdown_separator
 
 
 def loads(value: str, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
@@ -141,25 +142,29 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
 
 
 def load_all(
-    value: io.StringIO, config: Optional[Config] = None, object_hook=None
+    value: TextIO, config: Optional[Config] = None, object_hook=None
 ) -> Generator[SerializableTypes, None, None]:
     """Load multiple documents from a single stream"""
     part = io.StringIO()
     has_data = True
+    last_row_is_blank = False
     while True:
         line = value.readline()
         if line is None or line == "":
             break
-        if line.startswith("---") and not has_data:
+        if is_markdown_separator(line, last_row_is_blank) and not has_data:
+            last_row_is_blank = False
             continue
-        if line.startswith("---"):
+        if is_markdown_separator(line, last_row_is_blank):
             part.seek(0)
             yield load(part, config, object_hook)
             has_data = False
             part = io.StringIO()
+            last_row_is_blank = False
             continue
         part.write(line)
         has_data = True
+        last_row_is_blank = line == "\n"
     # last part
     if has_data:
         part.seek(0)
@@ -308,7 +313,7 @@ def missing_top_key(result: MistuneTokenList):
     return True
 
 
-def load(value: io.StringIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
+def load(value: TextIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown streams into simple Python types
 

@@ -7,7 +7,7 @@ authors = [
 ]
 license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.8,<4.0"
+requires-python = ">=3.8"
 keywords = ["serializer", "deserializer", "markdown", ]
 classifiers = [
     "Development Status :: 4 - Beta",

@@ -6,6 +6,18 @@ import io
 from typing import Generator
 
 
+def is_markdown_separator(row: str, last_row_blank: bool) -> bool:
+    """Return ``True`` when a line is a markdown document separator."""
+    compact = row.strip().replace(" ", "")
+    if len(compact) < 3:
+        return False
+    if set(compact) in ({"_"}, {"*"}):
+        return True
+    if set(compact) == {"-"}:
+        return True
+    return False
+
+
 def split_file(file: io.FileIO) -> Generator[str, None, None]:
     """
     Split a file into a list of lines.
@@ -13,21 +25,14 @@ def split_file(file: io.FileIO) -> Generator[str, None, None]:
     current_section: list[str] = []
     last_row_is_blank = False
 
-    def is_separator(row: bytes) -> bool:
-        """Is this a markdown horizontal rule"""
-        return (
-            (row.startswith(b"___") and all(_ == b"_" for _ in row))
-            or (row.startswith(b"***") and all(_ == b"*" for _ in row))
-            or (last_row_is_blank and row.startswith(b"---") and all(_ == b"-" for _ in row))
-        )
-
     for row in file:
-        if is_separator(row):
+        decoded_row = row.decode("utf-8")
+        if is_markdown_separator(decoded_row, last_row_is_blank):
             if current_section:
                 yield "".join(current_section)
                 current_section = []
         else:
-            current_section.append(row.decode("utf-8"))
+            current_section.append(decoded_row)
         last_row_is_blank = row == b"\n"
 
     if current_section:
