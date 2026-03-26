@@ -56,7 +56,7 @@ def dumps_fast(value: Any) -> str:
         except NotImplementedError:
             pass
     # Pure-Python fallback (import here to avoid circular imports)
-    from markpickle.serialize import dumps  # noqa: PLC0415
+    from markpickle.serialize import dumps  # pylint: disable=import-outside-toplevel
 
     return dumps(value)
 
@@ -73,6 +73,6 @@ def loads_fast(value: str) -> Any:
         except NotImplementedError:
             pass
     # Pure-Python fallback
-    from markpickle.deserialize import loads  # noqa: PLC0415
+    from markpickle.deserialize import loads  # pylint: disable=import-outside-toplevel
 
     return loads(value)

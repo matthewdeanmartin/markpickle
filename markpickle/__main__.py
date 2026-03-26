@@ -30,8 +30,9 @@ def _version(pkg: str) -> str:
 
 
 def _tkinter_status() -> str:
+    """Check if tkinter is available."""
     try:
-        import tkinter  # noqa: F401
+        import tkinter  # pylint: disable=unused-import,import-outside-toplevel
 
         return "available (stdlib)"
     except ImportError:
@@ -39,12 +40,15 @@ def _tkinter_status() -> str:
 
 
 def _col(text: str, width: int) -> str:
+    """Helper for column formatting in doctor."""
     return text.ljust(width)
 
 
 def _load_config(args: argparse.Namespace):
     """Load config from --config path or auto-discovered pyproject.toml."""
-    from markpickle.config_file import load_config
+    from markpickle.config_file import (
+        load_config,  # pylint: disable=import-outside-toplevel
+    )
 
     config_path = getattr(args, "config", None)
     try:
@@ -60,6 +64,7 @@ def _load_config(args: argparse.Namespace):
 
 
 def cmd_doctor(_args: argparse.Namespace) -> int:
+    """Show installed optional libraries and diagnostic info."""
     rows = [
         ("Python", platform.python_version()),
         ("mistune", _version("mistune")),
@@ -83,7 +88,10 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
     pyproject = Path.cwd() / "pyproject.toml"
     if pyproject.exists():
         try:
-            from markpickle.config_file import _extract_markpickle_section, _read_toml
+            from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
+                _extract_markpickle_section,
+                _read_toml,
+            )
 
             data = _read_toml(pyproject)
             section = _extract_markpickle_section(data, pyproject)
@@ -91,7 +99,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
                 print(f"\nConfig: {pyproject} ([tool.markpickle] found, {len(section)} key(s))")
             else:
                 print(f"\nConfig: {pyproject} (no [tool.markpickle] section)")
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             pass
 
     hint = "pip install markpickle[all]  # installs tabulate, Pillow, mdformat"
@@ -105,7 +113,8 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
 
 
 def cmd_convert(args: argparse.Namespace) -> int:
-    from markpickle.deserialize import load
+    """Convert a markdown file to JSON."""
+    from markpickle.deserialize import load  # pylint: disable=import-outside-toplevel
 
     config = _load_config(args)
     infile_arg: str = args.infile
@@ -145,8 +154,11 @@ def cmd_convert(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    import markpickle
-    from markpickle.validate import validate_markdown
+    """Check if a markdown file can be safely round-tripped."""
+    import markpickle  # pylint: disable=import-outside-toplevel
+    from markpickle.validate import (
+        validate_markdown,  # pylint: disable=import-outside-toplevel
+    )
 
     config = _load_config(args)
     path = Path(args.infile)
@@ -162,7 +174,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
         # AST-based structural check
         if not getattr(args, "no_ast", False):
-            ast_issues = validate_markdown(original_text, config=config)
+            ast_issues = validate_markdown(original_text, _config=config)
             issues.extend(ast_issues)
 
         # Round-trip check
@@ -176,7 +188,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
     except NotImplementedError as exc:
         issues.append(f"Unsupported construct: {exc}")
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:  # pylint: disable=broad-exception-caught
         issues.append(f"Parse error: {exc}")
 
     if issues:
@@ -184,9 +196,9 @@ def cmd_validate(args: argparse.Namespace) -> int:
         for issue in issues:
             print(f"  - {issue}")
         return 1
-    else:
-        print(f"OK    {args.infile}  (round-trip safe)")
-        return 0
+
+    print(f"OK    {args.infile}  (round-trip safe)")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -195,8 +207,11 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 
 def cmd_gui(_args: argparse.Namespace) -> int:
+    """Launch the tkinter GUI."""
     try:
-        from markpickle.gui.app import launch_gui  # noqa: PLC0415
+        from markpickle.gui.app import (
+            launch_gui,  # pylint: disable=import-outside-toplevel
+        )
 
         launch_gui()
         return 0
@@ -212,6 +227,7 @@ def cmd_gui(_args: argparse.Namespace) -> int:
 
 
 def _add_config_arg(p: argparse.ArgumentParser) -> None:
+    """Add common --config argument to sub-parsers."""
     p.add_argument(
         "--config",
         metavar="FILE",
@@ -221,6 +237,7 @@ def _add_config_arg(p: argparse.ArgumentParser) -> None:
 
 
 def run(argv: Optional[list[str]] = None) -> int:
+    """CLI entry point logic."""
     parser = argparse.ArgumentParser(
         prog="markpickle",
         description="Convert between Markdown and Python data structures.",

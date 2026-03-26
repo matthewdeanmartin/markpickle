@@ -47,10 +47,10 @@ def extract_bytes(src: str, config: Config) -> Any:
 
     if config.serialize_images_to_pillow and mime_type == "image/png":
         try:
-            from PIL import Image  # noqa: PLC0415
+            from PIL import Image  # pylint: disable=import-outside-toplevel
         except ImportError as exc:
             raise ImportError(
-                "Pillow is required for image deserialization. " "Install it with: pip install markpickle[images]"
+                "Pillow is required for image deserialization. Install it with: pip install markpickle[images]"
             ) from exc
         # Create an in-memory stream from the image bytes
         stream = io.BytesIO(image_bytes)

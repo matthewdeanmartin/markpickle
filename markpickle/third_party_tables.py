@@ -20,9 +20,9 @@ def to_table_tablulate_style(value: Any) -> str:
     Requires the ``tabulate`` package: pip install markpickle[tables]
     """
     try:
-        import tabulate as tabulate_mod
+        import tabulate as tabulate_mod  # pylint: disable=import-outside-toplevel
     except ImportError as exc:
         raise ImportError(
-            "tabulate is required for tabulate-style tables. " "Install it with: pip install markpickle[tables]"
+            "tabulate is required for tabulate-style tables. Install it with: pip install markpickle[tables]"
         ) from exc
     return tabulate_mod.tabulate(value, tablefmt="github")

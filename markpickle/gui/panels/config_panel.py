@@ -31,9 +31,15 @@ _EDITABLE_FIELDS = [
 
 
 class ConfigPanel(tk.Frame):
+    """
+    Live Config Editor panel.
+    Allows viewing and editing markpickle Config options, and seeing their effect
+    on a markdown document in real-time.
+    """
+
     def __init__(
         self, parent, config: Config = None, config_source: str = "defaults", doc_state=None, config_state=None, **kw
-    ):
+    ):  # pylint: disable=too-many-positional-arguments
         super().__init__(parent, **T.frame_kw(), **kw)
         self._active_config: Config = config if config is not None else Config()
         self._config_source: str = config_source
@@ -46,6 +52,7 @@ class ConfigPanel(tk.Frame):
 
     # ------------------------------------------------------------------
     def activate(self):
+        """Called when this panel becomes active."""
         if self._doc_state is not None and self._doc_state.text.strip():
             self._test_roundtrip_with_md(self._doc_state.text)
 
@@ -112,7 +119,7 @@ class ConfigPanel(tk.Frame):
         self._fields_frame = tk.Frame(canvas, **T.frame_kw())
         canvas_window = canvas.create_window((0, 0), window=self._fields_frame, anchor="nw")
 
-        def _on_configure(event):
+        def _on_configure(_event):
             canvas.configure(scrollregion=canvas.bbox("all"))
             canvas.itemconfig(canvas_window, width=canvas.winfo_width())
 
@@ -253,7 +260,7 @@ class ConfigPanel(tk.Frame):
         self._test_roundtrip_with_md(text)
 
     def _test_roundtrip_with_md(self, md_text: str):
-        import markpickle
+        import markpickle  # pylint: disable=import-outside-toplevel
 
         try:
             cfg = self._get_config()
@@ -261,7 +268,7 @@ class ConfigPanel(tk.Frame):
             out = markpickle.dumps(obj, config=cfg)
             self._set_preview_output(out)
             self._status.config(text="Round-trip OK.", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._set_preview_output(f"Error: {exc}")
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 
@@ -275,7 +282,7 @@ class ConfigPanel(tk.Frame):
             if self._config_state is not None:
                 self._config_state.set(cfg)
             self._status.config(text=f"Reloaded: {source}", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._status.config(text=f"Reload error: {exc}", fg=T.RED)
 
     def _reset_to_defaults(self):
@@ -300,16 +307,18 @@ class ConfigPanel(tk.Frame):
 
 
 def _load_config_with_source() -> tuple[Config, str]:
-    from pathlib import Path
+    from pathlib import Path  # pylint: disable=import-outside-toplevel
 
     try:
-        from markpickle.config_file import load_config
+        from markpickle.config_file import (
+            load_config,  # pylint: disable=import-outside-toplevel
+        )
 
         cfg = load_config()
         pyproject = Path.cwd() / "pyproject.toml"
         if pyproject.exists():
             try:
-                from markpickle.config_file import (
+                from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
                     _extract_markpickle_section,
                     _read_toml,
                 )
@@ -318,9 +327,9 @@ def _load_config_with_source() -> tuple[Config, str]:
                 section = _extract_markpickle_section(data, pyproject)
                 if section:
                     return cfg, f"pyproject.toml ([tool.markpickle], {len(section)} key(s))"
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
             return cfg, "pyproject.toml (no [tool.markpickle] section — defaults)"
         return cfg, "defaults (no pyproject.toml found)"
-    except Exception:
+    except Exception:  # pylint: disable=broad-exception-caught
         return Config(), "defaults"

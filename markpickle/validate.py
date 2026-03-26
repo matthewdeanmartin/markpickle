@@ -64,7 +64,7 @@ def _has_any_heading(tokens: list[dict[str, Any]]) -> bool:
     return False
 
 
-def validate_markdown(text: str, config: Optional[Any] = None) -> list[str]:
+def validate_markdown(text: str, _config: Optional[Any] = None) -> list[str]:
     """
     Walk a mistune AST and return a list of issue strings describing constructs
     that won't round-trip cleanly through markpickle.
@@ -73,7 +73,7 @@ def validate_markdown(text: str, config: Optional[Any] = None) -> list[str]:
     ----------
     text:
         Raw markdown text to analyse.
-    config:
+    _config:
         Unused; reserved for future use so callers can pass a Config object.
 
     Returns
@@ -116,7 +116,7 @@ def validate_markdown(text: str, config: Optional[Any] = None) -> list[str]:
 
         elif typ == "table":
             issues.append(
-                "table token found: native mistune tables may not round-trip correctly " "without tabulate support"
+                "table token found: native mistune tables may not round-trip correctly without tabulate support"
             )
 
         elif typ == "strikethrough":

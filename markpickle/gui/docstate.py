@@ -15,6 +15,7 @@ class DocumentState:
     """Observable string holding the current markdown document."""
 
     def __init__(self) -> None:
+        """Initialize with an empty document."""
         self._text: str = ""
         self._listeners: list[Callable[[str], None]] = []
 
@@ -29,9 +30,10 @@ class DocumentState:
         for fn in self._listeners:
             try:
                 fn(text)
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
 
     @property
     def text(self) -> str:
+        """Return the current document text."""
         return self._text

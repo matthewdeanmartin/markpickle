@@ -137,6 +137,10 @@ markpickle gui                       # launch this GUI
 
 
 class HelpPanel(tk.Frame):
+    """
+    Panel for displaying a markdown syntax cheat sheet and help information.
+    """
+
     def __init__(self, parent, **kw):
         super().__init__(parent, **T.frame_kw(), **kw)
         self._build()

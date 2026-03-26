@@ -17,15 +17,19 @@ def _version(pkg: str) -> str:
 
 
 def _tkinter_status() -> str:
+    """Check if tkinter is available."""
     try:
-        import tkinter  # noqa: F401
-
-        return "available (stdlib)"
-    except ImportError:
+        # We already imported it at top level as tk
+        return f"available (version {tk.TkVersion})"
+    except Exception:  # pylint: disable=broad-exception-caught
         return "NOT AVAILABLE"
 
 
 class DoctorPanel(tk.Frame):
+    """
+    Panel for diagnostics and showing environment information.
+    """
+
     def __init__(self, parent, config_state=None, **kw):
         super().__init__(parent, **T.frame_kw(), **kw)
         self._config_state = config_state
@@ -99,12 +103,12 @@ class DoctorPanel(tk.Frame):
         self._output.insert("end", sep, "sep")
 
         # --- Config file source ---
-        from pathlib import Path
+        from pathlib import Path  # pylint: disable=import-outside-toplevel
 
         pyproject = Path.cwd() / "pyproject.toml"
         if pyproject.exists():
             try:
-                from markpickle.config_file import (
+                from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
                     _extract_markpickle_section,
                     _read_toml,
                 )
@@ -121,7 +125,7 @@ class DoctorPanel(tk.Frame):
                         f"\nConfig file: {pyproject}\n  (no [tool.markpickle] section — using defaults)\n",
                         "hint",
                     )
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
         else:
             self._output.insert("end", "\nConfig file: none found (using defaults)\n", "hint")
@@ -132,10 +136,12 @@ class DoctorPanel(tk.Frame):
         self._output.insert("end", f"{'Active Config':<28}{'Value'}\n", "heading")
         self._output.insert("end", sep, "sep")
 
-        from markpickle.config_class import Config
+        from markpickle.config_class import (
+            Config,  # pylint: disable=import-outside-toplevel
+        )
 
         cfg = self._config_state.config if self._config_state is not None else Config()
-        import dataclasses
+        import dataclasses  # pylint: disable=import-outside-toplevel
 
         for field in dataclasses.fields(cfg):
             val = getattr(cfg, field.name)

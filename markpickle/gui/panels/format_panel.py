@@ -10,6 +10,10 @@ from markpickle.gui import theme as T
 
 
 class FormatPanel(tk.Frame):
+    """
+    Panel for formatting markdown using mdformat or basic normalization.
+    """
+
     def __init__(self, parent, doc_state=None, config_state=None, **kw):
         super().__init__(parent, **T.frame_kw(), **kw)
         self._doc_state = doc_state
@@ -135,10 +139,11 @@ class FormatPanel(tk.Frame):
             self._load_text(text)
             self._run()
             self._status.config(text=f"Loaded: {path}", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 
     def _random(self):
+        # pylint: disable=import-outside-toplevel
         from markpickle.gui.randgen import random_markdown
 
         label, text = random_markdown()
@@ -156,6 +161,7 @@ class FormatPanel(tk.Frame):
     # ------------------------------------------------------------------
     def _check_mdformat(self):
         try:
+            # pylint: disable=import-outside-toplevel, unused-import
             import mdformat  # noqa: F401
 
             self._mdformat_label.config(text="mdformat available", fg=T.GREEN)
@@ -168,12 +174,13 @@ class FormatPanel(tk.Frame):
             formatted = self._format(text)
             self._set_output(formatted)
             self._status.config(text="OK", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._set_output(f"Error: {exc}")
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 
     def _format(self, text: str) -> str:
         try:
+            # pylint: disable=import-outside-toplevel
             import mdformat
 
             return mdformat.text(text)

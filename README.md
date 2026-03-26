@@ -44,6 +44,18 @@ make sense for you.
 pip install markpickle
 ```
 
+To install with a formatter, image-as-link format,
+
+```shell
+pip install markpickle[all]
+```
+
+Discover capabilities with gui.
+
+```shell
+markpickle gui
+```
+
 ## Capabilities
 
 This is a lossy serialization. Markdown is missing too many concepts to make a high fidelity representation of a python

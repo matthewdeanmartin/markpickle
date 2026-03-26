@@ -39,23 +39,7 @@ def parse_outermost_dict(
 
             # Recurse deeper if inner_result is a dict with more headings
             if isinstance(inner_result, dict):
-                for inner_key, inner_val in inner_result.items():
-                    if inner_val is None:
-                        continue
-                    if isinstance(inner_val, list) and any(
-                        item.get("type") == "heading" for item in inner_val if isinstance(item, dict)
-                    ):
-                        # There are deeper headings - recurse
-                        deeper_seq = [
-                            item["level"]
-                            for item in inner_val
-                            if isinstance(item, dict) and item.get("type") == "heading"
-                        ]
-                        if deeper_seq:
-                            deeper_level = min(deeper_seq)
-                            inner_result[inner_key] = parse_outermost_dict(
-                                cast(list[PossibleDictTypes], inner_val), deeper_level
-                            )
+                _recurse_inner_result(inner_result)
 
             candidate[token_key] = inner_result
 
@@ -64,6 +48,22 @@ def parse_outermost_dict(
     # no ATX dict-like structures here.
     # mypy doesn't like this, but this is really just a hack to hold a list.
     return cast(PossibleDictTypes, {None: token_list})
+
+
+def _recurse_inner_result(inner_result: dict[Optional[str], Any]) -> None:
+    for inner_key, inner_val in inner_result.items():
+        if inner_val is None:
+            continue
+        if isinstance(inner_val, list) and any(
+            item.get("type") == "heading" for item in inner_val if isinstance(item, dict)
+        ):
+            # There are deeper headings - recurse
+            deeper_seq = [
+                item["level"] for item in inner_val if isinstance(item, dict) and item.get("type") == "heading"
+            ]
+            if deeper_seq:
+                deeper_level = min(deeper_seq)
+                inner_result[inner_key] = parse_outermost_dict(cast(list[PossibleDictTypes], inner_val), deeper_level)
 
 
 def recursive_part(level: int, token_list: MistuneTokenList) -> Any:

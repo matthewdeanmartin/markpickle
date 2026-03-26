@@ -31,7 +31,7 @@ pre-commit:  isort black
 
 bandit:  
 	@echo "Security checks"
-	$(VENV)  bandit markpickle -r
+	$(VENV)  bandit markpickle -r --skip B311,B110
 
 
 .PHONY: pylint

@@ -66,7 +66,7 @@ def from_monospace(text: str) -> str:
 
 def _is_in_range(ch: str, table: dict[int, int]) -> bool:
     """Check if a character is in a Unicode math range (values of a forward table)."""
-    return ord(ch) in {v for v in table.values()}
+    return ord(ch) in set(table.values())
 
 
 def _detect_run(text: str, reverse_table: dict[int, int]) -> bool:

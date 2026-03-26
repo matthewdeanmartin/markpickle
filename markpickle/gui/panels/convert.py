@@ -10,6 +10,10 @@ from markpickle.gui import theme as T
 
 
 class ConvertPanel(tk.Frame):
+    """
+    Panel for converting between Markdown and Python representations.
+    """
+
     def __init__(self, parent, doc_state=None, config_state=None, **kw):
         super().__init__(parent, **T.frame_kw(), **kw)
         self._direction = "md_to_py"
@@ -134,11 +138,13 @@ class ConvertPanel(tk.Frame):
             self._load_text(text)
             self._status.config(text=f"Loaded: {path}", fg=T.GREEN)
             self._run()
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 
     def _random(self):
-        from markpickle.gui.randgen import random_markdown
+        from markpickle.gui.randgen import (
+            random_markdown,  # pylint: disable=import-outside-toplevel
+        )
 
         label, text = random_markdown()
         self._load_text(text)
@@ -166,7 +172,7 @@ class ConvertPanel(tk.Frame):
             self._out_label.config(text="Output (Python repr)")
 
     def _run(self):
-        import markpickle
+        import markpickle  # pylint: disable=import-outside-toplevel
 
         text = self._input.get("1.0", "end-1c")
         cfg = self._config_state.config if self._config_state is not None else None
@@ -175,13 +181,13 @@ class ConvertPanel(tk.Frame):
                 result = markpickle.loads(text, config=cfg)
                 out = repr(result)
             else:
-                import ast
+                import ast  # pylint: disable=import-outside-toplevel
 
                 obj = ast.literal_eval(text)
                 out = markpickle.dumps(obj, config=cfg)
             self._set_output(out)
             self._status.config(text="OK", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._set_output(f"Error: {exc}")
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 

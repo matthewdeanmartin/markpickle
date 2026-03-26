@@ -10,6 +10,10 @@ from markpickle.gui import theme as T
 
 
 class ValidatePanel(tk.Frame):
+    """
+    Panel for validating markdown round-trip and AST analysis.
+    """
+
     def __init__(self, parent, doc_state=None, config_state=None, **kw):
         super().__init__(parent, **T.frame_kw(), **kw)
         self._doc_state = doc_state
@@ -159,10 +163,11 @@ class ValidatePanel(tk.Frame):
             self._load_text(text)
             self._run()
             self._status.config(text=f"Loaded: {path}", fg=T.GREEN)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             self._status.config(text=f"Error: {exc}", fg=T.RED)
 
     def _random(self):
+        # pylint: disable=import-outside-toplevel
         from markpickle.gui.randgen import random_markdown
 
         label, text = random_markdown()
@@ -179,6 +184,7 @@ class ValidatePanel(tk.Frame):
 
     # ------------------------------------------------------------------
     def _run(self):
+        # pylint: disable=import-outside-toplevel
         import markpickle
         from markpickle.validate import validate_markdown
 
@@ -199,7 +205,7 @@ class ValidatePanel(tk.Frame):
                         lines.append(("issue", f"  ✗ {issue}\n"))
                 else:
                     lines.append(("ok", "  ✓ No structural issues found.\n"))
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 lines.append(("issue", f"  Error during AST analysis: {exc}\n"))
             lines.append(("heading", ""))
 
@@ -217,7 +223,7 @@ class ValidatePanel(tk.Frame):
                     lines.append(("warn", f"  Round-tripped:{repr(obj2)[:120]}\n"))
             except NotImplementedError as exc:
                 lines.append(("issue", f"  ✗ Unsupported construct: {exc}\n"))
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 lines.append(("issue", f"  ✗ Parse error: {exc}\n"))
 
         all_ok = all(tag in ("ok", "heading") for tag, _ in lines)

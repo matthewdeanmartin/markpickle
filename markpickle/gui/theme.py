@@ -43,60 +43,66 @@ FONT_SMALL = ("Segoe UI", 9)
 
 def text_area_kw() -> dict:
     """Keyword args for a plain Text widget (editor/output)."""
-    return dict(
-        bg=SURFACE0,
-        fg=TEXT,
-        insertbackground=TEXT,
-        selectbackground=BLUE,
-        selectforeground=BASE,
-        relief="flat",
-        font=FONT_MONO,
-        padx=6,
-        pady=4,
-    )
+    return {
+        "bg": SURFACE0,
+        "fg": TEXT,
+        "insertbackground": TEXT,
+        "selectbackground": BLUE,
+        "selectforeground": BASE,
+        "relief": "flat",
+        "font": FONT_MONO,
+        "padx": 6,
+        "pady": 4,
+    }
 
 
 def label_kw() -> dict:
-    return dict(bg=BASE, fg=TEXT, font=FONT_UI)
+    """Keyword args for a standard Label."""
+    return {"bg": BASE, "fg": TEXT, "font": FONT_UI}
 
 
 def heading_kw() -> dict:
-    return dict(bg=BASE, fg=MAUVE, font=FONT_HEADING)
+    """Keyword args for a heading Label."""
+    return {"bg": BASE, "fg": MAUVE, "font": FONT_HEADING}
 
 
 def button_kw(active: bool = False) -> dict:
-    return dict(
-        bg=BLUE if active else SURFACE1,
-        fg=BASE if active else TEXT,
-        activebackground=LAVENDER,
-        activeforeground=BASE,
-        relief="flat",
-        font=FONT_UI,
-        padx=10,
-        pady=6,
-        cursor="hand2",
-        bd=0,
-    )
+    """Keyword args for a standard Button."""
+    return {
+        "bg": BLUE if active else SURFACE1,
+        "fg": BASE if active else TEXT,
+        "activebackground": LAVENDER,
+        "activeforeground": BASE,
+        "relief": "flat",
+        "font": FONT_UI,
+        "padx": 10,
+        "pady": 6,
+        "cursor": "hand2",
+        "bd": 0,
+    }
 
 
 def small_button_kw() -> dict:
-    return dict(
-        bg=SURFACE1,
-        fg=TEXT,
-        activebackground=BLUE,
-        activeforeground=BASE,
-        relief="flat",
-        font=FONT_SMALL,
-        padx=8,
-        pady=3,
-        cursor="hand2",
-        bd=0,
-    )
+    """Keyword args for a small Button."""
+    return {
+        "bg": SURFACE1,
+        "fg": TEXT,
+        "activebackground": BLUE,
+        "activeforeground": BASE,
+        "relief": "flat",
+        "font": FONT_SMALL,
+        "padx": 8,
+        "pady": 3,
+        "cursor": "hand2",
+        "bd": 0,
+    }
 
 
 def frame_kw() -> dict:
-    return dict(bg=BASE)
+    """Keyword args for a standard Frame."""
+    return {"bg": BASE}
 
 
 def sidebar_frame_kw() -> dict:
-    return dict(bg=MANTLE)
+    """Keyword args for a sidebar Frame."""
+    return {"bg": MANTLE}
