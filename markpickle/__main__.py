@@ -16,7 +16,6 @@ import sys
 from pathlib import Path
 from typing import Any, Optional
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -84,7 +83,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
     pyproject = Path.cwd() / "pyproject.toml"
     if pyproject.exists():
         try:
-            from markpickle.config_file import _read_toml, _extract_markpickle_section
+            from markpickle.config_file import _extract_markpickle_section, _read_toml
 
             data = _read_toml(pyproject)
             section = _extract_markpickle_section(data, pyproject)
@@ -147,6 +146,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
 
 def cmd_validate(args: argparse.Namespace) -> int:
     import markpickle
+    from markpickle.validate import validate_markdown
 
     config = _load_config(args)
     path = Path(args.infile)
@@ -160,12 +160,19 @@ def cmd_validate(args: argparse.Namespace) -> int:
         with path.open(encoding="utf-8") as fh:
             original_text = fh.read()
 
-        obj = markpickle.loads(original_text, config=config)
-        round_tripped = markpickle.dumps(obj, config=config)
-        obj2 = markpickle.loads(round_tripped, config=config)
+        # AST-based structural check
+        if not getattr(args, "no_ast", False):
+            ast_issues = validate_markdown(original_text, config=config)
+            issues.extend(ast_issues)
 
-        if obj != obj2:
-            issues.append("Round-trip produced a different object (lossy conversion).")
+        # Round-trip check
+        if not getattr(args, "no_roundtrip", False):
+            obj = markpickle.loads(original_text, config=config)
+            round_tripped = markpickle.dumps(obj, config=config)
+            obj2 = markpickle.loads(round_tripped, config=config)
+
+            if obj != obj2:
+                issues.append("Round-trip produced a different object (lossy conversion).")
 
     except NotImplementedError as exc:
         issues.append(f"Unsupported construct: {exc}")
@@ -242,6 +249,18 @@ examples:
     # validate
     p_validate = sub.add_parser("validate", help="Check if a markdown file can be safely round-tripped")
     p_validate.add_argument("infile", help="markdown file to validate")
+    p_validate.add_argument(
+        "--no-roundtrip",
+        action="store_true",
+        default=False,
+        help="skip the round-trip equality check (only run AST analysis)",
+    )
+    p_validate.add_argument(
+        "--no-ast",
+        action="store_true",
+        default=False,
+        help="skip the AST structural analysis (only run round-trip check)",
+    )
     _add_config_arg(p_validate)
 
     # doctor

@@ -7,9 +7,8 @@ Each test documents whether the TODO item is:
   - WORKS PARTIALLY: some cases work, others don't
 """
 
-import pytest
 import markpickle
-from markpickle import loads, dumps, loads_all
+from markpickle import dumps, loads, loads_all
 
 # ---------------------------------------------------------------------------
 # Bug: "Doesn't deserialize python nested dict to ATX headers, except 1st level"

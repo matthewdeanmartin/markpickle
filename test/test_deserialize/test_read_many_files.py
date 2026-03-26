@@ -1,9 +1,9 @@
 import glob
+from test.utils import locate_file
 
 import pytest
 
 import markpickle
-from test.utils import locate_file
 
 
 @pytest.mark.skip("Lots of mixed content errors")

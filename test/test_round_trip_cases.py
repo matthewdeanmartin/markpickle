@@ -1,5 +1,6 @@
-import markpickle
 import datetime
+
+import markpickle
 
 
 def test_zero():

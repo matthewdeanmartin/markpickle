@@ -40,8 +40,7 @@ def _read_toml(path: Path) -> dict[str, Any]:
                     return tomllib.load(fh)
             except ImportError as exc:
                 raise ImportError(
-                    "TOML support requires Python 3.11+ or the 'tomli' package. "
-                    "Install it with: pip install tomli"
+                    "TOML support requires Python 3.11+ or the 'tomli' package. " "Install it with: pip install tomli"
                 ) from exc
 
 

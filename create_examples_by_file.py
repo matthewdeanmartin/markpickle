@@ -1,6 +1,8 @@
-import markpickle
-import mdformat
 import difflib
+
+import mdformat
+
+import markpickle
 
 
 def compare_files(file1_path, file2_path):

@@ -7,7 +7,6 @@ import io
 import markpickle
 from markpickle.dom_deserialize import load_as_dom, loads_as_dom
 
-
 # ---------------------------------------------------------------------------
 # Headings
 # ---------------------------------------------------------------------------

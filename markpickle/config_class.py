@@ -73,10 +73,10 @@ class Config:
 
     # --- New in 2.0.0 ---
 
-    serialize_tuples_as_ordered_lists: bool = True
+    serialize_tuples_as_ordered_lists: bool = False
     """If true, serialize tuples as ordered (numbered) lists instead of unordered lists"""
 
-    ordered_list_as_tuple: bool = True
+    ordered_list_as_tuple: bool = False
     """If true, deserialize ordered (numbered) lists as tuples"""
 
     infer_complex_types: bool = False

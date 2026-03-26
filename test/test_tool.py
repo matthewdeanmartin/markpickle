@@ -1,8 +1,9 @@
-import pytest
-import sys
 import io
+import sys
 from pathlib import Path
 from typing import List
+
+import pytest
 
 import markpickle
 from markpickle.tool import main as cli_main

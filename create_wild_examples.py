@@ -1,9 +1,9 @@
 """Just check if anything blows up, it might not be sensible."""
 
 import glob
+from test.utils import locate_file
 
 import markpickle
-from test.utils import locate_file
 
 
 def run():

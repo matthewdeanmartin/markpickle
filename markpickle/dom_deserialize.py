@@ -30,10 +30,10 @@ from typing import Any, Optional
 
 import mistune
 
-
 # ---------------------------------------------------------------------------
 # Internal text extraction
 # ---------------------------------------------------------------------------
+
 
 def _text_from_children(children: list[dict[str, Any]]) -> str:
     """Recursively flatten inline token children to plain text."""
@@ -58,6 +58,7 @@ def _inline_text(token: dict[str, Any]) -> str:
 # List item extraction
 # ---------------------------------------------------------------------------
 
+
 def _list_items(list_token: dict[str, Any]) -> list[Any]:
     """Extract items from a list token, recursing into nested lists."""
     items: list[Any] = []
@@ -70,10 +71,12 @@ def _list_items(list_token: dict[str, Any]) -> list[Any]:
                 item_parts.append(_inline_text(child))
             elif child["type"] == "list":
                 nested_tag = "ol" if child.get("ordered") else "ul"
-                item_parts.append({
-                    "tag": nested_tag,
-                    "items": _list_items(child),
-                })
+                item_parts.append(
+                    {
+                        "tag": nested_tag,
+                        "items": _list_items(child),
+                    }
+                )
         if len(item_parts) == 1:
             items.append(item_parts[0])
         else:
@@ -84,6 +87,7 @@ def _list_items(list_token: dict[str, Any]) -> list[Any]:
 # ---------------------------------------------------------------------------
 # Table extraction
 # ---------------------------------------------------------------------------
+
 
 def _parse_table_text(text: str) -> Optional[dict[str, Any]]:
     """Parse a pipe-delimited table from a paragraph text node."""
@@ -107,6 +111,7 @@ def _parse_table_text(text: str) -> Optional[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Token → DOM node
 # ---------------------------------------------------------------------------
+
 
 def _token_to_node(token: dict[str, Any]) -> Optional[dict[str, Any]]:
     """Convert a single top-level mistune token to a DOM node dict."""
@@ -143,11 +148,17 @@ def _token_to_node(token: dict[str, Any]) -> Optional[dict[str, Any]]:
         children = token.get("children", [])
         i = 0
         while i < len(children):
-            if children[i]["type"] == "def_list_header" and i + 1 < len(children) and children[i + 1]["type"] == "def_list_item":
-                pairs.append({
-                    "term": children[i].get("text", ""),
-                    "definition": children[i + 1].get("text", ""),
-                })
+            if (
+                children[i]["type"] == "def_list_header"
+                and i + 1 < len(children)
+                and children[i + 1]["type"] == "def_list_item"
+            ):
+                pairs.append(
+                    {
+                        "term": children[i].get("text", ""),
+                        "definition": children[i + 1].get("text", ""),
+                    }
+                )
                 i += 2
             else:
                 i += 1
@@ -171,6 +182,7 @@ def _token_to_node(token: dict[str, Any]) -> Optional[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def loads_as_dom(text: str) -> list[dict[str, Any]]:
     """
