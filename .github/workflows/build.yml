@@ -18,7 +18,7 @@ jobs:
       uses: astral-sh/setup-uv@v6.0.1
 
     - name: Install Dependencies
-      run: uv sync
+      run: uv sync --all-extras
     - name: Install global dependencies
       run: |
         pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
