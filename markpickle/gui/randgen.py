@@ -8,9 +8,12 @@ Only generates constructs that markpickle can round-trip:
 
 from __future__ import annotations
 
-import random
+import random as _random
 import string
 from typing import Any
+
+# Use OS-backed randomness so Ruff/Bandit S311 does not flag this helper module.
+random = _random.SystemRandom()
 
 # ---------------------------------------------------------------------------
 # Low-level value generators

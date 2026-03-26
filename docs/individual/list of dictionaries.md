@@ -1,4 +1,4 @@
-| animal | name   |
+| animal | name |
 | ------ | ------ |
-| cat    | Frisky |
-| dog    | Fido   |
+| cat | Frisky |
+| dog | Fido |

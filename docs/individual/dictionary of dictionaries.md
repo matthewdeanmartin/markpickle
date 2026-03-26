@@ -1,11 +1,11 @@
 # Best Cat
 
-| animal | name   |
+| animal | name |
 | ------ | ------ |
-| cat    | Frisky |
+| cat | Frisky |
 
 # Best Dog
 
 | animal | name |
 | ------ | ---- |
-| dog    | Fido |
+| dog | Fido |

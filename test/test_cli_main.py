@@ -1,11 +1,11 @@
-import io
 import importlib.metadata
+import io
 import json
 import sys
 import types
 from argparse import Namespace
-from unittest.mock import patch
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 

@@ -1,11 +1,18 @@
 import io
-from datetime import date, datetime
 from dataclasses import dataclass
+from datetime import date, datetime
 
 import pytest
 
 from markpickle.config_class import Config
-from markpickle.serialize import dump, dump_all, dumps, dumps_all, render_dict, render_scalar
+from markpickle.serialize import (
+    dump,
+    dump_all,
+    dumps,
+    dumps_all,
+    render_dict,
+    render_scalar,
+)
 
 
 def test_dumps_child_dict_uses_python_table_renderer_when_tabulate_style_disabled(

@@ -9,7 +9,11 @@ import pytest
 
 import markpickle
 from markpickle.config_class import Config
-from markpickle.config_file import _apply_section, _extract_markpickle_section, load_config
+from markpickle.config_file import (
+    _apply_section,
+    _extract_markpickle_section,
+    load_config,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers

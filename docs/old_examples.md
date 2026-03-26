@@ -2,7 +2,7 @@
 
 **String**. Can you infer types? Probably not.
 
-**List**. And lists can hold String, List, Dict\[int, str\],
+**List**. And lists can hold String, List, Dict[int, str],
 
 ```markdown
  - Cat
@@ -10,7 +10,7 @@
  - Rabbit
 ```
 
-**Dict\[int, str | list | dict\[int, str\]\]**. Also known as ordered lists. Can hold most types.
+**Dict\[int, str | list | dict[int, str]\]**. Also known as ordered lists. Can hold most types.
 
 ```markdown
 1. Cat
@@ -18,9 +18,9 @@
 3. Rabbit
 ```
 
-**Dict\[int, str\]**. Also known as ordered lists.
+**Dict[int, str]**. Also known as ordered lists.
 
-**Dict\[str, str\]**. Via headers
+**Dict[str, str]**. Via headers
 
 ```markdown
 # Things
@@ -34,7 +34,7 @@
  - Radish
 ```
 
-**Dict\[int, dict\[str, str\]\]** Dictionary of numeric keys and value that are dictionaries.
+**Dict\[int, dict[str, str]\]** Dictionary of numeric keys and value that are dictionaries.
 
 ```markdown
 # dict of lists of strings

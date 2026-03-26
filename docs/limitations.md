@@ -26,6 +26,7 @@ markpickle.dumps("42")  # "42"
 When deserializing, `"42"` becomes `int(42)` if `infer_scalar_types=True`. The original type is lost. The same applies to floats, booleans, dates, and None.
 
 If you need to preserve the distinction between `42` and `"42"`, either:
+
 - Use `infer_scalar_types=False` (everything stays as strings)
 - Use YAML front matter to store type hints
 

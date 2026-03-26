@@ -1,108 +1,197 @@
-ifeq ($(origin VIRTUAL_ENV),undefined)
-    VENV := uv run
-else
-    VENV :=
+.DEFAULT_GOAL := help
+MAKEFLAGS += --no-print-directory
+
+UV_RUN := uv run
+CODE_PATHS := markpickle test
+DOC_FILE_PATHS := README.md CHANGELOG.md AGENTS.md tiny.md
+DOC_DIR_PATHS := docs spec
+DOC_PATHS := $(DOC_FILE_PATHS) $(DOC_DIR_PATHS)
+PYTEST_N ?= auto
+PYTEST_ARGS := -q -ra --maxfail=1 --doctest-modules --cov=markpickle --cov-report=html --cov-fail-under=50
+PYTEST_XDIST_ARGS := -n $(PYTEST_N) --dist loadfile
+PYTEST_IGNORE_ARGS := --ignore=test/test_benchmark.py
+PYTEST_DISABLE_PLUGIN_ARGS := -p no:benchmark
+
+ifdef PYTEST_SEED
+PYTEST_RANDOM_ARGS := --randomly-seed=$(PYTEST_SEED)
 endif
 
-uv.lock: pyproject.toml
-	@echo "Installing dependencies"
-	@uv lock && uv sync
+.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust
 
-# tests can't be expected to pass if dependencies aren't installed.
-# tests are often slow and linting is fast, so run tests on linted code.
-test: pylint bandit uv.lock
-	@echo "Running unit tests"
-	$(VENV) pytest markpickle --doctest-modules
-	# $(VENV) python -m unittest discover
-	$(VENV) py.test test --cov=markpickle --cov-report=html --cov-fail-under 50
+help:
+	@printf "%s\n" \
+	"make sync                # lock + install dev deps and all extras" \
+	"make format              # format code and docs" \
+	"make lint                # format code, then run pylint" \
+	"make test                # run doctests + unit tests in parallel" \
+	"make type-check-mypy     # run mypy on markpickle" \
+	"make type-check-pyright  # run pyright on markpickle" \
+	"make type-check-ty       # run ty on markpickle" \
+	"make type-check-docstrings # check docstring/signature type mismatches" \
+	"make type-check-all      # run mypy, pyright, ty, pydoclint" \
+	"make check-code          # code checks only" \
+	"make docs-format-check   # verify markdown formatting" \
+	"make check-docs          # documentation checks only" \
+	"make check-all           # code + docs checks" \
+	"make publication-checks  # release readiness checks" \
+	"make publish             # alias for publication-checks"
 
-isort:  
-	@echo "Formatting imports"
-	$(VENV) isort markpickle markmodule
+lock:
+	@echo "[lock]"
+	uv lock
 
-black:  isort 
-	@echo "Formatting code"
-	$(VENV) metametameta pep621
-	$(VENV) black . --exclude .virtualenv --exclude .venv
+sync: lock
+	@echo "[sync]"
+	uv sync --all-extras
 
-pre-commit:  isort black
-	@echo "Pre-commit checks"
-	$(VENV) pre-commit run --all-files
+format: format-code format-docs
 
-bandit:  
-	@echo "Security checks"
-	$(VENV)  bandit markpickle -r --skip B311,B110
+format-code:
+	@echo "[format-code]"
+	$(UV_RUN) metametameta pep621
+	$(UV_RUN) isort --quiet $(CODE_PATHS)
+	$(UV_RUN) black --quiet . --exclude .virtualenv --exclude .venv
 
+format-docs:
+	@echo "[format-docs]"
+	$(UV_RUN) mdformat $(DOC_PATHS)
 
-.PHONY: pylint
-pylint:  isort black 
-	@echo "Linting with pylint"
-	$(VENV) pylint markpickle --fail-under 9.9
+lint: format-code lint-code
 
-mypy:  
-	@echo "Security checks"
-	$(VENV)  mypy markpickle
+lint-code:
+	@echo "[lint]"
+	$(UV_RUN) pylint markpickle --disable=C0415 --fail-under 9.9
 
-pip-audit:
-	@echo "Auditing dependencies"
-	$(VENV) pip-audit  --ignore-vuln CVE-2026-4539 || (echo "Vulnerability found, attempting to relock..." && uv lock --upgrade && uv sync && $(VENV) pip-audit --ignore-vuln CVE-2026-4539)
+ruff:
+	@echo "[ruff]"
+	$(UV_RUN) ruff check $(CODE_PATHS)
+
+pylint: lint-code
+
+type-check-mypy:
+	@echo "[mypy]"
+	$(UV_RUN) mypy markpickle
+
+type-check-pyright:
+	@echo "[pyright]"
+	$(UV_RUN) pyright markpickle
+
+type-check-ty:
+	@echo "[ty]"
+	$(UV_RUN) ty check markpickle
+
+type-check-docstrings:
+	@echo "[pydoclint]"
+	@if $(UV_RUN) python -c "import shutil, sys; sys.exit(0 if shutil.which('pydoclint') else 1)"; then \
+		$(UV_RUN) pydoclint markpickle; \
+	else \
+		echo "[skip] pydoclint unavailable for this Python"; \
+	fi
+
+type-check-all: type-check-mypy type-check-pyright type-check-ty type-check-docstrings
+
+type-check: type-check-all
+
+security-check:
+	@echo "[bandit]"
+	$(UV_RUN) bandit markpickle -r --skip B311,B110
+
+audit:
+	@echo "[pip-audit]"
+	$(UV_RUN) pip-audit --ignore-vuln CVE-2026-4539
+
+test:
+	@echo "[test] workers=$(PYTEST_N)"
+	$(UV_RUN) pytest $(CODE_PATHS) $(PYTEST_IGNORE_ARGS) $(PYTEST_DISABLE_PLUGIN_ARGS) $(PYTEST_ARGS) $(PYTEST_XDIST_ARGS) $(PYTEST_RANDOM_ARGS)
 
 benchmark:
-	@echo "Running benchmarks"
-	$(VENV) pytest test/test_benchmark.py --benchmark-only
+	@echo "[benchmark]"
+	$(UV_RUN) pytest test\test_benchmark.py --benchmark-only
+
+docs-format-check:
+	@echo "[docs-format-check]"
+	$(UV_RUN) mdformat --check $(DOC_PATHS)
+
+docs-links:
+	@echo "[docs-links]"
+	$(UV_RUN) linkcheckMarkdown -local docs
+	$(UV_RUN) linkcheckMarkdown -local spec
+	$(UV_RUN) linkcheckMarkdown -local README.md
+	$(UV_RUN) linkcheckMarkdown -local CHANGELOG.md
+	$(UV_RUN) linkcheckMarkdown -local AGENTS.md
+	$(UV_RUN) linkcheckMarkdown -local tiny.md
+
+docs-build:
+	@echo "[docs-build]"
+	$(UV_RUN) mkdocs build
+
+docs-test:
+	@echo "[docs-test]"
+	$(UV_RUN) pytest --markdown-docs -q README.md docs spec
+
+check-code: lint security-check audit test
+
+check-docs: docs-links docs-build
+
+check-all: check-code check-docs
+
+check: check-all
+
+version-check:
+	@echo "[version-check]"
+	$(UV_RUN) jiggle_version check
+
+release-status:
+	@echo "[release-status]"
+	@if $(UV_RUN) python -c "import shutil, sys; sys.exit(0 if shutil.which('troml-dev-status') else 1)"; then \
+		$(UV_RUN) troml-dev-status validate .; \
+	else \
+		echo "[skip] troml-dev-status unavailable for this Python"; \
+	fi
+
+clean-dist:
+	@echo "[clean-dist]"
+	$(UV_RUN) python -c "import shutil; shutil.rmtree('dist', ignore_errors=True)"
+
+build-package: clean-dist
+	@echo "[build-package]"
+	$(UV_RUN) python -m build
+
+package-check: build-package
+	@echo "[package-check]"
+	$(UV_RUN) twine check dist/*
+	$(UV_RUN) check-wheel-contents dist/*.whl
+
+publication-checks: check-all version-check release-status package-check
+
+publish: publication-checks
 
 # ---------------------------------------------------------------------------
 # Rust / maturin targets
-#
-# Prerequisites:
-#   - Rust toolchain  (https://rustup.rs)
-#   - maturin         (installed via `uv sync`)
-#
-# build-rust        Compile an optimised release build and install into the
-#                   current venv so `import markpickle._markpickle` works.
-# build-rust-debug  Same but with debug symbols (faster compile, slower runtime).
-# build-rust-wheel  Produce a distributable .whl in dist/.
-# check-rust        Run `cargo check` + clippy on the Rust source.
-# test-rust         Run Rust unit tests via `cargo test`.
-# clean-rust        Remove Rust build artefacts and any installed .pyd/.so.
-#
-# The Python package works without these; they are purely optional speedups.
 # ---------------------------------------------------------------------------
 
-.PHONY: build-rust
 build-rust:
-	@echo "Building Rust extension (release) with maturin"
-	$(VENV) maturin develop --release
+	@echo "[build-rust]"
+	$(UV_RUN) maturin develop --release
 
-.PHONY: build-rust-debug
 build-rust-debug:
-	@echo "Building Rust extension (debug) with maturin"
-	$(VENV) maturin develop
+	@echo "[build-rust-debug]"
+	$(UV_RUN) maturin develop
 
-.PHONY: build-rust-wheel
 build-rust-wheel:
-	@echo "Building Rust wheel with maturin"
-	$(VENV) maturin build --release --out dist
+	@echo "[build-rust-wheel]"
+	$(UV_RUN) maturin build --release --out dist
 
-.PHONY: check-rust
 check-rust:
-	@echo "Checking Rust code"
+	@echo "[check-rust]"
 	cargo check
 	cargo clippy -- -D warnings
 
-.PHONY: test-rust
 test-rust:
-	@echo "Running Rust unit tests"
+	@echo "[test-rust]"
 	cargo test
 
-.PHONY: clean-rust
 clean-rust:
-	@echo "Removing Rust build artefacts"
-	cargo clean 2>/dev/null || true
-	rm -f markpickle/_markpickle*.so markpickle/_markpickle*.pyd 2>/dev/null || true
-
-check: test pylint bandit pre-commit mypy pip-audit
-
-.PHONY: publish
-publish: check
-	rm -rf dist && $(VENV) hatch build
+	@echo "[clean-rust]"
+	-cargo clean
+	-$(UV_RUN) python -c "from pathlib import Path; [path.unlink() for path in Path('markpickle').glob('_markpickle*.so')]; [path.unlink() for path in Path('markpickle').glob('_markpickle*.pyd')]"

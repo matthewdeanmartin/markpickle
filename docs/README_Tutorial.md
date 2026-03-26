@@ -5,29 +5,31 @@ This is an interactive Jupyter notebook that teaches you how to use Markpickle -
 ## What you'll learn
 
 1. **Introduction to Markpickle**: What it is, key features, and use cases
-2. **Installation**: How to install Markpickle using pip
-3. **Basic Usage**: Serializing Python objects to Markdown and deserializing Markdown back to Python
-4. **Working with Different Data Types**: Scalars, lists, dictionaries, lists of dictionaries, and binary data
-5. **Advanced Configuration**: Customizing serialization behavior with Config class
-6. **Working with Files**: Reading and writing Markdown files
-7. **Multiple Documents**: Handling multiple documents in a single Markdown file
-8. **Command-Line Usage**: Using Markpickle from the terminal
-9. **Real-World Scenarios**: Converting API responses to Markdown documentation
-10. **Limitations and Best Practices**: Understanding lossy serialization and best practices
+1. **Installation**: How to install Markpickle using pip
+1. **Basic Usage**: Serializing Python objects to Markdown and deserializing Markdown back to Python
+1. **Working with Different Data Types**: Scalars, lists, dictionaries, lists of dictionaries, and binary data
+1. **Advanced Configuration**: Customizing serialization behavior with Config class
+1. **Working with Files**: Reading and writing Markdown files
+1. **Multiple Documents**: Handling multiple documents in a single Markdown file
+1. **Command-Line Usage**: Using Markpickle from the terminal
+1. **Real-World Scenarios**: Converting API responses to Markdown documentation
+1. **Limitations and Best Practices**: Understanding lossy serialization and best practices
 
 ## Getting Started
 
 1. **Install Jupyter Notebook**: If you don't have Jupyter installed, you can install it with:
+
    ```bash
    pip install jupyter
    ```
 
-2. **Open the Notebook**:
+1. **Open the Notebook**:
+
    ```bash
    jupyter notebook docs/Markpickle_Tutorial.ipynb
    ```
 
-3. **Run the Cells**: Click on each cell and press Shift+Enter to run the code.
+1. **Run the Cells**: Click on each cell and press Shift+Enter to run the code.
 
 ## Prerequisites
 

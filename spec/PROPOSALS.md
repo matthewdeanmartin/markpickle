@@ -38,7 +38,7 @@ table even when it should recurse into deeper ATX headers. Result: a flat table 
 **The rule should be:** Tables are for *leaf-level* flat dicts (all scalar values) or list-of-flat-dicts. If a dict has
 dict/list values, it should use ATX header nesting, not tables.
 
----
+______________________________________________________________________
 
 ## Proposal 1: Fix Table Heuristics
 
@@ -76,7 +76,7 @@ Similarly for `list-of-dicts` in `render_list` (line 316): only table-ify if all
 Default behavior changes slightly: deep nested dicts that previously produced garbled tables will now produce ATX header
 nesting. This is a bug fix, not a breaking change.
 
----
+______________________________________________________________________
 
 ## Proposal 2: YAML Front Matter Support
 
@@ -150,7 +150,7 @@ Alice
 30
 ```
 
----
+______________________________________________________________________
 
 ## Proposal 3: More Scalar Types
 
@@ -202,16 +202,16 @@ Financial/precise numbers:
 
 ### Summary table
 
-| Type    | Serialize | Deserialize     | Needs config | Risk                    |
+| Type | Serialize | Deserialize | Needs config | Risk |
 |---------|-----------|-----------------|--------------|-------------------------|
-| complex | repr()    | regex detect    | yes          | low                     |
-| Decimal | str()     | pattern detect  | yes          | medium (float conflict) |
-| UUID    | str()     | regex detect    | yes          | low                     |
-| Path    | str()     | ambiguous       | front matter | high                    |
-| Enum    | name      | needs class ref | object_hook  | medium                  |
-| Pattern | /pattern/ | convention      | yes          | low                     |
+| complex | repr() | regex detect | yes | low |
+| Decimal | str() | pattern detect | yes | medium (float conflict) |
+| UUID | str() | regex detect | yes | low |
+| Path | str() | ambiguous | front matter | high |
+| Enum | name | needs class ref | object_hook | medium |
+| Pattern | /pattern/ | convention | yes | low |
 
----
+______________________________________________________________________
 
 ## Proposal 4: Unicode Text Formatting as Python String Metadata
 
@@ -222,15 +222,15 @@ Python strings don't have bold... **or do they?**
 Unicode has Mathematical Alphanumeric Symbols that provide bold, italic, bold-italic, monospace, script, and other
 variants for Latin letters and digits. These are real characters that render in terminals, editors, and markdown:
 
-| Style         | Example                                 | Unicode Block |
+| Style | Example | Unicode Block |
 |---------------|-----------------------------------------|---------------|
-| Bold          | **hello** -> `????????????????????`     | U+1D400-1D419 |
-| Italic        | *hello* -> `????????????????????`       | U+1D434-1D44D |
-| Bold Italic   | `????????????????????????????`          | U+1D468-1D481 |
-| Monospace     | `` `hello` `` -> `????????????????????` | U+1D670-1D689 |
-| Script        | `????????????????????????`              | U+1D49C-1D4B5 |
-| Double-struck | `????????????????????`                  | U+1D538-1D551 |
-| Fraktur       | `????????????????????`                  | U+1D504-1D51D |
+| Bold | **hello** -> `????????????????????` | U+1D400-1D419 |
+| Italic | *hello* -> `????????????????????` | U+1D434-1D44D |
+| Bold Italic | `????????????????????????????` | U+1D468-1D481 |
+| Monospace | `` `hello` `` -> `????????????????????` | U+1D670-1D689 |
+| Script | `????????????????????????` | U+1D49C-1D4B5 |
+| Double-struck | `????????????????????` | U+1D538-1D551 |
+| Fraktur | `????????????????????` | U+1D504-1D51D |
 
 ### How it works
 
@@ -281,7 +281,7 @@ unicode_monospace: bool = True  # convert `text` to Unicode monospace
 Build a translation table (dict mapping `ord('a')` -> `ord('\U0001D41A')` etc.) and use `str.translate()`. The existing
 `unicode_formatting.py` module already has terminal escape code logic; this would be the "pure Unicode" alternative.
 
----
+______________________________________________________________________
 
 ## Proposal 5: More Complex Types via Markdown Constructs
 
@@ -349,7 +349,7 @@ ATX-header dicts (Python 3.7+ dicts are ordered anyway, so this is mostly symbol
 
 Same as set but immutable. Serialize identically; config flag to choose set vs frozenset on deserialize.
 
----
+______________________________________________________________________
 
 ## Proposal 6: Blockquotes as Strings with Attribution
 
@@ -369,7 +369,7 @@ Markdown blockquotes are unused by markpickle:
 
 Blockquotes could also represent "escaped" or "literal" string values where we want to preserve whitespace and newlines.
 
----
+______________________________________________________________________
 
 ## Proposal 7: Code Blocks as Typed Values
 
@@ -389,7 +389,7 @@ def hello():
 - **With front matter**: could specify that code blocks should be `exec()`'d or `eval()`'d (dangerous but opt-in)
 - **As bytes**: code blocks with language `base64` could be an alternative to data URLs for binary data
 
----
+______________________________________________________________________
 
 ## Proposal 8: Links and Images as Rich Types
 
@@ -409,7 +409,7 @@ Already supported as bytes via base64 data URLs. Could also support:
 - Remote images: `![alt](https://...)` -> URL object
 - Config: `serialize_images_to_pillow` already exists but is unused
 
----
+______________________________________________________________________
 
 ## Proposal 9: Horizontal Rules as Sentinel Values
 
@@ -421,7 +421,7 @@ Currently `---` is a document separator. But within a document, `***` or `___` c
 
 Low priority but worth noting as an unused markdown construct.
 
----
+______________________________________________________________________
 
 ## Proposal 10: Markdown Comments as Type Hints
 
@@ -448,45 +448,45 @@ This is lighter than YAML front matter for inline type hints. Could be used alon
 - Use it to guide deserialization (set vs list, tuple vs list, custom class, etc.)
 - On serialization, emit comments when the Python type would otherwise be ambiguous
 
----
+______________________________________________________________________
 
 ## Priority Ranking
 
-| #  | Proposal                                   | Impact                  | Effort | Priority |
+| # | Proposal | Impact | Effort | Priority |
 |----|--------------------------------------------|-------------------------|--------|----------|
-| 1  | Fix table heuristics                       | High (bug fix)          | Low    | **P0**   |
-| 5d | Fix nested dict ATX recursion              | High (bug fix)          | Low    | **P0**   |
-| 2  | YAML front matter                          | High (ecosystem compat) | Medium | **P1**   |
-| 4  | Unicode text formatting                    | Medium (unique feature) | Medium | **P1**   |
-| 5b | Tuples as ordered lists                    | Medium (new type)       | Low    | **P1**   |
-| 3  | More scalar types (UUID, complex, Decimal) | Medium (completeness)   | Low    | **P2**   |
-| 5a | Sets                                       | Low-medium              | Low    | **P2**   |
-| 8  | Links/images as rich types                 | Medium                  | Medium | **P2**   |
-| 6  | Blockquotes                                | Low                     | Low    | **P3**   |
-| 7  | Code blocks as typed values                | Low                     | Low    | **P3**   |
-| 10 | Markdown comments as type hints            | Medium                  | Medium | **P3**   |
-| 9  | Horizontal rules as sentinels              | Low                     | Low    | **P3**   |
+| 1 | Fix table heuristics | High (bug fix) | Low | **P0** |
+| 5d | Fix nested dict ATX recursion | High (bug fix) | Low | **P0** |
+| 2 | YAML front matter | High (ecosystem compat) | Medium | **P1** |
+| 4 | Unicode text formatting | Medium (unique feature) | Medium | **P1** |
+| 5b | Tuples as ordered lists | Medium (new type) | Low | **P1** |
+| 3 | More scalar types (UUID, complex, Decimal) | Medium (completeness) | Low | **P2** |
+| 5a | Sets | Low-medium | Low | **P2** |
+| 8 | Links/images as rich types | Medium | Medium | **P2** |
+| 6 | Blockquotes | Low | Low | **P3** |
+| 7 | Code blocks as typed values | Low | Low | **P3** |
+| 10 | Markdown comments as type hints | Medium | Medium | **P3** |
+| 9 | Horizontal rules as sentinels | Low | Low | **P3** |
 
----
+______________________________________________________________________
 
 ## Appendix: Markdown Constructs vs Python Types (Full Grid)
 
-| Markdown Construct   | Current Python Mapping         | Proposed Python Mapping       |
+| Markdown Construct | Current Python Mapping | Proposed Python Mapping |
 |----------------------|--------------------------------|-------------------------------|
-| `# Header`           | dict key (level 1)             | same                          |
-| `## Header`          | nested dict key (level 2)      | same, fix deeper nesting      |
-| `- item`             | list element                   | list element                  |
-| `1. item`            | (unused)                       | tuple element                 |
-| `\| table \|`        | list-of-dicts or list-of-lists | same, fix heuristics          |
-| `> blockquote`       | (unused)                       | string or attributed tuple    |
-| `` `code` ``         | stripped formatting            | Unicode monospace char        |
-| `**bold**`           | stripped formatting            | Unicode bold chars            |
-| `*italic*`           | stripped formatting            | Unicode italic chars          |
-| ` ```code block``` ` | string                         | (language, string) tuple      |
-| `[text](url)`        | partial (urlparse)             | Link namedtuple / ParseResult |
-| `![alt](src)`        | bytes (base64 data URL)        | bytes / Path / URL            |
-| `---`                | document separator             | same                          |
-| `***` / `___`        | (unused)                       | sentinel / None               |
-| `<!-- comment -->`   | (unused)                       | type hint                     |
-| `term\n: defn`       | partial dict (single pair)     | full dict support             |
-| YAML front matter    | (unused)                       | metadata dict                 |
+| `# Header` | dict key (level 1) | same |
+| `## Header` | nested dict key (level 2) | same, fix deeper nesting |
+| `- item` | list element | list element |
+| `1. item` | (unused) | tuple element |
+| `\| table \|` | list-of-dicts or list-of-lists | same, fix heuristics |
+| `> blockquote` | (unused) | string or attributed tuple |
+| `` `code` `` | stripped formatting | Unicode monospace char |
+| `**bold**` | stripped formatting | Unicode bold chars |
+| `*italic*` | stripped formatting | Unicode italic chars |
+| ```` ```code block``` ```` | string | (language, string) tuple |
+| `[text](url)` | partial (urlparse) | Link namedtuple / ParseResult |
+| `![alt](src)` | bytes (base64 data URL) | bytes / Path / URL |
+| `---` | document separator | same |
+| `***` / `___` | (unused) | sentinel / None |
+| `<!-- comment -->` | (unused) | type hint |
+| `term\n: defn` | partial dict (single pair) | full dict support |
+| YAML front matter | (unused) | metadata dict |

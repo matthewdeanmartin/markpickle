@@ -5,7 +5,7 @@
 markpickle converts between Python objects and Markdown using a two-phase approach:
 
 1. **Serialization** (`dumps`/`dump`): Walk the Python object tree and emit Markdown constructs
-2. **Deserialization** (`loads`/`load`): Parse Markdown into an AST (via mistune), then walk the AST to reconstruct Python objects
+1. **Deserialization** (`loads`/`load`): Parse Markdown into an AST (via mistune), then walk the AST to reconstruct Python objects
 
 ## Markdown Constructs as Python Types
 

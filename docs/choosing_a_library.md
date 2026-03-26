@@ -32,7 +32,7 @@ Convert the markdown to HTML, then use libraries like Beautiful Soup to parse th
 
 ## You have a dictionary where the keys are HTML tags names and the values are HTML plain text.
 
-For example, 
+For example,
 
 ```python
 dom = {

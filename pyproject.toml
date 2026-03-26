@@ -68,20 +68,30 @@ dev = [
     "mypy>=1.6.1",
     # Docs
     "mdformat>=0.7.17",
+    "mkdocs>=1.6",
     "linkcheckmd>=1.4.0",
     "black",
-   "blacken-docs>=1.16.0",
+    "blacken-docs>=1.16.0",
     # test
     "pytest>=7.4.3",
     "hypothesis[cli]>=6.88.1",
     "pytest-cov>=4.1.0",
     "pytest-markdown-docs>=0.4.3",
     "pytest-codeblocks==0.17.0",
+    "pytest-randomly>=3.15.0",
+    "pytest-xdist>=3.6.1",
     # build tools
     "pre-commit>=3.5.0",
     "ruff>=0.1.4",
+    "isort>=5.13.2",
     "pip-audit",
+    "twine>=5.1.1",
+    "check-wheel-contents>=0.6.1",
+    "jiggle-version>=0.1.6",
+    "troml-dev-status>=0.6.0; python_version >= '3.9'",
     "pytest-benchmark",
+    "pydoclint>=0.8.3; python_version >= '3.10'",
+    "pyright>=1.1.400",
 
     "2to3>=1.0",
     # markdown stuff
@@ -135,10 +145,10 @@ exclude = '''
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = [
-    "tests",
+    "test",
 ]
 junit_family = "xunit1"
-norecursedirs = ["vendor", "scripts"]
+norecursedirs = ["vendor", "scripts", ".hypothesis", ".venv", "node_modules"]
 # don't know how to do this in toml
 #addopts = "--strict-markers"
 #markers =
@@ -194,6 +204,7 @@ lint.ignore = [
     "E501", # formatting
     "PLR2004", # not all literal numbers need to be named constants
     "SIM108", # not all trinary if improves readability
+    "PLC0415", # lazy loading
 ]
 
 # Exclude a variety of commonly ignored directories.

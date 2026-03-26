@@ -6,8 +6,8 @@ This document outlines the strategy for improving the semantic correctness, robu
 ## 1. Project Philosophy
 
 `markpickle` is a **lossy** serialization format. Unlike JSON or YAML, Markdown does not have native support for all
-Python types. Our quality goal is not "perfection" in representing every object, but **predictability** and *
-*transparency** regarding what is lost.
+Python types. Our quality goal is not "perfection" in representing every object, but **predictability** and \*
+*transparency*\* regarding what is lost.
 
 ## 2. Identified Flaws & Known Bugs
 
@@ -29,7 +29,7 @@ Python types. Our quality goal is not "perfection" in representing every object,
 - **Lack of Validation**: There is no "dry run" mechanism to tell a user if their data will survive a round-trip before
   they write it to disk.
 
----
+______________________________________________________________________
 
 ## 3. Quality Initiatives
 
@@ -38,7 +38,7 @@ Python types. Our quality goal is not "perfection" in representing every object,
 Move beyond simple fuzzing. We will use `hypothesis` to generate complex, valid Python data structures and assert:
 
 1. `loads(dumps(x)) == x` (where `x` is a string-heavy dict/list).
-2. If `loads(dumps(x)) != x`, the difference must be documented and predictable (e.g., ints becoming strings if type
+1. If `loads(dumps(x)) != x`, the difference must be documented and predictable (e.g., ints becoming strings if type
    inference is off).
 
 ### B. Dependency & Security Auditing
@@ -65,7 +65,7 @@ without a test failing, the test suite is insufficient.
 Every code block in `README.md` and `docs/` must be tested. We use `pytest-codeblocks` to ensure the "Source of Truth"
 for users doesn't drift from the implementation.
 
----
+______________________________________________________________________
 
 ## 4. Implementation Checklist
 
