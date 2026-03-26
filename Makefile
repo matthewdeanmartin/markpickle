@@ -53,11 +53,11 @@ format: format-code format-docs
 
 add-future-annotations:
 	@echo "[add-future-annotations]"
-	$(UV_RUN) python scripts\add_future_annotations.py
+	$(UV_RUN) python scripts/add_future_annotations.py
 
 format-code:
 	@echo "[format-code]"
-	$(UV_RUN) python scripts\add_future_annotations.py
+	$(UV_RUN) python scripts/add_future_annotations.py
 	$(UV_RUN) metametameta pep621
 	$(UV_RUN) isort --quiet $(CODE_PATHS)
 	$(UV_RUN) black --quiet . --exclude .virtualenv --exclude .venv
@@ -116,23 +116,23 @@ test:
 
 compat:
 	@echo "[compat]"
-	$(UV_RUN) pytest test\compat -q
+	$(UV_RUN) pytest test/compat -q
 
 compat-refresh:
 	@echo "[compat-refresh]"
-	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py generate
+	$(UV_RUN) python scripts/generate_v1_compat_fixtures.py generate
 
 compat-baseline-venv:
 	@echo "[compat-baseline-venv]"
-	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py create-baseline-venv
+	$(UV_RUN) python scripts/generate_v1_compat_fixtures.py create-baseline-venv
 
 compat-wheel:
 	@echo "[compat-wheel]"
-	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py run-wheel-check
+	$(UV_RUN) python scripts/generate_v1_compat_fixtures.py run-wheel-check
 
 benchmark:
 	@echo "[benchmark]"
-	$(UV_RUN) pytest test\test_benchmark.py --benchmark-only
+	$(UV_RUN) pytest test/test_benchmark.py --benchmark-only
 
 docs-format-check:
 	@echo "[docs-format-check]"
