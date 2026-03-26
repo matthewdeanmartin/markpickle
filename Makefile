@@ -2,6 +2,7 @@
 MAKEFLAGS += --no-print-directory
 
 UV_RUN := uv run
+PINACT_RUN ?= go run github.com/suzuki-shunsuke/pinact/v3/cmd/pinact@latest run
 CODE_PATHS := markpickle test
 DOC_FILE_PATHS := README.md CHANGELOG.md AGENTS.md tiny.md
 DOC_DIR_PATHS := docs spec
@@ -16,7 +17,7 @@ ifdef PYTEST_SEED
 PYTEST_RANDOM_ARGS := --randomly-seed=$(PYTEST_SEED)
 endif
 
-.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust add-future-annotations
+.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish github-actions-upgrade build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust add-future-annotations
 
 help:
 	@printf "%s\n" \
@@ -39,7 +40,8 @@ help:
 	"make check-docs          # documentation checks only" \
 	"make check-all           # code + docs checks" \
 	"make publication-checks  # release readiness checks" \
-	"make publish             # alias for publication-checks"
+	"make publish             # alias for publication-checks" \
+	"make github-actions-upgrade # update workflow actions and pin them to SHAs"
 
 lock:
 	@echo "[lock]"
@@ -191,6 +193,10 @@ package-check: build-package
 publication-checks: check-all version-check release-status package-check
 
 publish: publication-checks
+
+github-actions-upgrade:
+	@echo "[github-actions-upgrade]"
+	$(PINACT_RUN) -u
 
 # ---------------------------------------------------------------------------
 # Rust / maturin targets
