@@ -30,6 +30,9 @@ nav:
   - "Prior Art & Links": "stackoverflow.md"
   - "Credits": "credits.md"
   - "Change Log": "CHANGELOG.md"
+  - "Contributing":
+      - "Compatibility Tests": "COMPAT_TESTS.md"
+
 
 validation:
   nav:

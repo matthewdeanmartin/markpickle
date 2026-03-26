@@ -2,6 +2,8 @@
 Increase odds of successful serialization by converting to simpler types
 """
 
+from __future__ import annotations
+
 from dataclasses import is_dataclass
 from types import MappingProxyType
 from typing import Any

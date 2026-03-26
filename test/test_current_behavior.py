@@ -7,6 +7,7 @@ these tests and document the break in the changelog.
 
 No mocks. Real serialization/deserialization only.
 """
+from __future__ import annotations
 
 import datetime
 import io

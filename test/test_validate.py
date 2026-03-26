@@ -1,6 +1,7 @@
 """
 Tests for markpickle.validate.validate_markdown.
 """
+from __future__ import annotations
 
 from markpickle.validate import validate_markdown
 

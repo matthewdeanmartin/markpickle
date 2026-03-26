@@ -24,6 +24,7 @@ Supported tags
     hr        {'tag': 'hr'}
     blockquote {'tag': 'blockquote', 'text': '...'}
 """
+from __future__ import annotations
 
 import io
 from typing import Any, Optional

@@ -6,7 +6,11 @@
       "Bash(grep -v \"^$\")",
       "Bash(xargs wc:*)",
       "Bash(ls C:/github/markpickle/test*)",
-      "Bash(printf '# Colors\\\\n\\\\n- red\\\\n- green\\\\n- blue\\\\n')"
+      "Bash(printf '# Colors\\\\n\\\\n- red\\\\n- green\\\\n- blue\\\\n')",
+      "Bash(uv sync:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)",
+      "Bash(py -3.10 -c \":*)"
     ]
   }
 }

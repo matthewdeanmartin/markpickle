@@ -1,3 +1,4 @@
+from __future__ import annotations
 import glob
 from test.utils import locate_file
 

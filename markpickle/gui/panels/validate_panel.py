@@ -2,6 +2,7 @@
 Validate panel — paste markdown, see round-trip analysis report.
 Auto-runs when activated if a doc is in shared state.
 """
+from __future__ import annotations
 
 import tkinter as tk
 from tkinter import filedialog

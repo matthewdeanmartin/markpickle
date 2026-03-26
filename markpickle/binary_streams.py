@@ -1,6 +1,7 @@
 """
 Add support for binary streams via images and data URLs
 """
+from __future__ import annotations
 
 import base64
 import io

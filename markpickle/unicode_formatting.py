@@ -3,6 +3,7 @@ Convert bold and italic to terminal formatting.
 
 One solution for handling text with formatting markup in strings.
 """
+from __future__ import annotations
 
 import re
 

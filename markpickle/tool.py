@@ -1,3 +1,4 @@
+from __future__ import annotations
 r"""Command-line tool to pretty-print Markdown after round tripping it through Python types
 
 Usage::

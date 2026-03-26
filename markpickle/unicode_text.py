@@ -8,6 +8,7 @@ Uses Unicode blocks:
 - Bold Italic: U+1D468-1D481 (A-Z), U+1D482-1D49B (a-z)
 - Monospace: U+1D670-1D689 (A-Z), U+1D68A-1D6A3 (a-z), U+1D7F6-1D7FF (0-9)
 """
+from __future__ import annotations
 
 import re
 

@@ -1,6 +1,7 @@
 """
 Handle a convention for putting multiple serialized objects into a single file.
 """
+from __future__ import annotations
 
 import io
 from typing import Generator

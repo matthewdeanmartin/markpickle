@@ -1,3 +1,4 @@
+from __future__ import annotations
 from test.test_serialize.example_types import Animal, Person
 
 from markpickle.simplify_types import class_to_dict

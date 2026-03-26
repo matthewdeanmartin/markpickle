@@ -3,6 +3,7 @@ serialize.py
 
 This module provides functions to serialize many Python types to Markdown.
 """
+from __future__ import annotations
 
 import datetime
 import io
@@ -172,7 +173,15 @@ def dump(
     outtermost_type = type(value).__qualname__
 
     # mypy doesn't use info from the hadattr check.
-    if hasattr(value, "__getstate__") and cast(Any, value).__getstate__():
+    # dataclasses gained __getstate__ in 3.11; fall back to dataclasses.asdict on older Python.
+    import dataclasses as _dc
+    if _dc.is_dataclass(value) and not isinstance(value, type):
+        state: Any = cast(Any, value).__getstate__() if hasattr(value, "__getstate__") else _dc.asdict(value)
+        if state:
+            value = state
+            if isinstance(value, dict) and config.serialize_include_python_type:
+                value["python_type"] = outtermost_type
+    elif hasattr(value, "__getstate__") and cast(Any, value).__getstate__():
         value = cast(Any, value).__getstate__()
         if isinstance(value, dict) and config.serialize_include_python_type:
             value["python_type"] = outtermost_type
@@ -185,7 +194,7 @@ def dump(
     #         render_dict(builder, item, config, indent=1, header_level=header_level)
     elif isinstance(value, dict):
         render_dict(builder, value, config, indent=0, header_level=header_level)
-    elif isinstance(value, bool | datetime.date | datetime.datetime | float | int | str):
+    elif isinstance(value, (bool, datetime.date, datetime.datetime, float, int, str)):
         render_scalar(builder, value, config)
     elif simplify_types.can_class_to_dict(value):
         candidate_dict = cast(Any, simplify_types.class_to_dict(value))

@@ -1,3 +1,8 @@
+from __future__ import annotations
+import pytest
+
+pytest.importorskip("tkinter")
+
 from markpickle.gui import app as gui_app
 
 

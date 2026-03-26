@@ -10,6 +10,7 @@ Usage
     config = load_config()                        # auto-discover pyproject.toml
     config = load_config("path/to/config.toml")  # explicit file
 """
+from __future__ import annotations
 
 import dataclasses
 import sys

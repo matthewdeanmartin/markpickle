@@ -1,4 +1,5 @@
 """Metadata for markpickle."""
+from __future__ import annotations
 
 __all__ = [
     "__title__",

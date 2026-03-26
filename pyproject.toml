@@ -7,7 +7,7 @@ authors = [
 ]
 license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = ["serializer", "deserializer", "markdown", ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -104,6 +104,7 @@ dev = [
     # backwards compat
     "vermin>=1.5.2",
     "tox>=4.11.3",
+    "tox-uv>=1.11.0",
     "metametameta",
     # Rust extension build tool – used by `make build-rust` / `make build-rust-debug`
     "maturin>=1.4,<2.0",

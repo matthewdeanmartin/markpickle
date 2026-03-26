@@ -2,6 +2,8 @@
 Function created with help of ChatGPT
 """
 
+from __future__ import annotations
+
 import io
 from typing import Any, Optional, TextIO, Union, cast
 
@@ -131,4 +133,4 @@ def parse_table(md_table: str) -> ColumnsValuesTableType:
         for i, cell in enumerate(cells):
             table_data[i].append(cell)
     # Combine the column names with the table data and return the result
-    return [col_names] + list(zip(*table_data, strict=True))
+    return [col_names] + list(zip(*table_data))

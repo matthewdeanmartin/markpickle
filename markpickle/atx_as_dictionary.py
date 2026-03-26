@@ -5,6 +5,7 @@ https://github.com/njvack/markdown-to-json/blob/master/markdown_to_json/markdown
 
 Reused with MIT license and credit to https://github.com/njvack
 """
+from __future__ import annotations
 
 from typing import Any, Optional, cast
 

@@ -6,6 +6,8 @@ Strings made by markpickle should pass and create a variety of simple Python typ
 Arbitrary strings might not pass or may pass but create values that still have unparsed markdown in them.
 """
 
+from __future__ import annotations
+
 import datetime
 import io
 import logging
@@ -216,7 +218,7 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
                     return python_to_tables.parse_table_to_lists(current_text_value)
                 raw_table = python_to_tables.parse_table_to_list_of_dict(current_text_value)
                 return cast(
-                    SerializableTypes | None,
+                    "SerializableTypes | None",
                     [
                         {k: extract_scalar(v, config) if isinstance(v, str) else v for k, v in row.items()}
                         for row in cast(list, raw_table)

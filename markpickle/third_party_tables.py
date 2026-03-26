@@ -1,6 +1,7 @@
 """
 Use 3rd party library to create tables
 """
+from __future__ import annotations
 
 from typing import Any
 

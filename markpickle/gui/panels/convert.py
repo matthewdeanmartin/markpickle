@@ -2,6 +2,7 @@
 Convert panel — Markdown → Python repr, or Python repr → Markdown.
 Auto-runs conversion after Random.
 """
+from __future__ import annotations
 
 import tkinter as tk
 from tkinter import filedialog

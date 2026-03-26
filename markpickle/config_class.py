@@ -1,6 +1,7 @@
 """
 Config for serializing and deserializing. They need to be the same for increasing the odds of successful round tripping.
 """
+from __future__ import annotations
 
 import dataclasses
 from typing import Callable, Optional

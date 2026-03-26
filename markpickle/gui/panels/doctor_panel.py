@@ -1,6 +1,7 @@
 """
 Doctor panel — environment info, active config dump, copy-to-clipboard.
 """
+from __future__ import annotations
 
 import importlib.metadata
 import platform

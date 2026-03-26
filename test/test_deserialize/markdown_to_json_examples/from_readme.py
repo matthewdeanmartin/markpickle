@@ -1,3 +1,4 @@
+from __future__ import annotations
 X = {
     "Description": "This is an example file",
     "Authors": ["Nate Vack", "Vendor Packages", ["docopt", "CommonMark-py"]],

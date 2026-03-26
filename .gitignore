@@ -138,3 +138,5 @@ node_modules/
 
 # mkdocs build output
 site/
+.venv-compat-wheel
+

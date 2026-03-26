@@ -1,7 +1,8 @@
-import tkinter as tk
-from pathlib import Path
-
+from __future__ import annotations
 import pytest
+
+tk = pytest.importorskip("tkinter")
+from pathlib import Path
 
 from markpickle.config_class import Config
 from markpickle.gui.configstate import ConfigState

@@ -1,3 +1,4 @@
+from __future__ import annotations
 X = {
     "GUID": "2db62bb2-8ac0-4137-b26f-78a12bff449d",
     "Title": "Some title",

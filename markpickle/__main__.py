@@ -7,6 +7,7 @@ Usage:
     markpickle doctor                       # show installed optional libraries
     markpickle gui                          # launch tkinter GUI
 """
+from __future__ import annotations
 
 import argparse
 import importlib.metadata

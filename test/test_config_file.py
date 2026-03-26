@@ -1,6 +1,7 @@
 """
 Tests for file-based config loading (markpickle.config_file).
 """
+from __future__ import annotations
 
 import textwrap
 from pathlib import Path

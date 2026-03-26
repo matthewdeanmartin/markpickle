@@ -1,3 +1,4 @@
+from __future__ import annotations
 import io
 
 from markpickle.python_to_tables import list_of_dict_to_markdown

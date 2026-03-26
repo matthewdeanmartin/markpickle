@@ -16,11 +16,12 @@ ifdef PYTEST_SEED
 PYTEST_RANDOM_ARGS := --randomly-seed=$(PYTEST_SEED)
 endif
 
-.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust
+.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust add-future-annotations
 
 help:
 	@printf "%s\n" \
 	"make sync                # lock + install dev deps and all extras" \
+	"make add-future-annotations # add from __future__ import annotations to all .py files" \
 	"make format              # format code and docs" \
 	"make lint                # format code, then run pylint" \
 	"make test                # run doctests + unit tests in parallel" \
@@ -50,8 +51,13 @@ sync: lock
 
 format: format-code format-docs
 
+add-future-annotations:
+	@echo "[add-future-annotations]"
+	$(UV_RUN) python scripts\add_future_annotations.py
+
 format-code:
 	@echo "[format-code]"
+	$(UV_RUN) python scripts\add_future_annotations.py
 	$(UV_RUN) metametameta pep621
 	$(UV_RUN) isort --quiet $(CODE_PATHS)
 	$(UV_RUN) black --quiet . --exclude .virtualenv --exclude .venv

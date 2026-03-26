@@ -1,6 +1,7 @@
 """
 Tests for DOM-style deserialization (markpickle.dom_deserialize).
 """
+from __future__ import annotations
 
 import io
 

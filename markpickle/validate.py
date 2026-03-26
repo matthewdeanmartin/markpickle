@@ -4,6 +4,7 @@ AST-based markdown validation for round-trip safety.
 Walks the mistune AST to identify constructs that are not preserved
 during markpickle serialization/deserialization round-trips.
 """
+from __future__ import annotations
 
 from typing import Any, Optional
 
