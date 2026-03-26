@@ -64,7 +64,7 @@ def _has_any_heading(tokens: list[dict[str, Any]]) -> bool:
     return False
 
 
-def validate_markdown(text: str, _config: Optional[Any] = None) -> list[str]:
+def validate_markdown(text: str, _config: Optional[Any] = None, config: Optional[Any] = None) -> list[str]:
     """
     Walk a mistune AST and return a list of issue strings describing constructs
     that won't round-trip cleanly through markpickle.
@@ -74,13 +74,18 @@ def validate_markdown(text: str, _config: Optional[Any] = None) -> list[str]:
     text:
         Raw markdown text to analyse.
     _config:
-        Unused; reserved for future use so callers can pass a Config object.
+        Backward-compatible reserved config argument.
+    config:
+        Preferred reserved config argument. Accepted for API consistency with
+        other markpickle entry points.
 
     Returns
     -------
     list[str]
         Human-readable issue descriptions. Empty list means no problems found.
     """
+    _config = config if config is not None else _config
+
     if not text or not text.strip():
         return []
 

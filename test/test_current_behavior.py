@@ -623,7 +623,7 @@ class TestFileIO:
         f = tmp_path / "test.md"
         with open(f, "w") as fh:
             markpickle.dump(val, fh)
-        with open(f, "r") as fh:
+        with open(f) as fh:
             result = markpickle.load(fh)
         assert result == val
 
@@ -631,7 +631,7 @@ class TestFileIO:
         f = tmp_path / "scalar.md"
         with open(f, "w") as fh:
             markpickle.dump("just a string", fh)
-        with open(f, "r") as fh:
+        with open(f) as fh:
             assert markpickle.load(fh) == "just a string"
 
     def test_dict_file_roundtrip(self, tmp_path):
@@ -639,7 +639,7 @@ class TestFileIO:
         f = tmp_path / "dict.md"
         with open(f, "w") as fh:
             markpickle.dump(val, fh)
-        with open(f, "r") as fh:
+        with open(f) as fh:
             result = markpickle.load(fh)
         assert result == {"title": "Hello", "body": "World"}
 
@@ -648,7 +648,7 @@ class TestFileIO:
         f = tmp_path / "table.md"
         with open(f, "w") as fh:
             markpickle.dump(val, fh)
-        with open(f, "r") as fh:
+        with open(f) as fh:
             result = markpickle.load(fh)
         assert result == val
 
@@ -657,7 +657,7 @@ class TestFileIO:
         f = tmp_path / "bytes.md"
         with open(f, "w") as fh:
             markpickle.dump(val, fh)
-        with open(f, "r") as fh:
+        with open(f) as fh:
             result = markpickle.load(fh)
         assert result == val
 

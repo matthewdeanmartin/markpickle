@@ -9,7 +9,7 @@ import pytest
 
 import markpickle
 from markpickle.config_class import Config
-from markpickle.config_file import load_config
+from markpickle.config_file import _apply_section, _extract_markpickle_section, load_config
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -62,6 +62,37 @@ def test_load_config_ignores_unknown_keys(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     config = load_config()  # should not raise
     assert config.infer_scalar_types is False
+
+
+def test_apply_section_returns_warning_for_unknown_key() -> None:
+    warnings = _apply_section(Config(), {"totally_made_up_key": "ignored"})
+
+    assert warnings == ["Unknown config key 'totally_made_up_key' — ignored"]
+
+
+def test_apply_section_coerces_bool_and_list_values() -> None:
+    config = Config()
+
+    _apply_section(
+        config,
+        {
+            "infer_scalar_types": "false",
+            "true_values": "yes",
+        },
+    )
+
+    assert config.infer_scalar_types is False
+    assert config.true_values == ["yes"]
+
+
+def test_apply_section_skips_default_field() -> None:
+    config = Config()
+    original_default = config.default
+
+    warnings = _apply_section(config, {"default": "ignored"})
+
+    assert warnings == []
+    assert config.default == original_default
 
 
 def test_load_config_empty_section_returns_defaults(tmp_path, monkeypatch):
@@ -122,6 +153,15 @@ def test_load_config_standalone_toml_root_keys(tmp_path):
     config = load_config(str(cfg_file))
     assert config.infer_scalar_types is False
     assert config.list_bullet_style == "+"
+
+
+def test_extract_markpickle_section_supports_nested_markpickle_table(tmp_path):
+    cfg_file = tmp_path / "markpickle.toml"
+    data = {"markpickle": {"list_bullet_style": "*"}}
+
+    section = _extract_markpickle_section(data, cfg_file)
+
+    assert section == {"list_bullet_style": "*"}
 
 
 def test_load_config_base_is_layered(tmp_path, monkeypatch):
