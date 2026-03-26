@@ -22,6 +22,7 @@ nav:
   - "Home": "index.md"
   - "Getting Started": "getting_started.md"
   - "Examples": "examples.md"
+  - "CLI Reference": "cli.md"
   - "Configuration": "configuration.md"
   - "Things That Will Not Work": "limitations.md"
   - "Choosing a Library": "choosing_a_library.md"
@@ -31,6 +32,9 @@ nav:
   - "Credits": "credits.md"
   - "Change Log": "CHANGELOG.md"
   - "Contributing":
+      - "For Human Contributors": "contributing_humans.md"
+      - "For LLM Agents": "contributing_llms.md"
+      - "Pre-Release Checklist": "pre_release_checklist.md"
       - "Compatibility Tests": "COMPAT_TESTS.md"
 
 

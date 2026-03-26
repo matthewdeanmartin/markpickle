@@ -121,8 +121,31 @@ json_str = markpickle.convert_markdown_to_json("# name\n\nAlice\n\n# age\n\n30\n
 
 ### CLI
 
-Convert a Markdown file to JSON:
+markpickle ships with a `markpickle` command (also available as `python -m markpickle`):
 
 ```bash
-python -m markpickle "docs/individual/list of scalars.md"
+# Convert a Markdown file to JSON and print to stdout
+markpickle convert data.md
+
+# Convert and write output to a file
+markpickle convert data.md out.json
+
+# Read Markdown from stdin, write JSON to stdout
+markpickle convert -
+
+# Use a custom config file
+markpickle convert data.md --config my_config.toml
+
+# Validate that a file round-trips safely
+markpickle validate data.md
+
+# Show installed optional libraries
+markpickle doctor
+
+# Launch the interactive tkinter GUI
+markpickle gui
 ```
+
+Run `markpickle --help` or `markpickle <command> --help` for full usage.
+
+See [CLI Reference](cli.md) for complete documentation of all subcommands and flags.

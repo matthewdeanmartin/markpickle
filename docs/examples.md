@@ -255,13 +255,20 @@ markpickle.loads(md)
 
 ## YAML Front Matter
 
+Enable YAML front matter parsing with `Config(parse_yaml_frontmatter=True)`. When enabled,
+the `---` block at the top of a document is parsed as YAML and merged into the returned dict
+under the key `"frontmatter"`.
+
 ### Reading Front Matter
 
 ```python
+from markpickle import Config
+
+config = Config(parse_yaml_frontmatter=True)
+
 md = """---
 title: My Document
 date: 2024-01-15
-tags: [python, markdown]
 ---
 
 # name
@@ -273,18 +280,24 @@ Alice
 30
 """
 
-frontmatter, body = markpickle.loads_with_frontmatter(md)
-# frontmatter = {"title": "My Document", "date": "2024-01-15", "tags": ["python", "markdown"]}
-# body = {"name": "Alice", "age": 30}
+result = markpickle.loads(md, config=config)
+# result contains the body dict; frontmatter keys are accessible via result["frontmatter"]
+# {"frontmatter": {"title": "My Document", "date": "2024-01-15"}, "name": "Alice", "age": 30}
 ```
 
 ### Writing Front Matter
 
-```python
-body = {"name": "Alice", "age": 30}
-frontmatter = {"title": "Person Record", "version": 2}
+To write a document with YAML front matter, prepend the `---` block manually or serialize
+your metadata dict separately:
 
-md = markpickle.dumps_with_frontmatter(body, frontmatter)
+```python
+import yaml  # PyYAML or compatible library
+
+frontmatter = {"title": "Person Record", "version": 2}
+body = {"name": "Alice", "age": 30}
+
+front_block = "---\n" + yaml.dump(frontmatter, default_flow_style=False) + "---\n\n"
+md = front_block + markpickle.dumps(body)
 # ---
 # title: Person Record
 # version: 2

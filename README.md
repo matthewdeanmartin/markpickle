@@ -28,9 +28,9 @@ Ringo
 Felix
 ```
 
-becomes the python list `{"cat":{"Name":"Ringo","Species":"Felix"}}`
+becomes the python dict `{"Cat": {"Name": "Ringo", "Species": "Felix"}}`
 
-See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md) for representable types.
+See [examples](docs/examples.md) for representable types.
 
 Almost all markdown libraries use it as a way to generate HTML fragments from untrusted sources for insertion into some
 other HTML template. We are using it to represent data. See [guidance](docs/choosing_a_library.md) for which library
@@ -64,11 +64,17 @@ of mistune or one of the other markdown parsers.
 
 ### Supported Types
 
-- Scalar values
-- Lists of scalar values
-- Dictionaries with scalar values
-- Lists of dictionaries of scalar values
-- Dictionaries with list values
+- Scalar values: strings, integers, floats, booleans, `None`
+- Dates (`datetime.date`) and datetimes (`datetime.datetime`)
+- Complex numbers, `decimal.Decimal`, and `uuid.UUID` (opt-in via `Config`)
+- Bytes serialized as base64 data URLs
+- Lists of scalar values, including nested lists
+- Tuples (as numbered ordered lists)
+- Dictionaries with scalar, list, or nested dict values
+- Lists of dictionaries (as Markdown tables)
+- YAML front matter (opt-in via `Config`)
+- Unicode text formatting preservation (bold/italic/monospace)
+- Objects with `__getstate__` or `__dict__`, and dataclasses
 - Partial support for blanks/string with leading/trailing whitespace
 
 See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md).
@@ -106,11 +112,30 @@ if you use `split_file`. It works like [splitstream](https://github.com/rickardp
 
 ## CLI
 
-This command will take a deserializable markdown file and output json.
+markpickle ships with a command-line interface. The `markpickle` entry point is installed
+automatically; you can also invoke it as `python -m markpickle`.
 
 ```bash
-python -m markpickle "docs/individual/list of scalars.md"
+# Convert a Markdown file to JSON (stdout)
+markpickle convert data.md
+
+# Convert and write to a file
+markpickle convert data.md out.json
+
+# Read Markdown from stdin
+markpickle convert -
+
+# Check whether a file round-trips safely
+markpickle validate data.md
+
+# Show installed optional libraries and their status
+markpickle doctor
+
+# Launch the interactive tkinter GUI
+markpickle gui
 ```
+
+Use `markpickle --help` or `markpickle <command> --help` for full usage.
 
 ## Prior Art
 
@@ -190,7 +215,13 @@ I copied the ATX-dictionary-like header parsing from [markdown-to-json](https://
 
 ## Documentation
 
-- [Choosing a Library](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/choosing_a_library.md)
-- [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
-- [People solving similar problems on StackOverflow](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/stackoverflow.md)
-- [Credits](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/credits.md)
+Full documentation is available at [markpickle.readthedocs.io](https://markpickle.readthedocs.io/).
+
+- [Getting Started](docs/getting_started.md)
+- [Examples](docs/examples.md)
+- [Configuration](docs/configuration.md)
+- [Things That Will Not Work](docs/limitations.md)
+- [Choosing a Library](docs/choosing_a_library.md)
+- [How It Works](docs/how_it_works.md)
+- [Credits](docs/credits.md)
+- [Changelog](CHANGELOG.md)
