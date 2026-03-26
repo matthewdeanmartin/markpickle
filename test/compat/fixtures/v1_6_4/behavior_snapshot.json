@@ -1,0 +1,101 @@
+{
+  "baseline_ref": "c80c4c4",
+  "baseline_version": "1.6.4",
+  "cases": [
+    {
+      "baseline_expected": "hello",
+      "description": "Serialize a plain string.",
+      "id": "dumps_string",
+      "input": "hello",
+      "operation": "dumps"
+    },
+    {
+      "baseline_expected": 42,
+      "description": "Deserialize an integer scalar.",
+      "id": "loads_int",
+      "input": "42",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": true,
+      "description": "Deserialize a boolean scalar.",
+      "id": "loads_bool_true",
+      "input": "True",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": {
+        "__type__": "date",
+        "value": "2024-01-15"
+      },
+      "description": "Deserialize an ISO date scalar.",
+      "id": "loads_date",
+      "input": "2024-01-15",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": "- a\n- b\n",
+      "description": "Serialize a simple list.",
+      "id": "dumps_list",
+      "input": [
+        "a",
+        "b"
+      ],
+      "operation": "dumps"
+    },
+    {
+      "baseline_expected": [
+        "a",
+        "b"
+      ],
+      "description": "Deserialize a simple list.",
+      "id": "loads_list",
+      "input": "- a\n- b\n",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": "# Name\n\nRingo\n\n# Species\n\nFelix\n",
+      "description": "Serialize a flat dict with the default ATX format.",
+      "id": "dumps_dict",
+      "input": {
+        "Name": "Ringo",
+        "Species": "Felix"
+      },
+      "operation": "dumps"
+    },
+    {
+      "baseline_expected": {
+        "Name": "Ringo",
+        "Species": "Felix"
+      },
+      "description": "Deserialize a flat ATX-header dict.",
+      "id": "loads_dict",
+      "input": "# Name\n\nRingo\n\n# Species\n\nFelix\n",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": "42",
+      "config": {
+        "infer_scalar_types": false
+      },
+      "description": "Keep numeric text as a string when inference is disabled.",
+      "id": "loads_infer_scalar_types_false",
+      "input": "42",
+      "operation": "loads"
+    },
+    {
+      "baseline_expected": "# a\n\n1\n\n---\n\n# b\n\n2\n",
+      "description": "Serialize multiple documents with the string helper.",
+      "id": "dumps_all_two_documents",
+      "input": [
+        {
+          "a": "1"
+        },
+        {
+          "b": "2"
+        }
+      ],
+      "operation": "dumps_all"
+    }
+  ]
+}

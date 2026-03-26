@@ -16,7 +16,7 @@ ifdef PYTEST_SEED
 PYTEST_RANDOM_ARGS := --randomly-seed=$(PYTEST_SEED)
 endif
 
-.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust
+.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust
 
 help:
 	@printf "%s\n" \
@@ -24,6 +24,10 @@ help:
 	"make format              # format code and docs" \
 	"make lint                # format code, then run pylint" \
 	"make test                # run doctests + unit tests in parallel" \
+	"make compat              # run frozen 1.x compatibility tests" \
+	"make compat-refresh      # regenerate frozen 1.6.4 compatibility fixtures" \
+	"make compat-baseline-venv # create .venv-compat-1.6.4 from the local 1.6.4 git baseline" \
+	"make compat-wheel        # build wheel, install into .venv-compat-wheel, run compat checks" \
 	"make type-check-mypy     # run mypy on markpickle" \
 	"make type-check-pyright  # run pyright on markpickle" \
 	"make type-check-ty       # run ty on markpickle" \
@@ -103,6 +107,22 @@ audit:
 test:
 	@echo "[test] workers=$(PYTEST_N)"
 	$(UV_RUN) pytest $(CODE_PATHS) $(PYTEST_IGNORE_ARGS) $(PYTEST_DISABLE_PLUGIN_ARGS) $(PYTEST_ARGS) $(PYTEST_XDIST_ARGS) $(PYTEST_RANDOM_ARGS)
+
+compat:
+	@echo "[compat]"
+	$(UV_RUN) pytest test\compat -q
+
+compat-refresh:
+	@echo "[compat-refresh]"
+	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py generate
+
+compat-baseline-venv:
+	@echo "[compat-baseline-venv]"
+	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py create-baseline-venv
+
+compat-wheel:
+	@echo "[compat-wheel]"
+	$(UV_RUN) python scripts\generate_v1_compat_fixtures.py run-wheel-check
 
 benchmark:
 	@echo "[benchmark]"

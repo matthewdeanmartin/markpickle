@@ -1,0 +1,72 @@
+{
+  "baseline_ref": "c80c4c4",
+  "baseline_version": "1.6.4",
+  "cases": [
+    {
+      "baseline_expected": -5.0,
+      "current_expected": -5,
+      "description": "Negative integers now deserialize as int instead of float.",
+      "id": "loads_negative_int",
+      "input": "-5",
+      "operation": "loads",
+      "reference": "CHANGELOG 2.0.0 Fixed: Negative ints become float"
+    },
+    {
+      "baseline_expected": true,
+      "config": {
+        "infer_scalar_types": false
+      },
+      "current_expected": "True",
+      "description": "infer_scalar_types=False now leaves booleans as strings.",
+      "id": "loads_bool_no_infer",
+      "input": "True",
+      "operation": "loads",
+      "reference": "CHANGELOG 2.0.0 Breaking Changes: infer_scalar_types=False now truly returns strings"
+    },
+    {
+      "baseline_expected": "null",
+      "config": {
+        "none_values": [
+          "None",
+          "nil",
+          "null",
+          "N/A"
+        ]
+      },
+      "current_expected": null,
+      "description": "none_values is now consulted during deserialization.",
+      "id": "loads_none_values_custom",
+      "input": "null",
+      "operation": "loads",
+      "reference": "CHANGELOG 2.0.0 Breaking Changes: none_values config list is now consulted"
+    },
+    {
+      "baseline_expected": "2024-01-15",
+      "current_expected": "2024-01-15 10:30:45",
+      "description": "datetime serialization now preserves the time component.",
+      "id": "dumps_datetime",
+      "input": {
+        "__type__": "datetime",
+        "value": "2024-01-15T10:30:45"
+      },
+      "operation": "dumps",
+      "reference": "CHANGELOG 2.0.0 Fixed: datetime loses time"
+    },
+    {
+      "baseline_expected": "# a\n\n1\n\n# b\n\n2\n\n",
+      "current_expected": "# a\n\n1\n\n---\n\n# b\n\n2\n\n",
+      "description": "dump_all stream output now emits --- separators between documents.",
+      "id": "dump_all_two_documents",
+      "input": [
+        {
+          "a": "1"
+        },
+        {
+          "b": "2"
+        }
+      ],
+      "operation": "dump_all",
+      "reference": "CHANGELOG 2.0.0 Fixed: dump_all stream bug"
+    }
+  ]
+}

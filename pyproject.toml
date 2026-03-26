@@ -149,6 +149,10 @@ testpaths = [
 ]
 junit_family = "xunit1"
 norecursedirs = ["vendor", "scripts", ".hypothesis", ".venv", "node_modules"]
+markers = [
+    "compat: frozen 1.x compatibility contract tests",
+    "documented_change: documented or accepted 2.x differences from the 1.x baseline",
+]
 # don't know how to do this in toml
 #addopts = "--strict-markers"
 #markers =

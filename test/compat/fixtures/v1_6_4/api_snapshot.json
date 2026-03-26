@@ -1,0 +1,210 @@
+{
+  "baseline_ref": "c80c4c4",
+  "baseline_version": "1.6.4",
+  "config_fields": [
+    "infer_scalar_types",
+    "true_values",
+    "false_values",
+    "none_values",
+    "empty_string_is",
+    "serialize_headers_are_dict_keys",
+    "serialize_dict_as_table",
+    "serialize_child_dict_as_table",
+    "serialize_tables_tabulate_style",
+    "serialize_force_final_newline",
+    "serialize_bytes_mime_type",
+    "none_string",
+    "serialize_date_format",
+    "serialized_datetime_format",
+    "list_bullet_style",
+    "serialize_include_python_type",
+    "serialize_images_to_pillow",
+    "default",
+    "deserialized_add_missing_key",
+    "deserialized_missing_key_name"
+  ],
+  "exports": [
+    "load",
+    "load_all",
+    "loads",
+    "loads_all",
+    "dump",
+    "dump_all",
+    "dumps",
+    "dumps_all",
+    "Config",
+    "split_file",
+    "convert_json_to_markdown",
+    "convert_markdown_to_json",
+    "__version__"
+  ],
+  "function_contracts": {
+    "convert_json_to_markdown": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "json_string",
+        "required": true
+      }
+    ],
+    "convert_markdown_to_json": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "markdown_string",
+        "required": true
+      }
+    ],
+    "dump": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "stream",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "default",
+        "required": false
+      }
+    ],
+    "dump_all": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "stream",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "default",
+        "required": false
+      }
+    ],
+    "dumps": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "default",
+        "required": false
+      }
+    ],
+    "dumps_all": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "default",
+        "required": false
+      }
+    ],
+    "load": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "object_hook",
+        "required": false
+      }
+    ],
+    "load_all": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "object_hook",
+        "required": false
+      }
+    ],
+    "loads": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "object_hook",
+        "required": false
+      }
+    ],
+    "loads_all": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "value",
+        "required": true
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "config",
+        "required": false
+      },
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "object_hook",
+        "required": false
+      }
+    ],
+    "split_file": [
+      {
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "file",
+        "required": true
+      }
+    ]
+  }
+}
