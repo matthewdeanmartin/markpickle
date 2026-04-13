@@ -1,6 +1,7 @@
 """
 Scalars are just python repr or str. No not very portable.
 """
+
 from __future__ import annotations
 
 from markpickle import loads

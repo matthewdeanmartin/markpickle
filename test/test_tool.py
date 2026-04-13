@@ -2,7 +2,6 @@ from __future__ import annotations
 import io
 import sys
 from pathlib import Path
-from typing import List
 
 import pytest
 
@@ -14,7 +13,7 @@ def test_stdin_to_stdout(capsys: pytest.CaptureFixture[str], monkeypatch: pytest
     """Test reading from stdin and writing to stdout (default behavior)."""
     markdown_input: str = "- item1\n- item2"
     # This expected object depends on the MarkpickleLibMock.load behavior
-    expected_obj: List[str] = ["item1", "item2"]
+    expected_obj: list[str] = ["item1", "item2"]
     expected_string = markpickle.dumps(expected_obj) + "\n"
 
     monkeypatch.setattr(sys, "stdin", io.StringIO(markdown_input))
@@ -47,7 +46,7 @@ def test_stdin_to_file_output(
 ) -> None:
     """Test reading from stdin and writing to a specified output file."""
     markdown_input: str = "- list entry A\n- list entry B"
-    expected_obj: List[str] = ["list entry A", "list entry B"]
+    expected_obj: list[str] = ["list entry A", "list entry B"]
     expected_string = markpickle.dumps(expected_obj) + "\n"
 
     monkeypatch.setattr(sys, "stdin", io.StringIO(markdown_input))
@@ -104,7 +103,7 @@ def test_tool_docstring_example(capsys: pytest.CaptureFixture[str], monkeypatch:
     """Test the example provided in the tool.py docstring: echo '-a\n-b\n-c' | ..."""
     markdown_input: str = "- a\n- b\n - c"  # Note: no space after hyphen in docstring example
 
-    expected_obj: List[str] = ["a", "b", "c"]
+    expected_obj: list[str] = ["a", "b", "c"]
     expected_string = markpickle.dumps(expected_obj) + "\n"
 
     monkeypatch.setattr(sys, "stdin", io.StringIO(markdown_input))

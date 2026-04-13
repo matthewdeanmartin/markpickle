@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 # This test code was written by the `hypothesis.extra.ghostwriter` module
 # and is provided under the Creative Commons Zero public domain dedication.
 
@@ -73,7 +74,7 @@ def test_fuzz_is_float(value: str) -> None:
     value=st.builds(StringIO),
     config=st.from_type(typing.Optional[markpickle.config_class.Config]),
 )
-def test_fuzz_load(value: _io.StringIO, config: typing.Optional[markpickle.config_class.Config]) -> None:
+def test_fuzz_load(value: _io.StringIO, config: markpickle.config_class.Config | None) -> None:
     markpickle.deserialize.load(value=value, config=config)
 
 

@@ -24,10 +24,11 @@ Supported tags
     hr        {'tag': 'hr'}
     blockquote {'tag': 'blockquote', 'text': '...'}
 """
+
 from __future__ import annotations
 
 import io
-from typing import Any, Optional
+from typing import Any
 
 import mistune
 
@@ -90,7 +91,7 @@ def _list_items(list_token: dict[str, Any]) -> list[Any]:
 # ---------------------------------------------------------------------------
 
 
-def _parse_table_text(text: str) -> Optional[dict[str, Any]]:
+def _parse_table_text(text: str) -> dict[str, Any] | None:
     """Parse a pipe-delimited table from a paragraph text node."""
     lines = [ln.strip() for ln in text.strip().splitlines()]
     lines = [ln for ln in lines if set(ln) - set("| :-")]
@@ -114,7 +115,7 @@ def _parse_table_text(text: str) -> Optional[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 
-def _token_to_node(token: dict[str, Any]) -> Optional[dict[str, Any]]:
+def _token_to_node(token: dict[str, Any]) -> dict[str, Any] | None:
     """Convert a single top-level mistune token to a DOM node dict."""
     t = token["type"]
 

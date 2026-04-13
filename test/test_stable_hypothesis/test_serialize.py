@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 # This test code was written by the `hypothesis.extra.ghostwriter` module
 # and is provided under the Creative Commons Zero public domain dedication.
 
 import datetime
 import io
-import typing
 
 from hypothesis import given
 from hypothesis import strategies as st
@@ -97,30 +97,30 @@ def test_fuzz_Config(
     config=st.just(markpickle.config_class.Config()),
 )
 def test_fuzz_dump(
-    value: typing.Union[
-        None,
-        str,
-        int,
-        float,
-        datetime.date,
-        dict[str, typing.Union[None, str, int, float, datetime.date]],
-        dict[
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                list[typing.Union[None, str, int, float, datetime.date]],
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-            ],
-        ],
-        list[typing.Union[None, str, int, float, datetime.date]],
-        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-    ],
+            (
+                None
+                | str
+                | int
+                | float
+                | datetime.date
+                | list[None | str | int | float | datetime.date]
+                | dict[str, None | str | int | float | datetime.date]
+            ),
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+    ),
     stream: io.IOBase,
-    config: typing.Optional[markpickle.config_class.Config],
+    config: markpickle.config_class.Config | None,
 ) -> None:
     markpickle.serialize.dump(value=value, stream=stream, config=config)
 
@@ -162,38 +162,38 @@ def test_fuzz_dump(
     config=st.just(markpickle.config_class.Config()),
 )
 def test_fuzz_dumps(
-    value: typing.Union[
-        None,
-        str,
-        int,
-        float,
-        datetime.date,
-        dict[str, typing.Union[None, str, int, float, datetime.date]],
-        dict[
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                list[typing.Union[None, str, int, float, datetime.date]],
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-            ],
-        ],
-        list[typing.Union[None, str, int, float, datetime.date]],
-        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-    ],
-    config: typing.Optional[markpickle.config_class.Config],
+            (
+                None
+                | str
+                | int
+                | float
+                | datetime.date
+                | list[None | str | int | float | datetime.date]
+                | dict[str, None | str | int | float | datetime.date]
+            ),
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+    ),
+    config: markpickle.config_class.Config | None,
 ) -> None:
     markpickle.serialize.dumps(value=value, config=config)
 
 
 @given(value=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()))
-def test_fuzz_unsafe_falsy_type(value: typing.Union[None, str, int, float, datetime.date]) -> None:
+def test_fuzz_unsafe_falsy_type(value: None | str | int | float | datetime.date) -> None:
     markpickle.serialize.unsafe_falsy_type(value=value)
 
 
 @given(value=st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()))
-def test_fuzz_unsafe_scalar_type(value: typing.Union[None, str, int, float, datetime.date]) -> None:
+def test_fuzz_unsafe_scalar_type(value: None | str | int | float | datetime.date) -> None:
     markpickle.serialize.unsafe_scalar_type(value=value)

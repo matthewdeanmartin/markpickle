@@ -1,6 +1,7 @@
 """
 Handle a convention for putting multiple serialized objects into a single file.
 """
+
 from __future__ import annotations
 
 import io
@@ -19,7 +20,7 @@ def is_markdown_separator(row: str, last_row_blank: bool) -> bool:
     return False
 
 
-def split_file(file: io.FileIO) -> Generator[str, None, None]:
+def split_file(file: io.FileIO) -> Generator[str]:
     """
     Split a file into a list of lines.
     """
