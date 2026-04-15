@@ -1,6 +1,7 @@
 """
 Help / Cheat Sheet panel — syntax reference for supported markdown constructs.
 """
+
 from __future__ import annotations
 
 import tkinter as tk

@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 r"""Command-line tool to pretty-print Markdown after round tripping it through Python types
 
 Usage::
@@ -12,13 +13,13 @@ Source code modeled after json.tool https://github.com/python/cpython/blob/3.11/
 import argparse
 import sys
 from pathlib import Path
-from typing import Any, Optional, Sequence
+from typing import Any, Sequence
 
 import markpickle
 
 
 def main(
-    argv: Optional[Sequence[str]] = None,
+    argv: Sequence[str] | None = None,
 ):
     """CLI entry point"""
     prog = "python -m markpickle.tool"

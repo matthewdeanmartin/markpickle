@@ -156,7 +156,9 @@ def _uv_python(venv_path: Path) -> Path:
     return venv_path / "Scripts" / "python.exe"
 
 
-def _run(command: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+def _run(
+    command: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command, cwd=cwd, env=env, check=True, text=True, capture_output=True)
 
 

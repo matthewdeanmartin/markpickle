@@ -15,7 +15,7 @@ from markpickle.gui.panels.help_panel import HelpPanel
 from markpickle.gui.panels.validate_panel import ValidatePanel
 
 
-@pytest.fixture()
+@pytest.fixture
 def root():
     try:
         app = tk.Tk()

@@ -3,13 +3,14 @@ serialize.py
 
 This module provides functions to serialize many Python types to Markdown.
 """
+
 from __future__ import annotations
 
 import datetime
 import io
 import logging
 import textwrap
-from typing import Any, Callable, Optional, TextIO, Union, cast
+from typing import Any, Callable, TextIO, cast
 
 from markpickle import python_to_tables, simplify_types, third_party_tables
 from markpickle.binary_streams import bytes_to_markdown
@@ -19,8 +20,8 @@ from markpickle.mypy_types import DictTypes, SerializableTypes
 
 def dumps_all(
     value: list[SerializableTypes],
-    config: Optional[Config] = None,
-    default: Optional[Callable[[object], str]] = None,
+    config: Config | None = None,
+    default: Callable[[object], str] | None = None,
 ) -> str:
     """Iterate value and serialize documents with horizontal lines between documents"""
     if default and config:
@@ -41,8 +42,8 @@ def dumps_all(
 
 def dumps(
     value: SerializableTypes,
-    config: Optional[Config] = None,
-    default: Optional[Callable[[object], str]] = None,
+    config: Config | None = None,
+    default: Callable[[object], str] | None = None,
 ) -> str:
     """
     Serialize basic Python types to a string of Markdown.
@@ -95,9 +96,9 @@ def dumps(
 
 def dump_all(
     value: list[SerializableTypes],
-    stream: Union[io.IOBase, TextIO],
-    config: Optional[Config] = None,
-    default: Optional[Callable[[object], str]] = None,
+    stream: io.IOBase | TextIO,
+    config: Config | None = None,
+    default: Callable[[object], str] | None = None,
 ) -> None:
     """Iterate value and serialize documents with horizontal lines between documents"""
     if default and config:
@@ -112,7 +113,7 @@ def dump_all(
 
 
 def render_scalar(
-    builder: Union[io.IOBase, TextIO],
+    builder: io.IOBase | TextIO,
     value: SerializableTypes,
     config: Config,
     _indent: int = 0,
@@ -145,9 +146,9 @@ def render_scalar(
 
 def dump(
     value: SerializableTypes,
-    stream: Union[io.IOBase, TextIO],
-    config: Optional[Config] = None,
-    default: Optional[Callable[[object], str]] = None,
+    stream: io.IOBase | TextIO,
+    config: Config | None = None,
+    default: Callable[[object], str] | None = None,
 ) -> None:
     """
     Serialize basic Python types to Markdown in a file-like object.
@@ -175,6 +176,7 @@ def dump(
     # mypy doesn't use info from the hadattr check.
     # dataclasses gained __getstate__ in 3.11; fall back to dataclasses.asdict on older Python.
     import dataclasses as _dc
+
     if _dc.is_dataclass(value) and not isinstance(value, type):
         state: Any = cast(Any, value).__getstate__() if hasattr(value, "__getstate__") else _dc.asdict(value)
         if state:
@@ -211,13 +213,13 @@ def dump(
         raise NotImplementedError(f"Can't dump type of {type(value)} with value of {value}")
 
 
-def python_to_atx_header(_builder: Union[io.IOBase, TextIO], _data: list[DictTypes], _header_level: int, _indent: int):
+def python_to_atx_header(_builder: io.IOBase | TextIO, _data: list[DictTypes], _header_level: int, _indent: int):
     """Write a nested dictionary as a series of ATX header sections"""
     print("Not implemented yet")
 
 
 def render_dict(
-    builder: Union[io.IOBase, TextIO], value: DictTypes, config: Config, indent: int = 0, header_level: int = 1
+    builder: io.IOBase | TextIO, value: DictTypes, config: Config, indent: int = 0, header_level: int = 1
 ) -> int:
     """Convert a Python dictionary to Markdown.
 
@@ -304,7 +306,7 @@ def render_dict(
 
 
 def render_list(
-    builder: Union[io.IOBase, TextIO],
+    builder: io.IOBase | TextIO,
     value: list[SerializableTypes],
     config: Config,
     indent: int = 0,

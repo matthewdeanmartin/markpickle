@@ -1,16 +1,17 @@
 """
 Add support for binary streams via images and data URLs
 """
+
 from __future__ import annotations
 
 import base64
 import io
-from typing import Any, Optional
+from typing import Any
 
 from markpickle.config_class import Config
 
 
-def bytes_to_markdown(key: Optional[str], value: bytes, config: Config) -> str:
+def bytes_to_markdown(key: str | None, value: bytes, config: Config) -> str:
     """
     Convert bytes to markdown image
     """

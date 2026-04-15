@@ -7,6 +7,7 @@ Usage:
     markpickle doctor                       # show installed optional libraries
     markpickle gui                          # launch tkinter GUI
 """
+
 from __future__ import annotations
 
 import argparse
@@ -15,7 +16,7 @@ import json
 import platform
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -119,7 +120,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
 
     config = _load_config(args)
     infile_arg: str = args.infile
-    outfile_arg: Optional[str] = args.outfile
+    outfile_arg: str | None = args.outfile
 
     try:
         if infile_arg == "-":
@@ -237,7 +238,7 @@ def _add_config_arg(p: argparse.ArgumentParser) -> None:
     )
 
 
-def run(argv: Optional[list[str]] = None) -> int:
+def run(argv: list[str] | None = None) -> int:
     """CLI entry point logic."""
     parser = argparse.ArgumentParser(
         prog="markpickle",

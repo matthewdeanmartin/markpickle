@@ -5,12 +5,12 @@ Function created with help of ChatGPT
 from __future__ import annotations
 
 import io
-from typing import Any, Optional, TextIO, Union, cast
+from typing import Any, TextIO, cast
 
 from markpickle.mypy_types import ColumnsValuesTableType, DictTypes, ListTypes
 
 
-def list_of_dict_to_markdown(builder: Union[io.IOBase, TextIO], data: list[DictTypes], indent: int = 0) -> None:
+def list_of_dict_to_markdown(builder: io.IOBase | TextIO, data: list[DictTypes], indent: int = 0) -> None:
     """
     Create a markdown table. Assumes dict are compatible (have similar keys) and shallow (no dicts of dict values)
     """
@@ -32,7 +32,7 @@ def list_of_dict_to_markdown(builder: Union[io.IOBase, TextIO], data: list[DictT
 
 
 def dict_to_markdown(
-    data: DictTypes, include_header: bool = True, column_widths: Optional[dict[str, int]] = None, indent: int = 0
+    data: DictTypes, include_header: bool = True, column_widths: dict[str, int] | None = None, indent: int = 0
 ) -> str:
     """Convert dict to a header-value pair, or a header-value pair where values can be tables."""
     # indentation = indent * " "

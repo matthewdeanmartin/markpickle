@@ -1,6 +1,7 @@
 """
 Creative Commons license: https://stackoverflow.com/questions/54125181/how-to-convert-markdown-to-json
 """
+
 from __future__ import annotations
 
 import markpickle

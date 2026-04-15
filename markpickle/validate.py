@@ -4,9 +4,10 @@ AST-based markdown validation for round-trip safety.
 Walks the mistune AST to identify constructs that are not preserved
 during markpickle serialization/deserialization round-trips.
 """
+
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import mistune
 
@@ -65,7 +66,7 @@ def _has_any_heading(tokens: list[dict[str, Any]]) -> bool:
     return False
 
 
-def validate_markdown(text: str, _config: Optional[Any] = None, config: Optional[Any] = None) -> list[str]:
+def validate_markdown(text: str, _config: Any | None = None, config: Any | None = None) -> list[str]:
     """
     Walk a mistune AST and return a list of issue strings describing constructs
     that won't round-trip cleanly through markpickle.

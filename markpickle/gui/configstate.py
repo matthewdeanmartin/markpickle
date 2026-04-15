@@ -6,7 +6,7 @@ Analogous to DocumentState but for markpickle.Config objects.
 
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import Callable
 
 from markpickle.config_class import Config
 
@@ -14,7 +14,7 @@ from markpickle.config_class import Config
 class ConfigState:
     """Observable Config object."""
 
-    def __init__(self, config: Optional[Config] = None) -> None:
+    def __init__(self, config: Config | None = None) -> None:
         """Initialize with an optional Config object."""
         self._config: Config = config if config is not None else Config()
         self._listeners: list[Callable[[Config], None]] = []

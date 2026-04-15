@@ -1,10 +1,11 @@
 """
 Config for serializing and deserializing. They need to be the same for increasing the odds of successful round tripping.
 """
+
 from __future__ import annotations
 
 import dataclasses
-from typing import Callable, Optional
+from typing import Callable
 
 
 @dataclasses.dataclass
@@ -64,7 +65,7 @@ class Config:
 
     serialize_images_to_pillow: bool = False
 
-    default: Optional[Callable[[object], str]] = None
+    default: Callable[[object], str] | None = None
 
     deserialized_add_missing_key: bool = True
     """If document has ATX headers add missing initial ATX header"""

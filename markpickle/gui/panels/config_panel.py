@@ -8,7 +8,6 @@ Other panels subscribe to ConfigState to use the current config.
 from __future__ import annotations
 
 import tkinter as tk
-from typing import Optional
 
 from markpickle.config_class import Config
 from markpickle.gui import theme as T
@@ -43,7 +42,7 @@ class ConfigPanel(tk.Frame):
     def __init__(
         self,
         parent,
-        config: Optional[Config] = None,
+        config: Config | None = None,
         config_source: str = "defaults",
         doc_state=None,
         config_state=None,

@@ -32,7 +32,7 @@ from markpickle.mypy_types import (
 from markpickle.split_file_code import is_markdown_separator
 
 
-def loads(value: str, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
+def loads(value: str, config: Config | None = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown strings into simple Python types
 
@@ -143,9 +143,7 @@ def process_list(list_ast: Any, config: Config) -> ListTypes:
     return cast(ListTypes, current_list)
 
 
-def load_all(
-    value: TextIO, config: Optional[Config] = None, object_hook=None
-) -> Generator[SerializableTypes, None, None]:
+def load_all(value: TextIO, config: Config | None = None, object_hook=None) -> Generator[SerializableTypes]:
     """Load multiple documents from a single stream"""
     part = io.StringIO()
     has_data = True
@@ -173,17 +171,15 @@ def load_all(
         yield load(part, config, object_hook)
 
 
-def loads_all(
-    value: str, config: Optional[Config] = None, object_hook=None
-) -> Generator[SerializableTypes, None, None]:
+def loads_all(value: str, config: Config | None = None, object_hook=None) -> Generator[SerializableTypes]:
     """Load multiple documents from a single string"""
     yield from load_all(io.StringIO(value), config, object_hook)
 
 
-def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> Optional[SerializableTypes]:
+def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> SerializableTypes | None:
     """Process a list of tokens to lists and scalars and so on."""
     # Tokens that are not ATX-dict-like headers
-    return_value: Optional[SerializableTypes] = None
+    return_value: SerializableTypes | None = None
 
     accumulate_a_tuple: list[SerializableTypes] = []
     for token in list_of_tokens:
@@ -315,7 +311,7 @@ def missing_top_key(result: MistuneTokenList):
     return True
 
 
-def load(value: TextIO, config: Optional[Config] = None, object_hook=None) -> SerializableTypes:
+def load(value: TextIO, config: Config | None = None, object_hook=None) -> SerializableTypes:
     """
     Convert certain markdown streams into simple Python types
 

@@ -10,12 +10,13 @@ Usage
     config = load_config()                        # auto-discover pyproject.toml
     config = load_config("path/to/config.toml")  # explicit file
 """
+
 from __future__ import annotations
 
 import dataclasses
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from markpickle.config_class import Config
 
@@ -89,8 +90,8 @@ def _apply_section(config: Config, section: dict[str, Any]) -> list[str]:
 
 
 def load_config(
-    config_path: Optional[str] = None,
-    base: Optional[Config] = None,
+    config_path: str | None = None,
+    base: Config | None = None,
 ) -> Config:
     """
     Load a Config from a TOML file.

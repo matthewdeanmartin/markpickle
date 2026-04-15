@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 X = {
     "Description": "And another paragraph.",
     "Authors": ["Nate Vack", "Someone Else"],

@@ -1,6 +1,7 @@
 """
 Catppuccin Mocha dark palette + shared widget helpers.
 """
+
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------

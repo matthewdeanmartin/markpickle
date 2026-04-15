@@ -5,6 +5,7 @@ https://github.com/njvack/markdown-to-json/blob/master/markdown_to_json/markdown
 
 Reused with MIT license and credit to https://github.com/njvack
 """
+
 from __future__ import annotations
 
 from typing import Any, Optional, cast
@@ -51,7 +52,7 @@ def parse_outermost_dict(
     return cast(PossibleDictTypes, {None: token_list})
 
 
-def _recurse_inner_result(inner_result: dict[Optional[str], Any]) -> None:
+def _recurse_inner_result(inner_result: dict[str | None, Any]) -> None:
     for inner_key, inner_val in inner_result.items():
         if inner_val is None:
             continue
@@ -69,9 +70,9 @@ def _recurse_inner_result(inner_result: dict[Optional[str], Any]) -> None:
 
 def recursive_part(level: int, token_list: MistuneTokenList) -> Any:
     """Recursive part of processing headers"""
-    candidate: dict[Optional[str], Any] = {}
+    candidate: dict[str | None, Any] = {}
     key = None
-    between_values: list[dict[Optional[str], Any]] = []
+    between_values: list[dict[str | None, Any]] = []
     # First pass, yields candidate full of keys and lists of tokens
     for item in token_list:
         if item["type"] == "newline":

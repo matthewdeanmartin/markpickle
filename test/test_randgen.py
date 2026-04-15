@@ -1,5 +1,5 @@
 from __future__ import annotations
-import markpickle.gui.randgen as randgen
+from markpickle.gui import randgen
 
 
 def test_rand_word_and_words_are_built_from_random_choices(monkeypatch) -> None:
