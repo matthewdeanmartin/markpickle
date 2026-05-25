@@ -26,7 +26,6 @@ jobs:
       run: uv sync --all-extras
     - name: Install global dependencies
       run: |
-        pipx install isort && pipx install black && pipx install bandit && pipx install pylint && \
-        pipx install pre-commit
+        pipx install isort && pipx install black && pipx install bandit && pipx install pylint
     - name: Run make
       run: uv run make check
