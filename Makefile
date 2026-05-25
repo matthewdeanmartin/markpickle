@@ -227,3 +227,22 @@ clean-rust:
 	@echo "[clean-rust]"
 	-cargo clean
 	-$(UV_RUN) python -c "from pathlib import Path; [path.unlink() for path in Path('markpickle').glob('_markpickle*.so')]; [path.unlink() for path in Path('markpickle').glob('_markpickle*.pyd')]"
+
+# ── Dogfooding targets (independent, not wired into check) ───────────────────
+
+.PHONY: dev-status
+dev-status:
+	@uv run troml-dev-status validate .
+
+.PHONY: prerelease-check
+prerelease-check: version-check dev-status
+	@echo "Pre-release checks passed."
+
+.PHONY: dont-be-lazy
+dont-be-lazy:
+	@uv run dont_be_lazy --root . --no-color summary
+	@uv run dont_be_lazy --root . --no-color scan markpickle --no-config-suppressions || true
+
+.PHONY: pydoc-docs
+pydoc-docs:
+	@uv run pydoc_fork markpickle -o ./pydoc/
