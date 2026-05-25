@@ -114,6 +114,7 @@ dev = [
 
 [tool.uv]
 default-groups = ["dev"]
+universal = true
 
 [tool.maturin]
 # Compiled extension is placed inside the markpickle package as _markpickle

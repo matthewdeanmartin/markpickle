@@ -7,6 +7,10 @@ resolution-markers = [
     "python_full_version < '3.10'",
 ]
 
+[options]
+exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for backwards compatibility when using relative exclude-newer values.
+exclude-newer-span = "P5D"
+
 [[package]]
 name = "2to3"
 version = "1.0"
@@ -3613,7 +3617,7 @@ wheels = [
 
 [[package]]
 name = "pydoc-fork"
-version = "3.4.0"
+version = "3.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "docopt-ng", marker = "python_full_version >= '3.10'" },
@@ -3623,9 +3627,9 @@ dependencies = [
     { name = "tomli", marker = "python_full_version >= '3.10'" },
     { name = "typing-extensions", marker = "python_full_version >= '3.10'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cd/1c/20ba0e3ddb78f873f1cc60553e8a500f29d4cef891526e6e4c1cc60caf23/pydoc_fork-3.4.0.tar.gz", hash = "sha256:b9fd3035d66ac81aff1d3bb51febebb49ca821ea1b582b1bc4bf34b487731287", size = 85853, upload-time = "2026-05-24T20:32:05.124Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/af/80/d3e988bdb729df73ad388ce0bf21e82c13adf0d84c8e58b7729748c2cab8/pydoc_fork-3.3.0.tar.gz", hash = "sha256:ac35a98faad5731263dbdcc0cc8fbe3cd085bc7d71df54eb19c1fbda835aab0f", size = 26608, upload-time = "2024-02-18T23:10:18.479Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/f2/304f144279d858eb2576095b14529c50a912da806932bb1956e1c014c5eb/pydoc_fork-3.4.0-py3-none-any.whl", hash = "sha256:aebd96098a50b35c90c7d4cb626f33f79eac92533ca18d55c2a82abfa3e6d0af", size = 47981, upload-time = "2026-05-24T20:32:03.463Z" },
+    { url = "https://files.pythonhosted.org/packages/57/d4/a0f742c96437675d9442cf711aae1c858b4f106115541fc8884b74692118/pydoc_fork-3.3.0-py3-none-any.whl", hash = "sha256:7f4cbd6cf81648f296b257a768ad28ef550487c2adcf9b85a8a0d7eba6c8f005", size = 34931, upload-time = "2024-02-18T23:10:16.544Z" },
 ]
 
 [[package]]
