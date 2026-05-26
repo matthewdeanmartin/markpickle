@@ -81,9 +81,9 @@ def _apply_section(config: Config, section: dict[str, Any]) -> list[str]:
         field_type = type(getattr(config, key))
         # Coerce type if needed (TOML gives us native types for bool/int/str/list)
         if field_type is bool and not isinstance(value, bool):
-            value = str(value).lower() in ("true", "1", "yes")
+            value = str(value).lower() in ("true", "1", "yes")  # noqa: PLW2901
         elif field_type is list and not isinstance(value, list):
-            value = [value]
+            value = [value]  # noqa: PLW2901
         setattr(config, key, value)
 
     return warnings

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-# This test code was written by the `hypothesis.extra.ghostwriter` module
-# and is provided under the Creative Commons Zero public domain dedication.
-
 import datetime
 
 from hypothesis import given
 from hypothesis import strategies as st
 
 import markpickle.third_party_tables
+
+# This test code was written by the `hypothesis.extra.ghostwriter` module
+# and is provided under the Creative Commons Zero public domain dedication.
 
 
 @given(value=st.lists(st.lists(st.one_of(st.none(), st.dates(), st.floats(), st.integers(), st.text()))))

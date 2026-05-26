@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from test.compat.helpers import evaluate_case, load_fixture
+
 import pytest
 
 import markpickle
-
-from test.compat.helpers import evaluate_case, load_fixture
 
 BEHAVIOR_SNAPSHOT = load_fixture("behavior_snapshot.json")
 

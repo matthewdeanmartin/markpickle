@@ -4,6 +4,7 @@ Doctor panel — environment info, active config dump, copy-to-clipboard.
 
 from __future__ import annotations
 
+import contextlib
 import importlib.metadata
 import platform
 import tkinter as tk
@@ -109,7 +110,7 @@ class DoctorPanel(tk.Frame):
 
         pyproject = Path.cwd() / "pyproject.toml"
         if pyproject.exists():
-            try:
+            with contextlib.suppress(Exception):
                 from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
                     _extract_markpickle_section,
                     _read_toml,
@@ -127,8 +128,6 @@ class DoctorPanel(tk.Frame):
                         f"\nConfig file: {pyproject}\n  (no [tool.markpickle] section — using defaults)\n",
                         "hint",
                     )
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
         else:
             self._output.insert("end", "\nConfig file: none found (using defaults)\n", "hint")
 

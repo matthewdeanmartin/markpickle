@@ -8,6 +8,7 @@ registered listener is called with the new text so all inputs stay in sync.
 
 from __future__ import annotations
 
+import contextlib
 from typing import Callable
 
 
@@ -28,10 +29,8 @@ class DocumentState:
         """Update the shared document and notify all listeners."""
         self._text = text
         for fn in self._listeners:
-            try:
+            with contextlib.suppress(Exception):
                 fn(text)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
 
     @property
     def text(self) -> str:

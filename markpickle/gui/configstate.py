@@ -6,6 +6,7 @@ Analogous to DocumentState but for markpickle.Config objects.
 
 from __future__ import annotations
 
+import contextlib
 from typing import Callable
 
 from markpickle.config_class import Config
@@ -27,10 +28,8 @@ class ConfigState:
         """Set the Config and notify listeners."""
         self._config = config
         for fn in self._listeners:
-            try:
+            with contextlib.suppress(Exception):
                 fn(config)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
 
     @property
     def config(self) -> Config:

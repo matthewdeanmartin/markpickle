@@ -1,18 +1,19 @@
 from __future__ import annotations
+
 import pytest
 
 tk = pytest.importorskip("tkinter")
-from pathlib import Path
+from pathlib import Path  # noqa: E402
 
-from markpickle.config_class import Config
-from markpickle.gui.configstate import ConfigState
-from markpickle.gui.docstate import DocumentState
-from markpickle.gui.panels.config_panel import ConfigPanel, _load_config_with_source
-from markpickle.gui.panels.convert import ConvertPanel
-from markpickle.gui.panels.doctor_panel import DoctorPanel
-from markpickle.gui.panels.format_panel import FormatPanel
-from markpickle.gui.panels.help_panel import HelpPanel
-from markpickle.gui.panels.validate_panel import ValidatePanel
+from markpickle.config_class import Config  # noqa: E402
+from markpickle.gui.configstate import ConfigState  # noqa: E402
+from markpickle.gui.docstate import DocumentState  # noqa: E402
+from markpickle.gui.panels.config_panel import ConfigPanel, _load_config_with_source  # noqa: E402
+from markpickle.gui.panels.convert import ConvertPanel  # noqa: E402
+from markpickle.gui.panels.doctor_panel import DoctorPanel  # noqa: E402
+from markpickle.gui.panels.format_panel import FormatPanel  # noqa: E402
+from markpickle.gui.panels.help_panel import HelpPanel  # noqa: E402
+from markpickle.gui.panels.validate_panel import ValidatePanel  # noqa: E402
 
 
 @pytest.fixture

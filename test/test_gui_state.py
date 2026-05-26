@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from markpickle.config_class import Config
 from markpickle.gui.configstate import ConfigState
 from markpickle.gui.docstate import DocumentState

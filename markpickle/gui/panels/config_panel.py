@@ -7,6 +7,7 @@ Other panels subscribe to ConfigState to use the current config.
 
 from __future__ import annotations
 
+import contextlib
 import tkinter as tk
 
 from markpickle.config_class import Config
@@ -326,7 +327,7 @@ def _load_config_with_source() -> tuple[Config, str]:
         cfg = load_config()
         pyproject = Path.cwd() / "pyproject.toml"
         if pyproject.exists():
-            try:
+            with contextlib.suppress(Exception):
                 from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
                     _extract_markpickle_section,
                     _read_toml,
@@ -336,8 +337,6 @@ def _load_config_with_source() -> tuple[Config, str]:
                 section = _extract_markpickle_section(data, pyproject)
                 if section:
                     return cfg, f"pyproject.toml ([tool.markpickle], {len(section)} key(s))"
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
             return cfg, "pyproject.toml (no [tool.markpickle] section — defaults)"
         return cfg, "defaults (no pyproject.toml found)"
     except Exception:  # pylint: disable=broad-exception-caught

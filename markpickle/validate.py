@@ -60,10 +60,7 @@ def _has_top_level_heading(tokens: list[dict[str, Any]]) -> bool:
 
 def _has_any_heading(tokens: list[dict[str, Any]]) -> bool:
     """Return True if any token in the list is a heading."""
-    for token in tokens:
-        if token.get("type") == "heading":
-            return True
-    return False
+    return any(token.get("type") == "heading" for token in tokens)
 
 
 def validate_markdown(text: str, _config: Any | None = None, config: Any | None = None) -> list[str]:

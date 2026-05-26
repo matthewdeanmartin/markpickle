@@ -12,7 +12,7 @@ from __future__ import annotations
 def launch_gui() -> None:
     """Launch the markpickle tkinter GUI."""
     try:
-        import tkinter as tk  # pylint: disable=unused-import,import-outside-toplevel
+        import tkinter as tk  # pylint: disable=unused-import,import-outside-toplevel  # noqa: F401
     except ImportError as exc:
         raise ImportError(
             "tkinter is not available in this Python installation. "

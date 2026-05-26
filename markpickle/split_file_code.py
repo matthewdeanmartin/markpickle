@@ -15,9 +15,7 @@ def is_markdown_separator(row: str, last_row_blank: bool) -> bool:
         return False
     if set(compact) in ({"_"}, {"*"}):
         return True
-    if set(compact) == {"-"}:
-        return True
-    return False
+    return set(compact) == {"-"}
 
 
 def split_file(file: io.FileIO) -> Generator[str]:

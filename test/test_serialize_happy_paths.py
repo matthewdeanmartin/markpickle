@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import io
 from dataclasses import dataclass
 from datetime import date, datetime

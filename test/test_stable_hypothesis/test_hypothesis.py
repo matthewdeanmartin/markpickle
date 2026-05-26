@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-# This test code was written by the `hypothesis.extra.ghostwriter` module
-# and is provided under the Creative Commons Zero public domain dedication.
-
 import typing
 
 import _io
@@ -12,6 +9,9 @@ from hypothesis import strategies as st
 
 import markpickle
 import markpickle.config_class
+
+# This test code was written by the `hypothesis.extra.ghostwriter` module
+# and is provided under the Creative Commons Zero public domain dedication.
 
 
 @given(

@@ -133,4 +133,4 @@ def parse_table(md_table: str) -> ColumnsValuesTableType:
         for i, cell in enumerate(cells):
             table_data[i].append(cell)
     # Combine the column names with the table data and return the result
-    return [col_names] + list(zip(*table_data))
+    return [col_names] + list(zip(*table_data, strict=False))

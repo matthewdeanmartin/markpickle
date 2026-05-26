@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 r"""Command-line tool to pretty-print Markdown after round tripping it through Python types
 
 Usage::
@@ -9,6 +7,8 @@ Usage::
 
 Source code modeled after json.tool https://github.com/python/cpython/blob/3.11/Lib/json/tool.py
 """
+
+from __future__ import annotations
 
 import argparse
 import sys

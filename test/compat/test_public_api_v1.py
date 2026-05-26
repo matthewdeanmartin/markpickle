@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import markpickle
-
 from test.compat.helpers import (
     assert_signature_compatible,
     current_config_fields,
     load_fixture,
     signature_contract,
 )
+
+import markpickle
 
 API_SNAPSHOT = load_fixture("api_snapshot.json")
 

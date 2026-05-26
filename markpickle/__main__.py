@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import importlib.metadata
 import json
 import platform
@@ -34,7 +35,7 @@ def _version(pkg: str) -> str:
 def _tkinter_status() -> str:
     """Check if tkinter is available."""
     try:
-        import tkinter  # pylint: disable=unused-import,import-outside-toplevel
+        import tkinter  # pylint: disable=unused-import,import-outside-toplevel  # noqa: F401
 
         return "available (stdlib)"
     except ImportError:
@@ -89,7 +90,7 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
     # Show active config file if one was found
     pyproject = Path.cwd() / "pyproject.toml"
     if pyproject.exists():
-        try:
+        with contextlib.suppress(Exception):
             from markpickle.config_file import (  # pylint: disable=import-outside-toplevel
                 _extract_markpickle_section,
                 _read_toml,
@@ -101,8 +102,6 @@ def cmd_doctor(_args: argparse.Namespace) -> int:
                 print(f"\nConfig: {pyproject} ([tool.markpickle] found, {len(section)} key(s))")
             else:
                 print(f"\nConfig: {pyproject} (no [tool.markpickle] section)")
-        except Exception:  # pylint: disable=broad-exception-caught
-            pass
 
     hint = "pip install markpickle[all]  # installs tabulate, Pillow, mdformat"
     print(f"\nTo install all optional extras:\n  {hint}\n")
