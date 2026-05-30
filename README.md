@@ -30,10 +30,10 @@ Felix
 
 becomes the python dict `{"Cat": {"Name": "Ringo", "Species": "Felix"}}`
 
-See [examples](docs/examples.md) for representable types.
+See [examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md) for representable types.
 
 Almost all markdown libraries use it as a way to generate HTML fragments from untrusted sources for insertion into some
-other HTML template. We are using it to represent data. See [guidance](docs/choosing_a_library.md) for which library
+other HTML template. We are using it to represent data. See [guidance](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/choosing_a_library.md) for which library
 make sense for you.
 
 ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/pypi/markpickle) [![Downloads](https://pepy.tech/badge/markpickle/month)](https://pepy.tech/project/markpickle/month)
@@ -217,11 +217,18 @@ I copied the ATX-dictionary-like header parsing from [markdown-to-json](https://
 
 Full documentation is available at [markpickle.readthedocs.io](https://markpickle.readthedocs.io/).
 
-- [Getting Started](docs/getting_started.md)
-- [Examples](docs/examples.md)
-- [Configuration](docs/configuration.md)
-- [Things That Will Not Work](docs/limitations.md)
-- [Choosing a Library](docs/choosing_a_library.md)
-- [How It Works](docs/how_it_works.md)
-- [Credits](docs/credits.md)
-- [Changelog](CHANGELOG.md)
+- [Getting Started](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/getting_started.md)
+- [Examples](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/examples.md)
+- [Configuration](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/configuration.md)
+- [Things That Will Not Work](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/limitations.md)
+- [Choosing a Library](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/choosing_a_library.md)
+- [How It Works](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/how_it_works.md)
+- [Credits](https://github.com/matthewdeanmartin/markpickle/blob/main/docs/credits.md)
+- [Changelog](https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGELOG.md)
+
+## Project Links
+
+- [GitHub](https://github.com/matthewdeanmartin/markpickle)
+- [PyPI](https://pypi.org/project/markpickle/)
+- [Bug Tracker](https://github.com/matthewdeanmartin/markpickle/issues)
+- [Change Log](https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGELOG.md)

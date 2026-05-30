@@ -49,7 +49,7 @@ markpickle-gui = "markpickle.gui.app:launch_gui"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/matthewdeanmartin/markpickle/issues"
-"Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGES.md"
+"Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling"]
