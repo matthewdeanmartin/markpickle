@@ -21,10 +21,16 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 dependencies = [
-    # DOM Parser — hard dependency, AST renderer required
-    "mistune>=2.0.0,<3.0.0",
+    # DOM Parser — hard dependency, AST renderer required.
+    # mistune 2.x is dead on Python 3.15: 3.15 made re.Scanner reject capturing
+    # groups, so mistune 2.x raises ValueError at parse time. mistune 3.0.0 broke
+    # AST rendering separately; 3.1.4 restored it. Both shapes are supported via
+    # markpickle/_mistune_compat.py, which normalises the v3 AST to the v2 shape.
+    "mistune>=2.0.0,<3.0.0; python_version < '3.15'",
+    "mistune>=3.1.4; python_version >= '3.15'",
 ]
 
 [project.optional-dependencies]

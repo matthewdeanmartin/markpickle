@@ -30,7 +30,7 @@ from __future__ import annotations
 import io
 from typing import Any
 
-import mistune
+from markpickle._mistune_compat import parse_markdown
 
 # ---------------------------------------------------------------------------
 # Internal text extraction
@@ -196,8 +196,7 @@ def loads_as_dom(text: str) -> list[dict[str, Any]]:
     >>> loads_as_dom("# Hello\\n\\nWorld.\\n")
     [{'tag': 'h1', 'text': 'Hello'}, {'tag': 'p', 'text': 'World.'}]
     """
-    parser = mistune.create_markdown(renderer="ast", plugins=["def_list"])
-    tokens: list[dict[str, Any]] = parser.parse(text)
+    tokens: list[dict[str, Any]] = parse_markdown(text)
     nodes: list[dict[str, Any]] = []
     for token in tokens:
         node = _token_to_node(token)

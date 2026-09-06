@@ -4,7 +4,11 @@ Creative Commons license: https://stackoverflow.com/questions/54125181/how-to-co
 
 from __future__ import annotations
 
+import mistune
+
 import markpickle
+
+_MISTUNE_MAJOR = int(mistune.__version__.split(".", maxsplit=1)[0])
 
 DATA = """
 ```{python}
@@ -38,7 +42,9 @@ def test_it():
                 "2 -> optimized with at least one zero at band-center,",
                 "3 -> optimized zeros (with optimizer)",
                 "4 -> same as 3, but with at least one zero at band-center",
-                "[z], -> zero locations in complex form",
+                # mistune 2 leaked a comma in from the preceding list item here; mistune 3
+                # parses the item correctly, matching the source exactly.
+                "[z], -> zero locations in complex form" if _MISTUNE_MAJOR < 3 else "[z] -> zero locations in complex form",
             ],
         ),
     }

@@ -15,7 +15,7 @@ import textwrap
 import urllib.parse
 from typing import Any, Generator, Optional, TextIO, cast
 
-import mistune
+from markpickle._mistune_compat import parse_markdown
 
 from markpickle import python_to_tables
 from markpickle.atx_as_dictionary import parse_outermost_dict, strip_formatting
@@ -261,12 +261,18 @@ def process_list_of_tokens(list_of_tokens: MistuneTokenList, config: Config) -> 
             # handled elsewhere?
             raise TypeError("Unconsumed header... shouldn't be in AST by this point.")
         elif token["type"] == "def_list":
+            # A def_list may hold several header/item pairs. mistune 2 usually emitted one
+            # def_list per pair, but mistune 3 groups every pair of a run into a single
+            # node, so walk the children in order and emit each pair as it completes.
             list_header = None
             list_item = None
             for item in token["children"]:
-                if item["type"] == "def_list_header" and list_header is None:
+                if item["type"] == "def_list_header":
+                    if list_header is not None and list_item is not None:
+                        accumulate_a_tuple.append({list_header: list_item})
                     list_header = cast(str, item["text"])
-                elif item["type"] == "def_list_item" and list_item is None:
+                    list_item = None
+                elif item["type"] == "def_list_item":
                     list_item = cast(str, item["text"])
                 else:
                     raise TypeError("Expected only list header/list item in definition list")
@@ -342,8 +348,7 @@ def load(value: TextIO, config: Config | None = None, object_hook=None) -> Seria
         return cast(SerializableTypes, config.empty_string_is)
 
     # Enable def_list by default for another dictionary format.
-    parser = mistune.create_markdown(renderer="ast", plugins=["def_list"])
-    result = parser.parse(string_value)
+    result = parse_markdown(string_value)
 
     # Process a list
     if len(result) == 1 and result[0]["type"] == "list":
@@ -357,7 +362,7 @@ def load(value: TextIO, config: Config | None = None, object_hook=None) -> Seria
         # handle people skipping to ## or ###
         minimum = min(item["level"] if item["type"] == "heading" else 100000000 for item in result)
         if missing_top_key(result) and config.deserialized_add_missing_key:
-            result = parser.parse("#" * minimum + f" {config.deserialized_missing_key_name}\n\n" + string_value)
+            result = parse_markdown("#" * minimum + f" {config.deserialized_missing_key_name}\n\n" + string_value)
         outermost_dict = parse_outermost_dict(result, minimum)
         outermost_dict = walk_dict(cast(PossibleDictTypes, outermost_dict), config)
     else:

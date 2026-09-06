@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import mistune
+from markpickle._mistune_compat import parse_markdown
 
 
 def _check_inline_tokens(children: list[dict[str, Any]], context: str, issues: list[str]) -> None:
@@ -88,8 +88,7 @@ def validate_markdown(text: str, _config: Any | None = None, config: Any | None 
     if not text or not text.strip():
         return []
 
-    parser = mistune.create_markdown(renderer="ast", plugins=["def_list"])
-    tokens: list[dict[str, Any]] = parser(text)  # type: ignore[assignment]
+    tokens: list[dict[str, Any]] = parse_markdown(text)
 
     if not tokens:
         return []
