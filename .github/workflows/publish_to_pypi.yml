@@ -112,5 +112,10 @@ jobs:
           python -c "import markpickle; assert hasattr(markpickle, 'dumps'), 'missing dumps'"
           python -c "import markpickle; assert hasattr(markpickle, 'loads'), 'missing loads'"
 
+      # Fail before uploading: the publish action's bundled twine rejects
+      # metadata it cannot parse (e.g. Metadata-Version 2.5 from hatchling),
+      # which otherwise only surfaces after the release is already tagged.
+      - name: Validate distribution metadata
+        run: uv run --with 'twine>=7' twine check --strict dist/*
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
