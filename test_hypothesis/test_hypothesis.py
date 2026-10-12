@@ -1,12 +1,12 @@
 # This test code was written by the `hypothesis.extra.ghostwriter` module
 # and is provided under the Creative Commons Zero public domain dedication.
 
+import _io
 import datetime
 import io
 import typing
-
-import _io
 from _io import StringIO
+
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -56,31 +56,27 @@ from markpickle.serialize import unsafe_falsy_type, unsafe_scalar_type
 )
 def test_roundtrip_dumps_loads(
     config: typing.Optional[markpickle.config_class.Config],
-    value: typing.Union[
-        typing.Union[
-            None,
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            int,
-            float,
-            datetime.date,
-            dict[str, typing.Union[None, str, int, float, datetime.date]],
-            dict[
-                str,
-                typing.Union[
-                    None,
-                    str,
-                    int,
-                    float,
-                    datetime.date,
-                    list[typing.Union[None, str, int, float, datetime.date]],
-                    dict[str, typing.Union[None, str, int, float, datetime.date]],
-                ],
-            ],
-            list[typing.Union[None, str, int, float, datetime.date]],
-            list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-        ],
-        str,
-    ],
+            None
+            | str
+            | int
+            | float
+            | datetime.date
+            | list[None | str | int | float | datetime.date]
+            | dict[str, None | str | int | float | datetime.date],
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+        | str
+    ),
 ) -> None:
     if unsafe_falsy_type(value):
         # falsies will not roundtrip.
@@ -169,28 +165,26 @@ def test_fuzz_Config(
     config=st.from_type(typing.Optional[markpickle.config_class.Config]),
 )
 def test_fuzz_dump(
-    value: typing.Union[
-        None,
-        str,
-        int,
-        float,
-        datetime.date,
-        dict[str, typing.Union[None, str, int, float, datetime.date]],
-        dict[
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                list[typing.Union[None, str, int, float, datetime.date]],
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-            ],
-        ],
-        list[typing.Union[None, str, int, float, datetime.date]],
-        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-    ],
+            None
+            | str
+            | int
+            | float
+            | datetime.date
+            | list[None | str | int | float | datetime.date]
+            | dict[str, None | str | int | float | datetime.date],
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+    ),
     stream: io.IOBase,
     config: typing.Optional[markpickle.config_class.Config],
 ) -> None:

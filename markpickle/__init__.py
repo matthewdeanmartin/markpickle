@@ -13,21 +13,21 @@ from markpickle.serialize import dump, dump_all, dumps, dumps_all
 from markpickle.split_file_code import split_file
 
 __all__ = [
-    "load",
-    "load_all",
-    "loads",
-    "loads_all",
-    "load_as_dom",
-    "loads_as_dom",
+    "Config",
+    "__version__",
+    "convert_json_to_markdown",
+    "convert_markdown_to_json",
     "dump",
     "dump_all",
     "dumps",
     "dumps_all",
-    "Config",
+    "load",
+    "load_all",
+    "load_as_dom",
+    "loads",
+    "loads_all",
+    "loads_as_dom",
     "split_file",
-    "convert_json_to_markdown",
-    "convert_markdown_to_json",
-    "__version__",
 ]
 
 from markpickle.__about__ import __version__

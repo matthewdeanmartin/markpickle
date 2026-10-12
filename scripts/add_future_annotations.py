@@ -40,7 +40,7 @@ def _insert_after_docstring(text: str) -> str:
                 i += 1
 
     insert_at = i
-    new_lines = lines[:insert_at] + [SENTINEL + "\n"] + lines[insert_at:]
+    new_lines = [*lines[:insert_at], SENTINEL + "\n", *lines[insert_at:]]
     return "".join(new_lines)
 
 

@@ -55,28 +55,26 @@ def test_fuzz_loads(value: str, config: typing.Optional[markpickle.config_class.
     config=st.from_type(typing.Optional[markpickle.config_class.Config]),
 )
 def test_fuzz_dump(
-    value: typing.Union[
-        None,
-        str,
-        int,
-        float,
-        datetime.date,
-        dict[str, typing.Union[None, str, int, float, datetime.date]],
-        dict[
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                list[typing.Union[None, str, int, float, datetime.date]],
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-            ],
-        ],
-        list[typing.Union[None, str, int, float, datetime.date]],
-        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-    ],
+            None
+            | str
+            | int
+            | float
+            | datetime.date
+            | list[None | str | int | float | datetime.date]
+            | dict[str, None | str | int | float | datetime.date],
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+    ),
     stream: io.IOBase,
     config: typing.Optional[markpickle.config_class.Config],
 ) -> None:

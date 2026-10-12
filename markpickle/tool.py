@@ -51,10 +51,7 @@ def main(
             else:
                 objs = (markpickle.load(infile),)
 
-            if options.outfile is None:
-                out = sys.stdout
-            else:
-                out = options.outfile.open("w", encoding="utf-8")
+            out = sys.stdout if options.outfile is None else options.outfile.open("w", encoding="utf-8")
             # with out as outfile: # can't close this?
             outfile = out
             for obj in objs:

@@ -69,10 +69,7 @@ def dict_to_markdown(
     row += " |\n"
 
     # Combine the header, separator, and rows into a single table
-    if include_header:
-        table = header + separator + row
-    else:
-        table = row
+    table = header + separator + row if include_header else row
 
     return f"{table}"
 
@@ -133,4 +130,4 @@ def parse_table(md_table: str) -> ColumnsValuesTableType:
         for i, cell in enumerate(cells):
             table_data[i].append(cell)
     # Combine the column names with the table data and return the result
-    return [col_names] + list(zip(*table_data, strict=False))
+    return [col_names, *list(zip(*table_data, strict=False))]

@@ -17,8 +17,8 @@ def test_bytes_lists():
     config.serialize_bytes_mime_type = "application/octet-stream"
     result = markpickle.dumps(list_of_binary, config)
     assert (
-        result == "- ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)\n"
-        "- ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)\n"
+        result
+        == "- ![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)\n- ![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)\n"
     )
 
 
@@ -28,8 +28,5 @@ def test_bytes_dict():
     config.serialize_bytes_mime_type = "application/octet-stream"
     result = markpickle.dumps(dictionaries_of_binary, config)
     assert result == (
-        "# animal\n\n"
-        "![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)\n\n"
-        "# name\n\n"
-        "![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)\n"
+        "# animal\n\n![bytes](data:application/octet-stream;base64,aGVsbG8gd29ybGQ=)\n\n# name\n\n![bytes](data:application/octet-stream;base64,aGVsbG8gdW5pdmVyc2U=)\n"
     )

@@ -32,10 +32,7 @@ def parse_outermost_dict(
                 item["level"] if item["type"] == "heading" else 10000000
                 for item in cast(MistuneTokenList, inner_token_list)
             ]
-            if not the_sequence:
-                next_level = level + 1
-            else:
-                next_level = min(the_sequence)
+            next_level = level + 1 if not the_sequence else min(the_sequence)
 
             inner_result = recursive_part(next_level, cast(MistuneTokenList, inner_token_list))
 

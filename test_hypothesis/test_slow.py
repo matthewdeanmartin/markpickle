@@ -1,6 +1,5 @@
 import datetime
 import io
-import typing
 
 from hypothesis import given
 from hypothesis import strategies as st
@@ -50,28 +49,26 @@ import markpickle.serialize
 )
 def test_fuzz_render_dict(
     builder: io.IOBase,
-    value: typing.Union[
-        None,
-        str,
-        int,
-        float,
-        datetime.date,
-        dict[str, typing.Union[None, str, int, float, datetime.date]],
-        dict[
+    value: (
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            typing.Union[
-                None,
-                str,
-                int,
-                float,
-                datetime.date,
-                list[typing.Union[None, str, int, float, datetime.date]],
-                dict[str, typing.Union[None, str, int, float, datetime.date]],
-            ],
-        ],
-        list[typing.Union[None, str, int, float, datetime.date]],
-        list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
-    ],
+            None
+            | str
+            | int
+            | float
+            | datetime.date
+            | list[None | str | int | float | datetime.date]
+            | dict[str, None | str | int | float | datetime.date],
+        ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
+    ),
     config: markpickle.config_class.Config,
     indent: int,
     header_level: int,
@@ -129,28 +126,24 @@ def test_fuzz_render_dict(
 def test_fuzz_render_list(
     builder: io.IOBase,
     value: list[
-        typing.Union[
-            None,
+        None
+        | str
+        | int
+        | float
+        | datetime.date
+        | dict[str, None | str | int | float | datetime.date]
+        | dict[
             str,
-            int,
-            float,
-            datetime.date,
-            dict[str, typing.Union[None, str, int, float, datetime.date]],
-            dict[
-                str,
-                typing.Union[
-                    None,
-                    str,
-                    int,
-                    float,
-                    datetime.date,
-                    list[typing.Union[None, str, int, float, datetime.date]],
-                    dict[str, typing.Union[None, str, int, float, datetime.date]],
-                ],
-            ],
-            list[typing.Union[None, str, int, float, datetime.date]],
-            list[dict[str, typing.Union[None, str, int, float, datetime.date]]],
+            None
+            | str
+            | int
+            | float
+            | datetime.date
+            | list[None | str | int | float | datetime.date]
+            | dict[str, None | str | int | float | datetime.date],
         ]
+        | list[None | str | int | float | datetime.date]
+        | list[dict[str, None | str | int | float | datetime.date]]
     ],
     config: markpickle.config_class.Config,
     indent: int,

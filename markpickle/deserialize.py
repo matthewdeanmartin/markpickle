@@ -15,9 +15,8 @@ import textwrap
 import urllib.parse
 from typing import Any, Generator, Optional, TextIO, cast
 
-from markpickle._mistune_compat import parse_markdown
-
 from markpickle import python_to_tables
+from markpickle._mistune_compat import parse_markdown
 from markpickle.atx_as_dictionary import parse_outermost_dict, strip_formatting
 from markpickle.binary_streams import extract_bytes
 from markpickle.config_class import Config

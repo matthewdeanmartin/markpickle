@@ -79,7 +79,7 @@ def test_dumps_none_returns_empty_string() -> None:
 def test_dumps_top_level_list_of_dicts_uses_python_table_renderer() -> None:
     result = dumps([{"name": "Ada", "age": 30}, {"name": "Grace", "age": 25}])
 
-    assert result == ("| name  | age |\n" "| ----- | --- |\n" "| Ada   | 30  |\n" "| Grace | 25  |\n")
+    assert result == ("| name  | age |\n| ----- | --- |\n| Ada   | 30  |\n| Grace | 25  |\n")
 
 
 def test_dumps_nested_list_of_dicts_uses_python_table_renderer() -> None:

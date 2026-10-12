@@ -245,7 +245,7 @@ def render_dict(
                 minibuilder = io.StringIO()
                 render_scalar(minibuilder, item, config)
                 seralialized_scalar = minibuilder.getvalue()
-                builder.write(f"{header_level * '#'} {key}\n\n" f"{seralialized_scalar}\n\n")
+                builder.write(f"{header_level * '#'} {key}\n\n{seralialized_scalar}\n\n")
             else:
                 # This is ad hoc and not a markdown standard.
                 minibuilder = io.StringIO()

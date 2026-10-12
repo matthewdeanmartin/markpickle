@@ -488,7 +488,7 @@ class TestDeserializeTables:
         """Tables with colon alignment markers parse correctly."""
         c = Config()
         c.tables_become_list_of_lists = True
-        md = "| weekday   |   temp |\n" "|:----------|-------:|\n" "| monday    |     20 |\n"
+        md = "| weekday   |   temp |\n|:----------|-------:|\n| monday    |     20 |\n"
         result = markpickle.loads(md, config=c)
         assert result == [["weekday", "temp"], ["monday", "20"]]
 

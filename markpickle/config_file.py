@@ -14,7 +14,6 @@ Usage
 from __future__ import annotations
 
 import dataclasses
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -23,27 +22,10 @@ from markpickle.config_class import Config
 
 def _read_toml(path: Path) -> dict[str, Any]:
     """Read a TOML file using tomllib (3.11+) or tomli fallback."""
-    if sys.version_info >= (3, 11):
-        import tomllib  # pylint: disable=import-outside-toplevel
+    import tomllib  # pylint: disable=import-outside-toplevel
 
-        with path.open("rb") as fh:
-            return tomllib.load(fh)
-    else:
-        try:
-            import tomli  # pylint: disable=import-outside-toplevel
-
-            with path.open("rb") as fh:
-                return tomli.load(fh)
-        except ImportError:
-            try:
-                import tomllib  # pylint: disable=import-outside-toplevel
-
-                with path.open("rb") as fh:
-                    return tomllib.load(fh)
-            except ImportError as exc:
-                raise ImportError(
-                    "TOML support requires Python 3.11+ or the 'tomli' package. Install it with: pip install tomli"
-                ) from exc
+    with path.open("rb") as fh:
+        return tomllib.load(fh)
 
 
 def _extract_markpickle_section(data: dict[str, Any], path: Path) -> dict[str, Any]:

@@ -38,8 +38,7 @@ def _check_paragraph(token: dict[str, Any], issues: list[str]) -> None:
     # Mixed paragraph: multiple children of different types
     if len(children) > 1 and non_text_types:
         issues.append(
-            "mixed paragraph content found: paragraph contains multiple children of different "
-            "types and will become a tuple rather than a string"
+            "mixed paragraph content found: paragraph contains multiple children of different types and will become a tuple rather than a string"
         )
 
     _check_inline_tokens(children, "paragraph", issues)
@@ -98,8 +97,7 @@ def validate_markdown(text: str, _config: Any | None = None, config: Any | None 
     # Check for headings buried inside a document that has no top-level heading
     if not _has_top_level_heading(tokens) and _has_any_heading(tokens):
         issues.append(
-            "document has no top-level heading but contains headings further down: "
-            "the top key used by markpickle will be missing"
+            "document has no top-level heading but contains headings further down: the top key used by markpickle will be missing"
         )
 
     for token in tokens:
@@ -110,8 +108,7 @@ def validate_markdown(text: str, _config: Any | None = None, config: Any | None 
 
         elif typ == "thematic_break":
             issues.append(
-                "thematic_break (horizontal rule) found: horizontal rules are not serialized "
-                "as a value and will be lost"
+                "thematic_break (horizontal rule) found: horizontal rules are not serialized as a value and will be lost"
             )
 
         elif typ == "block_html":

@@ -15,8 +15,7 @@ def launch_gui() -> None:
         import tkinter as tk  # pylint: disable=unused-import,import-outside-toplevel  # noqa: F401
     except ImportError as exc:
         raise ImportError(
-            "tkinter is not available in this Python installation. "
-            "On Linux, install it with your package manager (e.g. python3-tk)."
+            "tkinter is not available in this Python installation. On Linux, install it with your package manager (e.g. python3-tk)."
         ) from exc
 
     app = _MarkpickleApp()
