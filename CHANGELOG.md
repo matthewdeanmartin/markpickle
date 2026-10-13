@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Python 3.15 support.
 ### Changed
+- On Python 3.14 and older, Markdown is now parsed with mistune 3 as on 3.15: code and HTML blocks no longer keep trailing blank lines, and a few edge cases (nested emphasis, reference links, lazy blockquotes) parse differently.
 - Requires Python 3.11 or newer; Python 3.9-3.10 are no longer supported.
 ### Security
 - Require mistune 3.3 or newer on every Python version; mistune 2.x has unfixed security advisories.
