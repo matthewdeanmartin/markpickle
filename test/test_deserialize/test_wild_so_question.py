@@ -44,7 +44,11 @@ def test_it():
                 "4 -> same as 3, but with at least one zero at band-center",
                 # mistune 2 leaked a comma in from the preceding list item here; mistune 3
                 # parses the item correctly, matching the source exactly.
-                "[z], -> zero locations in complex form" if _MISTUNE_MAJOR < 3 else "[z] -> zero locations in complex form",
+                (
+                    "[z], -> zero locations in complex form"
+                    if _MISTUNE_MAJOR < 3
+                    else "[z] -> zero locations in complex form"
+                ),
             ],
         ),
     }

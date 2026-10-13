@@ -1828,8 +1828,7 @@ name = "markpickle"
 version = "2.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "mistune", version = "2.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.15'" },
-    { name = "mistune", version = "3.3.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.15'" },
+    { name = "mistune" },
 ]
 
 [package.optional-dependencies]
@@ -1898,8 +1897,7 @@ dev = [
 requires-dist = [
     { name = "mdformat", marker = "extra == 'all'", specifier = ">=0.7.17" },
     { name = "mdformat", marker = "extra == 'format'", specifier = ">=0.7.17" },
-    { name = "mistune", marker = "python_full_version < '3.15'", specifier = ">=2.0.0,<3.0.0" },
-    { name = "mistune", marker = "python_full_version >= '3.15'", specifier = ">=3.1.4" },
+    { name = "mistune", specifier = ">=3.3.0" },
     { name = "pillow", marker = "python_full_version >= '3.14' and extra == 'all'", specifier = ">=11.3.0" },
     { name = "pillow", marker = "python_full_version >= '3.14' and extra == 'images'", specifier = ">=11.3.0" },
     { name = "pillow", marker = "python_full_version < '3.14' and extra == 'all'", specifier = ">=8.1" },
@@ -2160,25 +2158,8 @@ wheels = [
 
 [[package]]
 name = "mistune"
-version = "2.1.0"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version == '3.14.*'",
-    "python_full_version >= '3.12' and python_full_version < '3.14'",
-    "python_full_version < '3.12'",
-]
-sdist = { url = "https://files.pythonhosted.org/packages/78/0c/9fa8f2a906095bf0393e03d19bf33d22c0a501f1c9b1c9a021144a83db70/mistune-2.1.0.tar.gz", hash = "sha256:863bba1745fed5a05dbf3ada970d7a01f852bb0e1b0d9fcf6065ed794def1b73", size = 76490, upload-time = "2026-06-21T13:18:54.4Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/fd/9147e30e862592f70acf548fa01f475f8873a921360c704d76362092e440/mistune-2.1.0-py2.py3-none-any.whl", hash = "sha256:8208c43d6771da99f8195ac4499ec1373202d3726564c93092302fc3ac92dc38", size = 25056, upload-time = "2026-06-21T13:18:53.125Z" },
-]
-
-[[package]]
-name = "mistune"
 version = "3.3.4"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.15'",
-]
 sdist = { url = "https://files.pythonhosted.org/packages/7b/92/328a294a6de83bacb95bed01f04e0eaff4e3616ee359fc821a5dfc539b02/mistune-3.3.4.tar.gz", hash = "sha256:58b5c96d6fcb61190dfe5fae498d2b2065f99cf61e9649418fd54cf1ada86dfe", size = 121426, upload-time = "2026-07-22T05:22:30.89Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/77/e4/288365afae98953bc01de09f686f40d8ee84578135aa7767d5d4e60b5278/mistune-3.3.4-py3-none-any.whl", hash = "sha256:ee015381e955e370962968befe1d729ab60fafb6a715ac6751763fbce38c8d4a", size = 66862, upload-time = "2026-07-22T05:22:29.419Z" },

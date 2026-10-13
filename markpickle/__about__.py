@@ -2,6 +2,7 @@
 
 __all__ = [
     "__credits__",
+    "__dependencies__",
     "__description__",
     "__keywords__",
     "__readme__",
@@ -16,6 +17,7 @@ __version__ = "2.0.0"
 __description__ = "Lossy python to markdown serializer"
 __credits__ = [{"name": "Matthew Martin", "email": "matthewdeanmartin@gmail.com"}]
 __readme__ = "README.md"
-__requires_python__ = ">=3.9"
+__requires_python__ = ">=3.11"
 __keywords__ = ["serializer", "deserializer", "markdown"]
 __status__ = "5 - Production/Stable"
+__dependencies__ = ["mistune>=3.3.0"]

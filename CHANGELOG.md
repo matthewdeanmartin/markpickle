@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Python 3.15 support.
 ### Changed
 - Requires Python 3.11 or newer; Python 3.9-3.10 are no longer supported.
+### Security
+- Require mistune 3.3 or newer on every Python version; mistune 2.x has unfixed security advisories.
 
 ## [2.0.0] - 2026-03-26
 

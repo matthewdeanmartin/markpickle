@@ -110,7 +110,7 @@ security-check:
 
 audit:
 	@echo "[pip-audit]"
-	$(UV_RUN) pip-audit --ignore-vuln CVE-2026-4539
+	$(UV_RUN) pip-audit --ignore-vuln CVE-2026-4539 --ignore-vuln PYSEC-2026-3740  # nltk: dev-only, no fixed release yet
 
 test:
 	@echo "[test] workers=$(PYTEST_N)"

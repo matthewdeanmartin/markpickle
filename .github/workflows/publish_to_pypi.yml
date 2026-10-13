@@ -40,10 +40,6 @@ jobs:
 #      - name: Run just check
 #        run: chmod +x scripts/*.sh && uv run make check
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Run make publish
         run: uv run make publish

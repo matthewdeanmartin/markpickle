@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import typing
-
 import _io
+import typing
 from _io import StringIO
+
 from hypothesis import given
 from hypothesis import strategies as st
 
