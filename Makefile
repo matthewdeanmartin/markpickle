@@ -17,7 +17,7 @@ ifdef PYTEST_SEED
 PYTEST_RANDOM_ARGS := --randomly-seed=$(PYTEST_SEED)
 endif
 
-.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish github-actions-upgrade build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust add-future-annotations
+.PHONY: help lock sync format format-code format-docs lint lint-code ruff pylint type-check type-check-all type-check-mypy type-check-pyright type-check-ty type-check-docstrings security-check audit test compat compat-refresh compat-baseline-venv compat-wheel benchmark docs-format-check docs-links docs-build docs-test changelog-validate check-code check-docs check-all version-check release-status clean-dist build-package package-check publication-checks check publish github-actions-upgrade build-rust build-rust-debug build-rust-wheel check-rust test-rust clean-rust add-future-annotations
 
 help:
 	@printf "%s\n" \
@@ -37,6 +37,7 @@ help:
 	"make type-check-all      # run mypy, pyright, ty, pydoclint" \
 	"make check-code          # code checks only" \
 	"make docs-format-check   # verify markdown formatting" \
+	"make changelog-validate  # validate CHANGELOG.md" \
 	"make check-docs          # documentation checks only" \
 	"make check-all           # code + docs checks" \
 	"make publication-checks  # release readiness checks" \
@@ -149,6 +150,10 @@ docs-links:
 	$(UV_RUN) linkcheckMarkdown -local AGENTS.md
 	$(UV_RUN) linkcheckMarkdown -local tiny.md
 
+changelog-validate:
+	@echo "[changelog-validate]"
+	$(UV_RUN) kaclm --input-file CHANGELOG.md validate
+
 docs-build:
 	@echo "[docs-build]"
 	$(UV_RUN) mkdocs build
@@ -159,7 +164,7 @@ docs-test:
 
 check-code: lint security-check audit test
 
-check-docs: docs-links docs-build
+check-docs: docs-links docs-build changelog-validate
 
 check-all: check-code check-docs
 

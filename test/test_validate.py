@@ -144,3 +144,24 @@ def test_accepts_config_kwarg() -> None:
     md = "# Title\n\nHello.\n"
     issues = validate_markdown(md, config=Config())
     assert issues == []
+
+
+def test_mixed_paragraph_reports_mixed_content_and_nested_inline_formatting() -> None:
+    issues = validate_markdown("# Title\n\nText **bold *nested*** and [link](https://example.com).\n")
+
+    assert _has_issue_containing(issues, "mixed paragraph content")
+    assert _has_issue_containing(issues, "strong formatting")
+    assert _has_issue_containing(issues, "emphasis formatting")
+    assert _has_issue_containing(issues, "link found")
+
+
+def test_paragraph_with_only_text_and_line_break_is_not_marked_mixed() -> None:
+    issues = validate_markdown("# Title\n\nFirst line  \nsecond line\n")
+
+    assert not _has_issue_containing(issues, "mixed paragraph content")
+
+
+def test_config_positional_argument_remains_accepted() -> None:
+    from markpickle.config_class import Config
+
+    assert validate_markdown("# Title\n", Config()) == []

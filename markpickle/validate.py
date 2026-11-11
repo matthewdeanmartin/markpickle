@@ -33,7 +33,7 @@ def _check_paragraph(token: dict[str, Any], issues: list[str]) -> None:
     if not children:
         return
 
-    non_text_types = [c.get("type", "") for c in children if c.get("type", "") != "text"]
+    non_text_types = [c.get("type", "") for c in children if c.get("type", "") not in ("text", "linebreak")]
 
     # Mixed paragraph: multiple children of different types
     if len(children) > 1 and non_text_types:

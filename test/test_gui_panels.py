@@ -142,3 +142,116 @@ def test_load_config_with_source_reports_defaults_without_pyproject(
 
     assert isinstance(config, Config)
     assert source == "defaults (no pyproject.toml found)"
+
+
+def test_format_panel_basic_normalizer_strips_trailing_spaces_and_adds_newline(root: tk.Tk) -> None:
+    panel = FormatPanel(root, config_state=ConfigState(Config()))
+
+    assert panel._format("# Title   \n\nvalue  ") == "# Title\n\nvalue\n"
+
+
+def test_format_panel_doc_state_clear_clears_output_and_status(root: tk.Tk) -> None:
+    doc_state = DocumentState()
+    panel = FormatPanel(root, doc_state=doc_state, config_state=ConfigState(Config()))
+    panel._load_text("# Title\n")
+    panel._run()
+    doc_state.set("")
+
+    assert _widget_text(panel._input) == ""
+    assert _widget_text(panel._output) == ""
+    assert panel._status.cget("text") == ""
+
+
+def test_validate_panel_flags_unsafe_inline_markdown(root: tk.Tk) -> None:
+    panel = ValidatePanel(root, doc_state=DocumentState(), config_state=ConfigState(Config()))
+
+    panel._load_text("# Title\n\nA **bold** value.\n")
+    panel._run()
+    output = _widget_text(panel._output)
+
+    assert "strong formatting" in output
+    assert panel._status.cget("text") != "All checks passed."
+
+
+def test_validate_panel_empty_input_requests_markdown(root: tk.Tk) -> None:
+    panel = ValidatePanel(root, doc_state=DocumentState(), config_state=ConfigState(Config()))
+
+    panel._run()
+
+    assert "No input provided." in _widget_text(panel._output)
+
+
+def test_config_panel_empty_roundtrip_sets_guidance_status(root: tk.Tk) -> None:
+    panel = ConfigPanel(root, config=Config(), doc_state=DocumentState(), config_state=ConfigState(Config()))
+
+    panel._test_roundtrip()
+
+    assert panel._status.cget("text") == "No markdown in input area — load a doc first."
+
+
+def test_config_panel_list_values_are_trimmed_and_empty_items_removed(root: tk.Tk) -> None:
+    panel = ConfigPanel(root, config=Config(), config_state=ConfigState(Config()))
+    panel._vars["true_values"].set(" yes, , y ")
+
+    assert panel._get_config().true_values == ["yes", "y"]
+
+
+def test_convert_panel_invalid_python_expression_is_reported(root: tk.Tk) -> None:
+    panel = ConvertPanel(root, config_state=ConfigState(Config()))
+    panel._toggle_direction()
+    panel._load_text("not valid python !!!")
+    panel._run()
+
+    assert _widget_text(panel._output).startswith("Error:")
+    assert panel._status.cget("text").startswith("Error:")
+
+
+def test_convert_panel_clear_resets_shared_document_and_output(root: tk.Tk) -> None:
+    doc_state = DocumentState()
+    panel = ConvertPanel(root, doc_state=doc_state, config_state=ConfigState(Config()))
+    panel._load_text("# Title\n")
+    panel._run()
+    panel._clear()
+
+    assert doc_state.text == ""
+    assert _widget_text(panel._input) == ""
+    assert _widget_text(panel._output) == ""
+    assert panel._status.cget("text") == ""
+
+
+def test_convert_panel_copy_output_updates_status(root: tk.Tk, monkeypatch: pytest.MonkeyPatch) -> None:
+    panel = ConvertPanel(root, config_state=ConfigState(Config()))
+    panel._set_output("copied text")
+    copied: list[str] = []
+    monkeypatch.setattr(panel, "clipboard_clear", lambda: None)
+    monkeypatch.setattr(panel, "clipboard_append", copied.append)
+
+    panel._copy_output()
+
+    assert copied == ["copied text"]
+    assert panel._status.cget("text") == "Copied to clipboard."
+
+
+def test_validate_panel_can_run_ast_only(root: tk.Tk) -> None:
+    panel = ValidatePanel(root, doc_state=DocumentState(), config_state=ConfigState(Config()))
+    panel._roundtrip_var.set(False)
+    panel._load_text("# Title\n\nA **bold** value.\n")
+
+    panel._run()
+
+    assert "AST Analysis" in _widget_text(panel._output)
+    assert "Round-trip Check" not in _widget_text(panel._output)
+    assert panel._status.cget("text") == "Issues found."
+
+
+def test_validate_panel_clear_updates_shared_document_and_status(root: tk.Tk) -> None:
+    doc_state = DocumentState()
+    panel = ValidatePanel(root, doc_state=doc_state, config_state=ConfigState(Config()))
+    panel._load_text("# Title\n")
+    panel._run()
+    panel._clear()
+
+    assert doc_state.text == ""
+    assert _widget_text(panel._input) == ""
+    assert _widget_text(panel._output) == ""
+    assert panel._status.cget("text") == ""

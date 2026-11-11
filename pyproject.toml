@@ -77,7 +77,6 @@ include = [
 dev = [
     "dont-be-lazy>=0.1.2",
     "pydoc-fork>=3.0.0",
-
     # mypy
     "types-tabulate",
     "types-pillow",
@@ -111,7 +110,6 @@ dev = [
     "pyright>=1.1.400",
     "pylint>=3.0.0",
     "bandit>=1.7.0",
-
     "2to3>=1.0",
     # markdown stuff
     "flake8-markdown>=0.5.0",
@@ -127,6 +125,7 @@ dev = [
     "metametameta>=0.1.14",
     # Rust extension build tool – used by `make build-rust` / `make build-rust-debug`
     "maturin>=1.4,<2.0",
+    "keepachangelog-manager-fork>=6.10.1",
 ]
 
 [tool.uv]
@@ -232,6 +231,10 @@ lint.ignore = ["RUF100",
     "SIM108", # not all trinary if improves readability
     "PLC0415", # lazy loading
 ]
+lint.per-file-ignores = { "test*/**" = ["PLR0917"] }
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -257,10 +260,6 @@ exclude = [
     "venv",
     "hide"
 ]
-lint.per-file-ignores = { "test*/**" = ["PLR0917"] }
-
-# Allow unused variables when underscore-prefixed.
-lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.14.
 target-version = "py313"
