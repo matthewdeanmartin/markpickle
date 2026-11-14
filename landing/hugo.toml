@@ -1,0 +1,10 @@
+baseURL = "https://matthewdeanmartin.github.io/markpickle/"
+locale = "en-us"
+title = "markpickle"
+disableKinds = ["taxonomy", "term", "RSS"]
+
+[params]
+  description = "Turn Python data into readable Markdown and structured Markdown back into Python data."
+  docs = "https://markpickle.readthedocs.io/"
+  github = "https://github.com/matthewdeanmartin/markpickle"
+  pypi = "https://pypi.org/project/markpickle/"

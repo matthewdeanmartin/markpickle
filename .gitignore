@@ -140,5 +140,8 @@ node_modules/
 
 # mkdocs build output
 site/
+/landing/public/
+/landing/resources/
+/landing/.hugo_build.lock
 .venv-compat-wheel
 

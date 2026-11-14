@@ -1,0 +1,87 @@
+{{ define "main" }}
+{{ $p := .Site.Params }}
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="wordmark" href="#top" aria-label="markpickle home"><span class="mark">{ m }</span> markpickle</a>
+    <nav aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="{{ $p.docs }}">Docs <span aria-hidden="true">↗</span></a>
+      <a class="nav-github" href="{{ $p.github }}">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero shell">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="eyebrow-line"></span> A PYTHON LIBRARY FOR STRUCTURED MARKDOWN</p>
+      <h1>Give your data<br>a <em>Markdown</em> face.</h1>
+      <p class="hero-lead">Write Python dictionaries and lists as readable Markdown. Parse that same structure back into useful Python values.</p>
+      <div class="hero-actions">
+        <a class="button button-dark" href="{{ $p.docs }}en/latest/getting_started/">Get started <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="{{ $p.github }}">View source <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="install-line"><span>INSTALL</span><code>pip install markpickle</code></div>
+    </div>
+    <div class="hero-visual" aria-label="Illustration of Python data becoming Markdown">
+      <div class="visual-top"><span>01 / THE IDEA</span><span>PYTHON → MARKDOWN</span></div>
+      <div class="visual-stage">
+        <div class="note-card note-python"><span class="note-label">data.py</span><pre>{
+  "Cat": {
+    "Name": "Ringo",
+    "Species": "Felix"
+  }
+}</pre></div>
+        <span class="flow-arrow" aria-hidden="true">→</span>
+        <div class="note-card note-markdown"><span class="note-label">cat.md</span><pre># Cat
+
+## Name
+Ringo
+
+## Species
+Felix</pre></div>
+      </div>
+      <div class="visual-bottom"><span>HEADINGS MODE VIA CONFIG</span><span>TEXT BECOMES VALUES</span></div>
+    </div>
+  </section>
+
+  <section class="ticker" aria-label="At a glance"><div class="shell ticker-inner"><span>PYTHON OBJECTS</span><span aria-hidden="true">◆</span><span>READABLE MARKDOWN</span><span aria-hidden="true">◆</span><span>STRUCTURED DATA</span><span aria-hidden="true">◆</span><span>ONE SMALL BRIDGE</span></div></section>
+
+  <section id="how-it-works" class="section shell">
+    <div class="section-heading"><span class="section-index">01 / THE EXCHANGE</span><h2>Structure you can read.<br><em>Data you can use.</em></h2><p>Markpickle maps a deliberate subset of Markdown onto ordinary Python types. Headings nest dictionaries; bullet points make lists; tables can hold records.</p></div>
+    <div class="exchange-grid">
+      <div class="code-window"><div class="window-bar"><span><i></i><i></i><i></i></span><span>example.py</span></div><pre><code><span class="code-purple">import</span> markpickle
+<span class="code-purple">from</span> markpickle <span class="code-purple">import</span> Config
+
+data = {
+    <span class="code-orange">"Cat"</span>: {
+        <span class="code-orange">"Name"</span>: <span class="code-green">"Ringo"</span>,
+        <span class="code-orange">"Species"</span>: <span class="code-green">"Felix"</span>,
+    }
+}
+
+config = Config(serialize_child_dict_as_table=False)
+markdown = markpickle.dumps(data, config=config)
+restored = markpickle.loads(markdown, config=config)</code></pre></div>
+      <div class="exchange-result"><div class="result-label"><span>THE MARKDOWN</span><span>cat.md</span></div><pre><code># Cat
+
+## Name
+
+Ringo
+
+## Species
+
+Felix</code></pre><div class="result-foot">A document for people. A shape for programs.</div></div>
+    </div>
+  </section>
+
+  <section id="use-cases" class="use-section"><div class="shell"><div class="section-heading compact"><span class="section-index">02 / WHERE IT FITS</span><h2>For data that should<br><em>still feel like a document.</em></h2></div><div class="use-grid"><article><span class="use-number">01</span><h3>Human-editable files</h3><p>Keep simple structured data in headings, lists, and tables that people can read and revise.</p></article><article><span class="use-number">02</span><h3>Markdown output</h3><p>Turn data from Python or JSON into a Markdown representation for reports and notes.</p></article><article><span class="use-number">03</span><h3>Document ingestion</h3><p>Load Markdown written in markpickle’s structure into dictionaries and lists for another program.</p></article></div></div></section>
+
+  <section class="boundary shell"><span class="section-index">03 / KNOW THE BOUNDARY</span><div><h2>Made for a shape,<br><em>not every document.</em></h2><p>Serialization is lossy. Arbitrary Markdown is not guaranteed to become sensible Python data, and some values cannot round trip exactly. Use a Markdown parser’s AST when you need to preserve a whole document.</p><a class="text-link" href="{{ $p.docs }}en/latest/limitations/">Explore the limitations <span aria-hidden="true">↗</span></a></div></section>
+
+  <section class="closing"><div class="shell closing-inner"><div><span class="section-index">START WITH ONE COMMAND</span><h2>Make room for<br><em>readable data.</em></h2></div><div class="closing-actions"><code>pip install markpickle</code><a class="button button-light" href="{{ $p.docs }}en/latest/getting_started/">Read the documentation <span aria-hidden="true">↗</span></a></div></div></section>
+</main>
+
+<footer><div class="shell footer-inner"><span class="footer-brand">{ m } markpickle</span><span>Python ↔ Markdown</span><div><a href="{{ $p.docs }}">Documentation</a><a href="{{ $p.pypi }}">PyPI</a><a href="{{ $p.github }}">GitHub</a></div></div></footer>
+{{ end }}

@@ -45,15 +45,14 @@ all = [
     "pillow>=11.3.0; python_version >= '3.14'",
     "mdformat>=0.7.17",
 ]
-#repository = "https://github.com/matthewdeanmartin/markpickle"
-#homepage = "https://github.com/matthewdeanmartin/markpickle"
-#documentation ="https://github.com/matthewdeanmartin/markpickle"
 
 [project.scripts]
 markpickle = "markpickle.__main__:run"
 markpickle-gui = "markpickle.gui.app:launch_gui"
 
 [project.urls]
+Homepage = "https://matthewdeanmartin.github.io/markpickle/"
+Documentation = "https://markpickle.readthedocs.io/"
 "Bug Tracker" = "https://github.com/matthewdeanmartin/markpickle/issues"
 "Change Log" = "https://github.com/matthewdeanmartin/markpickle/blob/main/CHANGELOG.md"
 
