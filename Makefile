@@ -143,12 +143,7 @@ docs-format-check:
 
 docs-links:
 	@echo "[docs-links]"
-	$(UV_RUN) linkcheckMarkdown -local docs
-	$(UV_RUN) linkcheckMarkdown -local spec
-	$(UV_RUN) linkcheckMarkdown -local README.md
-	$(UV_RUN) linkcheckMarkdown -local CHANGELOG.md
-	$(UV_RUN) linkcheckMarkdown -local AGENTS.md
-	$(UV_RUN) linkcheckMarkdown -local tiny.md
+	$(UV_RUN) python -X utf8 scripts/check_local_links.py docs spec README.md CHANGELOG.md AGENTS.md tiny.md
 
 changelog-validate:
 	@echo "[changelog-validate]"
